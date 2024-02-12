@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { CaretDown, ShoppingCartIcon } from "../icons";
 import {
 	Sheet,
@@ -74,7 +74,7 @@ const Cart = ({ className }: CartProps) => {
 			<SheetTrigger asChild>
 				<div
 					className={cn("flex items-center gap-2 h-full relative", className)}>
-					<span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute top-2 right-1 z-30 text-sm flex items-center justify-center">
+					<span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute top-2 right-1 z-30 text-xs flex items-center justify-center">
 						{cartItemsQuantity}
 					</span>
 					<ShoppingCartIcon width={26} height={26} />
@@ -106,17 +106,21 @@ const Cart = ({ className }: CartProps) => {
 							<hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
 							<div className="flex items-center justify-between w-full h-auto">
 								<p className="font-normal text-sm">Subtotal</p>
-								<p className="font-normal text-gray-500 text-sm">{`Rs. ${subTotal}`}</p>
+								<p className="font-normal text-gray-500 text-sm">
+									{formatPrice(subTotal)}
+								</p>
 							</div>
 							<div className="flex items-center justify-between w-full h-auto">
 								<p className="font-normal text-sm">Delivery Charges</p>
 								<p className="font-normal text-gray-500 text-sm">
-									{deliveryCharges > 0 ? `Rs. ${deliveryCharges}` : "Free"}
+									{deliveryCharges > 0 ? formatPrice(deliveryCharges) : "Free"}
 								</p>
 							</div>
 							<div className="flex items-center justify-between w-full h-auto">
 								<p className="font-bold text-lg">Grand Total</p>
-								<p className="font-bold text-gray-500 text-lg">{`Rs. ${total}`}</p>
+								<p className="font-bold text-gray-500 text-lg">
+									{formatPrice(total)}
+								</p>
 							</div>
 							<Button
 								onClick={() => {}}

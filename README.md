@@ -2,6 +2,17 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+# TODO
+
+1. Filter and handle Radio Checks in Addons - DONE
+2. Display required and Selected Labels based on state - DONE
+3. Calculate price of item keeping in view the addOns - DONE
+4. Encapsulate the item finding logic that is repeated nearly 3 times, into its own separate Hook - DONE
+5. Make DescriptionModal Responsive
+6. Add AddOns options in Cart and calculate total on basis of that.
+7. Persist the addOn options of the items in cart in localStorage and global state aswell
+8. Check that all required addOns are selected and only then an item should be added to cart
+
 First, run the development server:
 
 ```bash
