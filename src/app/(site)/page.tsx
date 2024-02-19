@@ -1,23 +1,46 @@
 import CategoryLinkMenu from "../components/CategoryLinkMenu";
 import CategorySection from "../components/CategorySection";
-import { categories } from "@/lib/constants";
 import HeroBanner from "@/components/HeroBanner";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+import { getAllCategories, getAllSlides } from "@/functions";
+import ServiceError from "@/components/ServiceError";
 
-export default function Home() {
+export default async function Home() {
+  const queryClient = new QueryClient();
 
-	return (
-		<main className="w-full mt-[30px] h-[calc(100dvh - 80px)] scroll-smooth flex flex-col justify-center items-center">
-			<HeroBanner />
+  const categoriesPromise = getAllCategories();
 
-			<CategoryLinkMenu />
+  const slidesPromise = getAllSlides();
 
-			{categories.map((category, index) => (
-				<CategorySection
-					key={index}
-					name={category.name}
-					href={category.href}
-				/>
-			))}
-		</main>
-	);
+  const [{ categories }, { slides }] = await Promise.all([
+    categoriesPromise,
+    slidesPromise,
+  ]);
+
+  if (!categories || !slides) {
+    return <ServiceError />;
+  }
+
+  return (
+    <main className="w-full mt-[30px] h-[calc(100dvh - 80px)] scroll-smooth flex flex-col justify-center items-center">
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <HeroBanner slides={slides} />
+
+        <CategoryLinkMenu categories={categories} />
+
+        {categories.map((category, index) => (
+          <CategorySection
+            key={index}
+            name={category.title}
+            href={`#${category.title}`}
+            id={category.id}
+          />
+        ))}
+      </HydrationBoundary>
+    </main>
+  );
 }

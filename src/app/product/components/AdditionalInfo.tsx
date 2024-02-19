@@ -9,16 +9,48 @@ import InputIndicator from "./InputIndicator";
 import { cn, formatPrice } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { AddOn } from "@/types";
+import useCart from "@/hooks/useCart";
 
 type AdditionalInfoProps = {
   extraOptions: AddOn[];
   setExtraOptions: React.Dispatch<React.SetStateAction<AddOn[]>>;
+  productId: number;
 };
 
 function AdditionalInfo({
   extraOptions,
   setExtraOptions,
+  productId,
 }: AdditionalInfoProps) {
+  const { items } = useCart();
+
+  useEffect(() => {
+    const itemInCartAddOns = items.find(
+      (item) => item.itemId === productId
+    )?.addOnOptions;
+
+    if (itemInCartAddOns) {
+      setExtraOptions((prev) =>
+        prev.map((addOn) => {
+          if (addOn.addOnOptions) {
+            addOn.addOnOptions = addOn.addOnOptions.map((option) => {
+              const matchingCartItem = itemInCartAddOns.find(
+                (cartItem) => cartItem.label === option.label
+              );
+
+              if (matchingCartItem) {
+                return { ...option, isChecked: matchingCartItem.isChecked };
+              }
+
+              return option;
+            });
+          }
+          return addOn;
+        })
+      );
+    }
+  }, [items, productId, setExtraOptions]);
+
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setExtraOptions((prev) => {
       return prev.map((addOn) => {

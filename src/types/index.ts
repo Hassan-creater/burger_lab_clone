@@ -12,21 +12,32 @@ export type AddOn = {
 }
 
 export type CartItem = {
+	image: string;
+	id: number;
+	name: string;
+	description?: string;
+	quantity?: number;
+	totalPerPriceWithAddOns: number;
+	addOnOptions?: AddOnOption[]
+};
+
+export type MenuProduct = {
 	itemImage: string;
 	itemId: string;
 	itemName: string;
 	itemDescription?: string;
-	quantity?: number;
 	price: number;
 	discountedPrice?: number;
-	addOns?: AddOn[];
-};
-
-export type MenuProduct = Omit<CartItem, "quantity"> & {
 	category: string;
+	addOns?: AddOn[];
 }
 
 export type CartState = {
 	itemInCart?: CartItem;
 	isItemInCart: boolean;
 };
+
+export type TabsListType = {
+	name: "DELIVERY" | "PICK-UP" | "DINE-IN",
+	value: "delivery" | "pickUp" | "dineIn",
+}

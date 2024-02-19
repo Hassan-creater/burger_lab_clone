@@ -6,26 +6,38 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { MenuProduct } from "@/types";
+import { Item } from "@/models/Item";
 import React from "react";
 
 interface RelatedProductsProps {
-  products: MenuProduct[];
+  categoryId: number;
+  productId: number;
 }
 
-function RelatedProducts({ products }: RelatedProductsProps) {
+async function RelatedProducts({
+  categoryId,
+  productId,
+}: RelatedProductsProps) {
+  const response = await fetch(
+    `http://localhost:3001/item/getByCategory/${categoryId}`
+  );
+  const products: Item[] = await response.json();
+
+  const filteredProducts = products.filter(
+    (product) => product.id !== productId
+  );
   return (
     <Carousel className="w-full" autoplay={false}>
       <CarouselContent>
-        {products.length > 0 ? (
-          products.map((product) => (
+        {filteredProducts && filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
             <CarouselItem
-              key={product.itemId}
-              className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+              key={product.id}
+              className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 min-h-full"
             >
               <ProductCard
                 product={product}
-                className="min-[500px]:w-full w-full h-auto"
+                className="min-[500px]:w-full w-full h-full"
               />
             </CarouselItem>
           ))

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 interface QuantityCounterProps {
   quantity: number;
-  itemId: string;
+  itemId: number;
   className?: string;
   buttonClassName?: string;
   stateQuantity?: number;
@@ -31,7 +31,7 @@ function QuantityCounter({
   const { updateQuantity, removeItemFromCart, items } = useCart();
 
   useEffect(() => {
-    const itemToUpdate = items.find((item) => item.itemId === itemId);
+    const itemToUpdate = items.find((item) => item.id === itemId);
 
     if (itemToUpdate) {
       setStateQuantity && setStateQuantity(itemToUpdate.quantity ?? 1);

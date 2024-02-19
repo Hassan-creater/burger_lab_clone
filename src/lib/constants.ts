@@ -1,4 +1,4 @@
-import { MenuProduct } from "@/types";
+import { MenuProduct, TabsListType } from "@/types";
 
 export const categories = [
 	{
@@ -63,6 +63,16 @@ export const categories = [
 	},
 ];
 
+export const cartItemKeys = [
+	"image",
+	"id",
+	"name",
+	"description",
+	"quantity",
+	"totalPerPriceWithAddOns",
+	"price",
+	"addOnOptions"]
+
 export const menuItems: MenuProduct[] = [
 	{
 		itemImage: "/kadak-chai.webp",
@@ -89,7 +99,7 @@ export const menuItems: MenuProduct[] = [
 					},
 					{
 						label: "Nuker Chicken",
-						price: 0.0
+						price: 10.0
 					},
 					{
 						label: 'Zingster Pro',
@@ -111,7 +121,7 @@ export const menuItems: MenuProduct[] = [
 					},
 					{
 						label: "Pepsi",
-						price: 0.0
+						price: 50.0
 					},
 					{
 						label: 'Mirinda',
@@ -152,3 +162,20 @@ export const bannerImages = [
 		alt: "banner-3",
 	},
 ];
+
+export const BASE_URL_IMAGES = "https://shazal-web.onrender.com";
+
+export const deliveryModalTabList: TabsListType[] = [
+	{
+		name: "DELIVERY",
+		value: 'delivery',
+	},
+	{
+		name: 'PICK-UP',
+		value: 'pickUp',
+	},
+	{
+		name: 'DINE-IN',
+		value: 'dineIn',
+	}
+]

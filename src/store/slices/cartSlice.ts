@@ -10,8 +10,8 @@ export interface CartSlice {
 	persisted: boolean;
 	setItems: (items: CartItem[]) => void;
 	addItemToCart: (item: CartItem) => void;
-	updateQuantity: (itemId: string, quantity: number) => void;
-	removeItemFromCart: (itemId: string) => void;
+	updateQuantity: (itemId: number, quantity: number) => void;
+	removeItemFromCart: (itemId: number) => void;
 	clearCart: () => void;
 }
 
@@ -25,16 +25,16 @@ export const useCartStore = create<CartSlice>()(
 			addItemToCart: (item: CartItem) => {
 				set((state) => ({ items: [...state.items, item] }));
 			},
-			updateQuantity: async (itemId: string, quantity: number) => {
+			updateQuantity: async (itemId: number, quantity: number) => {
 				set((state) => ({
 					items: state.items.map((item) =>
-						item.itemId === itemId ? { ...item, quantity } : item
+						item.id === itemId ? { ...item, quantity } : item
 					),
 				}));
 			},
-			removeItemFromCart: (itemId: string) => {
+			removeItemFromCart: (itemId: number) => {
 				set((state) => ({
-					items: state.items.filter((item) => item.itemId !== itemId),
+					items: state.items.filter((item) => item.id !== itemId),
 				}));
 			},
 			clearCart: () => {

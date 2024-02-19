@@ -1,11 +1,12 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
-function LoadingSpinner() {
-	return (
-		<div className="absolute z-100 min-h-screen min-w-screen w-screen flex items-center justify-center blur-lg">
-			<div className="w-10 h-10 animate-spin absolute z-100 border-2 border-white rounded-full border-t-[#fabf2c]"></div>
-		</div>
-	);
-}
+const LoadingSpinner = ({ className }: { className?: string }) => {
+  return (
+    <div className={cn("flex justify-center items-center", className)}>
+      <div className="animate-spin rounded-full border-4 border-transparent border-solid border-opacity-75 h-12 w-12 border-t-[#fabf2c]"></div>
+    </div>
+  );
+};
 
 export default LoadingSpinner;

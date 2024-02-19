@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { categories } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useObserverStore } from "@/store";
+import { Category } from "@/models/Category";
 
-function CategoryLinkMenu() {
+function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const { activeSectionId, isBannerVisible } = useObserverStore();
   const [windowWidth, setWindowWidth] = useState<number>(0);
 
@@ -65,28 +65,29 @@ function CategoryLinkMenu() {
                 "flex-1 flex gap-3 items-center justify-center h-full"
               )}
             >
-              {categories.map((category, index) => (
-                <li
-                  key={category.href}
-                  ref={
-                    activeSectionId === category.href ||
-                    (!activeSectionId && index === 0)
-                      ? activeLinkRef
-                      : undefined
-                  }
-                  className={cn(
-                    "flex bg-gray-300 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-2xl",
-                    activeSectionId === category.href && "bg-[#fabf2c]",
-                    !activeSectionId && index === 0 && "bg-[#fabf2c]"
-                  )}
-                >
-                  <Link href={category.href}>
-                    <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
-                      {category.name}
-                    </p>
-                  </Link>
-                </li>
-              ))}{" "}
+              {categories &&
+                categories.map((category, index) => (
+                  <li
+                    key={category.title}
+                    ref={
+                      activeSectionId === category.title ||
+                      (!activeSectionId && index === 0)
+                        ? activeLinkRef
+                        : undefined
+                    }
+                    className={cn(
+                      "flex bg-gray-300 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-2xl",
+                      activeSectionId === category.title && "bg-[#fabf2c]",
+                      !activeSectionId && index === 0 && "bg-[#fabf2c]"
+                    )}
+                  >
+                    <Link href={`#${category.title}`}>
+                      <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
+                        {category.title}
+                      </p>
+                    </Link>
+                  </li>
+                ))}{" "}
             </ul>
           </div>
           <Button
@@ -108,28 +109,29 @@ function CategoryLinkMenu() {
         </>
       ) : (
         <ul className="flex-1 my-10 flex w-[80%] px-10 flex-wrap gap-3 items-center justify-center h-full">
-          {categories.map((category, index) => (
-            <li
-              key={category.href}
-              ref={
-                activeSectionId === category.href ||
-                (!activeSectionId && index === 0)
-                  ? activeLinkRef
-                  : undefined
-              }
-              className={cn(
-                "flex bg-slate-200 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-3xl",
-                activeSectionId === category.href && "bg-[#fabf2c]",
-                !activeSectionId && index === 0 && "bg-[#fabf2c]"
-              )}
-            >
-              <Link href={category.href}>
-                <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
-                  {category.name}
-                </p>
-              </Link>
-            </li>
-          ))}{" "}
+          {categories &&
+            categories.map((category, index) => (
+              <li
+                key={category.title}
+                ref={
+                  activeSectionId === category.title ||
+                  (!activeSectionId && index === 0)
+                    ? activeLinkRef
+                    : undefined
+                }
+                className={cn(
+                  "flex bg-slate-200 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-3xl",
+                  activeSectionId === category.title && "bg-[#fabf2c]",
+                  !activeSectionId && index === 0 && "bg-[#fabf2c]"
+                )}
+              >
+                <Link href={`#${category.title}`}>
+                  <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
+                    {category.title}
+                  </p>
+                </Link>
+              </li>
+            ))}{" "}
         </ul>
       )}
     </nav>

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 export default function useLocalStorage(key: string, initialValue: any) {
 	const [storedValue, setStoredValue] = useState(() => {
 		try {
-			const item = localStorage.getItem(key);
+			const item = window && localStorage.getItem(key);
 			return item ? JSON.parse(item) : initialValue;
 		} catch (error) {
 			console.error("Error reading localStorage item:", error);
@@ -18,8 +18,8 @@ export default function useLocalStorage(key: string, initialValue: any) {
 				if (valueFromStorage) {
 					setStoredValue(JSON.parse(valueFromStorage));
 				} else {
-					localStorage.setItem(key, JSON.stringify([]));
-					setStoredValue([]);
+					localStorage.setItem(key, JSON.stringify(initialValue));
+					setStoredValue(initialValue);
 				}
 			} catch (error) {
 				console.error("Error reading localStorage item:", error);
@@ -29,7 +29,7 @@ export default function useLocalStorage(key: string, initialValue: any) {
 		window.addEventListener("storage", handleChangeInStorage);
 
 		return () => window.removeEventListener("storage", handleChangeInStorage);
-	}, [key]);
+	}, [key, initialValue]);
 
 	const setValue = useCallback(
 		(newValue: any) => {
@@ -58,7 +58,7 @@ export default function useLocalStorage(key: string, initialValue: any) {
 
 	const removeItem = useCallback(() => {
 		setStoredValue(initialValue);
-		setValue([]);
+		setValue(initialValue);
 	}, [initialValue, setValue]);
 
 	const clearStorage = useCallback(() => {

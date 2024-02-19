@@ -2,16 +2,20 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-# TODO
+# TODOs
 
 1. Filter and handle Radio Checks in Addons - DONE
 2. Display required and Selected Labels based on state - DONE
 3. Calculate price of item keeping in view the addOns - DONE
 4. Encapsulate the item finding logic that is repeated nearly 3 times, into its own separate Hook - DONE
-5. Make DescriptionModal Responsive
-6. Add AddOns options in Cart and calculate total on basis of that.
-7. Persist the addOn options of the items in cart in localStorage and global state aswell
-8. Check that all required addOns are selected and only then an item should be added to cart
+5. Make DescriptionModal Responsive - Pending
+6. Add AddOns options in Cart and calculate total on basis of that. - DONE
+7. Persist the addOn options of the items in cart in localStorage and global state aswell - DONE
+8. Check that all required addOns are selected and only then an item should be added to cart - DONE
+9. Make sure that you can update addOns with quantity in cart
+10. Replace Sonner with Shadcn Toaster
+11. FIX - Adding other items that donot have addOns is currently breaking <- Look into it 
+12. Add addOns to other products aswell and add non-required addOns to see If they are functioning accordingly.
 
 First, run the development server:
 

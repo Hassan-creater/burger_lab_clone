@@ -53,6 +53,7 @@ const config = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
+				primaryOrange: "#fabf2c",
 			},
 			backgroundImage: {
 				categorySeparatorGradient:

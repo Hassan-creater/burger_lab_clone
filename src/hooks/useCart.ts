@@ -1,10 +1,14 @@
-import { CartItem, CartState, MenuProduct } from "@/types";
-import useLocalStorage from "./useLocalStorage"; // Assuming it's still needed for initial load
+import { AddOn, CartItem, CartState, MenuProduct } from "@/types";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/store";
+import { cartItemKeys } from "@/lib/constants";
+import { toast } from "sonner";
+import { removePropFromObject } from "@/lib/utils";
+import { Item } from "@/models/Item";
+import useLocalStorage from "./useLocalStorage";
 
 interface CartFromLocalStorage {
-	storedValue: { state: { items: CartItem[] }; version: number };
+	storedValue: { state?: { items: CartItem[] }; version?: number };
 	filterItems: (filterFunc: any) => void;
 	removeItem: () => void;
 	setValue: (newValue: any) => void;
@@ -18,37 +22,17 @@ export default function useCart() {
 	);
 
 	useEffect(() => {
-		if (storedValue.state.items) {
+		if (storedValue.state) {
 			try {
 				useCartStore.getState().setItems(storedValue.state.items);
-				useCartStore.setState({ loading: false, persisted: true });
+				useCartStore.setState({ loading: false, persisted: true,  });
 			} catch (error) {
 				console.error("Failed to load stored cart items:", error);
 			}
 		} else {
 			useCartStore.setState({ loading: false });
 		}
-	}, [storedValue.state?.items]);
-
-	const handleAddToCart = (e: React.FormEvent<HTMLFormElement>, product: MenuProduct, item: CartState, quantityToAdd: number) => {
-		//TODO incomplete and not working correctly
-		e.preventDefault();
-		product.addOns?.forEach((addOn) => {
-			if (addOn.required) {
-				const hasCheckedOption = addOn.addOnOptions?.some(
-					(option) => option.isChecked === true
-				);
-				setIsChecked(!!hasCheckedOption);
-			}
-		});
-		console.log(isChecked);
-		if (isChecked)
-			if (item.isItemInCart)
-				// Check if item is already in cart. If yes, update quantity else add new item to cart.
-				updateQuantity(product.itemId, quantityToAdd);
-			else addItemToCart({ ...product, quantity: quantityToAdd });
-		else alert("Please select an option");
-	};
+	}, [storedValue?.state?.items, storedValue?.state]);
 
 	const {
 		items,
@@ -59,6 +43,67 @@ export default function useCart() {
 		loading,
 		persisted,
 	} = useCartStore((state) => ({ ...state }));
+
+
+	const handleAddToCart = (e: React.FormEvent<HTMLFormElement>, item: CartState, quantityToAdd: number, product: Item, totalPrice: number, addOns?: AddOn[]) => {
+		//TODO - fix issue that form of item is not submitted correctly on first time even after all required options are selected
+		e.preventDefault();
+		addOns?.forEach((addOn) => {
+			if (addOn.required) {
+				const hasCheckedOption = addOn.addOnOptions?.some(
+					(option) => option.isChecked === true
+				);
+				setIsChecked(!!hasCheckedOption);
+			}
+		});
+
+		const cartItem = removePropFromObject<CartItem>(cartItemKeys, product);
+		console.log(cartItem)
+		if (!!addOns) {
+			if (isChecked) {
+				const allSelectedAddOnOptions = addOns.map(addOn => addOn.addOnOptions!.filter(option => option.isChecked === true)[0]);
+				if (item.isItemInCart) {
+					// Check if item is already in cart. If yes, update quantity else add new item to cart.
+					updateQuantity(product.id, quantityToAdd);
+					toast.success('Item Updated in Cart Successfully', { style: { backgroundColor: 'green', color: 'white' }, closeButton: true, dismissible: true });
+				}
+				else {
+					console.log(totalPrice);
+
+					addItemToCart(
+						{
+							...cartItem,
+							quantity: quantityToAdd,
+							addOnOptions: allSelectedAddOnOptions,
+							// If Item is not already in cart so, we divide the price by totalQuantity so that we get price of each item with addOns which will later be multiplied by quantity in Cart to get total price of each item
+							totalPerPriceWithAddOns: totalPrice / (!item.itemInCart ? quantityToAdd : 1)
+						}
+					);
+					toast.success('Item Added to Cart Successfully', { style: { backgroundColor: 'green', color: 'white' }, closeButton: true, dismissible: true });
+				}
+			}
+			else toast.error('Please Select all Required options and Try again.', { style: { backgroundColor: 'red', color: 'white' }, closeButton: true, dismissible: true });
+		} else {
+			if (item.isItemInCart) {
+				// Check if item is already in cart. If yes, update quantity else add new item to cart.
+				updateQuantity(product.id, quantityToAdd);
+				toast.success('Item Updated in Cart Successfully', { style: { backgroundColor: 'green', color: 'white' }, closeButton: true, dismissible: true });
+			}
+			else {
+				console.log(totalPrice);
+				addItemToCart(
+					{
+						...cartItem,
+						quantity: quantityToAdd,
+						totalPerPriceWithAddOns: totalPrice / (!item.itemInCart ? quantityToAdd : 1)
+					}
+				);
+				toast.success('Item Added to Cart Successfully', { style: { backgroundColor: 'green', color: 'white' }, closeButton: true, dismissible: true });
+			}
+		}
+	};
+
+
 
 	return {
 		items,
