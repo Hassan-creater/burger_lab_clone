@@ -1,5 +1,5 @@
 import { AddOn, CartItem, CartState, MenuProduct } from "@/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCartStore } from "@/store";
 import { cartItemKeys } from "@/lib/constants";
 import { toast } from "sonner";
@@ -7,7 +7,8 @@ import { removePropFromObject } from "@/lib/utils";
 import { Item } from "@/models/Item";
 import useLocalStorage from "./useLocalStorage";
 
-interface CartFromLocalStorage {
+
+export interface CartFromLocalStorage {
 	storedValue: { state?: { items: CartItem[] }; version?: number };
 	filterItems: (filterFunc: any) => void;
 	removeItem: () => void;
@@ -21,19 +22,6 @@ export default function useCart() {
 		[]
 	);
 
-	useEffect(() => {
-		if (storedValue.state) {
-			try {
-				useCartStore.getState().setItems(storedValue.state.items);
-				useCartStore.setState({ loading: false, persisted: true,  });
-			} catch (error) {
-				console.error("Failed to load stored cart items:", error);
-			}
-		} else {
-			useCartStore.setState({ loading: false });
-		}
-	}, [storedValue?.state?.items, storedValue?.state]);
-
 	const {
 		items,
 		addItemToCart,
@@ -44,6 +32,58 @@ export default function useCart() {
 		persisted,
 	} = useCartStore((state) => ({ ...state }));
 
+	const calculateSubTotal = useCallback(
+		(setSubTotal: React.Dispatch<React.SetStateAction<number>>) =>
+			setSubTotal(() => {
+				return items.reduce(
+					(accumulator, currentItem) =>
+						accumulator +
+						currentItem.totalPerPriceWithAddOns * (currentItem.quantity ?? 1),
+					0
+				);
+			}),
+		[items]
+	);
+
+	const calculateAndSetItemQuantity = useCallback(
+		(setCartItemsQuantity: React.Dispatch<React.SetStateAction<number>>) =>
+			setCartItemsQuantity(
+				items.reduce(
+					(accumulator, current) => accumulator + (current.quantity ?? 0),
+					0
+				)
+			),
+		[items]
+	);
+
+	const calculateAndSetTotal = useCallback(
+		(subTotal: number, deliveryCharges: number, setTotal: React.Dispatch<React.SetStateAction<number>>,
+			tax: string, discount: string) =>
+			setTotal(() => {
+				const totalWithoutDiscount = subTotal +
+					deliveryCharges +
+					((parseInt(tax) / 100) * subTotal);
+				return totalWithoutDiscount - (parseInt(discount) / 100) * totalWithoutDiscount
+			}
+			),
+		[]
+	);
+
+	useEffect(() => {
+		if (storedValue?.state) {
+			try {
+				useCartStore.getState().setItems(storedValue.state.items);
+				useCartStore.setState({ loading: false, persisted: true, });
+			} catch (error) {
+				console.error("Failed to load stored cart items:", error);
+			}
+		} else {
+			useCartStore.setState({ loading: false });
+		}
+	}, [storedValue?.state?.items, storedValue?.state]);
+
+
+	useEffect(() => { useCartStore.persist.rehydrate() }, [])
 
 	const handleAddToCart = (e: React.FormEvent<HTMLFormElement>, item: CartState, quantityToAdd: number, product: Item, totalPrice: number, addOns?: AddOn[]) => {
 		//TODO - fix issue that form of item is not submitted correctly on first time even after all required options are selected
@@ -103,8 +143,6 @@ export default function useCart() {
 		}
 	};
 
-
-
 	return {
 		items,
 		addItemToCart,
@@ -114,5 +152,8 @@ export default function useCart() {
 		loading,
 		persisted,
 		handleAddToCart,
+		calculateAndSetItemQuantity,
+		calculateSubTotal,
+		calculateAndSetTotal
 	};
 }

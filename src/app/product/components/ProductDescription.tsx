@@ -5,19 +5,27 @@ import QuantityCounter from "@/components/cart/QuantityCounter";
 import { Button } from "@/components/ui/button";
 import useCart from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
-import { AddOn, MenuProduct } from "@/types";
+import { AddOn } from "@/types";
 import AdditionalInfo from "./AdditionalInfo";
 import ImageModal from "@/components/modals/ImageModal";
 import useProductDescription from "@/hooks/useProductDescription";
 import { Item } from "@/models/Item";
+import { Favorite } from "@/models/Favorites";
+import { useState } from "react";
 
 interface ProductDescriptionProps {
   product: Item;
+  favorites: Favorite[] | null;
 }
 
-const ProductDescription = ({ product }: ProductDescriptionProps) => {
+const ProductDescription = ({
+  product,
+  favorites,
+}: ProductDescriptionProps) => {
   const { handleAddToCart } = useCart();
-
+  const [isFav, setIsFav] = useState(() => {
+    return !!favorites?.some((favorite) => favorite.itemid === product.id);
+  });
   const {
     item,
     quantityToAdd,
@@ -35,7 +43,12 @@ const ProductDescription = ({ product }: ProductDescriptionProps) => {
       <div className="flex flex-col gap-3 w-full min-[925px]:w-[60%] px-4  relative">
         <div className="flex w-full items-center justify-between">
           <h1 className="font-extrabold text-3xl">{product.name}</h1>
-          <LikeButton className="static" />
+          <LikeButton
+            className="static"
+            isFav={isFav}
+            itemId={product.id}
+            setIsFav={setIsFav}
+          />
         </div>
         {product.description ? (
           <div className="flex w-full flex-1">

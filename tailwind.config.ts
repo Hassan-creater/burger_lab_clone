@@ -54,6 +54,7 @@ const config = {
 					foreground: "hsl(var(--card-foreground))",
 				},
 				primaryOrange: "#fabf2c",
+				primaryBg: "#f8f9fa"
 			},
 			backgroundImage: {
 				categorySeparatorGradient:
@@ -73,10 +74,16 @@ const config = {
 					from: { height: "var(--radix-accordion-content-height)" },
 					to: { height: "0" },
 				},
+				"flash-animation": {
+					"0%": { opacity: "0", left: "-100%" },
+					"50%": { opacity: "0.75", left: "50%" },
+					"100%": { opacity: "0", left: "100%" },
+				}
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				"flash": "flash-animation 1s linear infinite",
 			},
 		},
 	},

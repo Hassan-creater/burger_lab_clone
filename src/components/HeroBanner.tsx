@@ -13,9 +13,15 @@ import Image from "next/image";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { useObserverStore } from "@/store";
 import { BASE_URL_IMAGES } from "@/lib/constants";
-import { Slides } from "@/models/Slides";
+import { useQuery } from "@tanstack/react-query";
+import { getAllSlides } from "@/functions";
 
-function HeroBanner({ slides }: { slides: Slides[] | null }) {
+function HeroBanner() {
+  const { data, status } = useQuery({
+    queryKey: ["slides"],
+    queryFn: getAllSlides,
+    refetchOnWindowFocus: false,
+  });
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const isVisible = useIntersectionObserver(carouselRef, { threshold: 0.6 });
 
@@ -33,8 +39,8 @@ function HeroBanner({ slides }: { slides: Slides[] | null }) {
       ref={carouselRef}
     >
       <CarouselContent>
-        {slides &&
-          slides.map((slide) => (
+        {data?.slides &&
+          data.slides.map((slide) => (
             <CarouselItem key={slide.id}>
               <div className="p-1 flex items-center justify-center">
                 <div className="flex w-full ml-5 mr-5 lg:ml-10 lg:mr-10 h-auto aspect-video md:aspect-auto bg-white items-center justify-center rounded-2xl">

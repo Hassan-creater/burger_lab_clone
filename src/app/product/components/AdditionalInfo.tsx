@@ -26,7 +26,7 @@ function AdditionalInfo({
 
   useEffect(() => {
     const itemInCartAddOns = items.find(
-      (item) => item.itemId === productId
+      (item) => item.id === productId
     )?.addOnOptions;
 
     if (itemInCartAddOns) {

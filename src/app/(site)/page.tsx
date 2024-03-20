@@ -1,36 +1,46 @@
-import CategoryLinkMenu from "../components/CategoryLinkMenu";
-import CategorySection from "../components/CategorySection";
+import CategoryLinkMenu from "./components/CategoryLinkMenu";
+import CategorySection from "./components/CategorySection";
 import HeroBanner from "@/components/HeroBanner";
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import { getAllCategories, getAllSlides } from "@/functions";
+import { getAllCategories, getAllFavorites, getAllSlides } from "@/functions";
 import ServiceError from "@/components/ServiceError";
+import SearchBox from "./components/SearchBox";
 
-export default async function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { query?: string };
+}) {
+  //TODO Temporary
+  const userId = 80;
   const queryClient = new QueryClient();
 
   const categoriesPromise = getAllCategories();
+  const favoritesPromise = getAllFavorites(userId);
 
-  const slidesPromise = getAllSlides();
-
-  const [{ categories }, { slides }] = await Promise.all([
+  const [{ categories }, { favorites }] = await Promise.all([
     categoriesPromise,
-    slidesPromise,
+    favoritesPromise,
   ]);
 
-  if (!categories || !slides) {
+  if (!categories) {
     return <ServiceError />;
   }
 
   return (
-    <main className="w-full mt-[30px] h-[calc(100dvh - 80px)] scroll-smooth flex flex-col justify-center items-center">
+    <main className="w-full mt-[30px] min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <HeroBanner slides={slides} />
+        <HeroBanner />
 
         <CategoryLinkMenu categories={categories} />
+
+        <SearchBox />
 
         {categories.map((category, index) => (
           <CategorySection
@@ -38,6 +48,8 @@ export default async function Home() {
             name={category.title}
             href={`#${category.title}`}
             id={category.id}
+            query={searchParams.query === "" ? undefined : searchParams.query}
+            favorites={favorites}
           />
         ))}
       </HydrationBoundary>

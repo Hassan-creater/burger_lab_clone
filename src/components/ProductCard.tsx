@@ -12,39 +12,45 @@ import {
   cn,
   formatPrice,
   removePropFromObject,
-  textShortner,
+  textShortener,
 } from "@/lib/utils";
 import { CartItem } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import LikeButton from "./LikeButton";
 import DescriptionModal from "./modals/DescriptionModal";
 import { Button } from "./ui/button";
 import useProductDescription from "@/hooks/useProductDescription";
-import { BASE_URL_IMAGES, cartItemKeys } from "@/lib/constants";
+import { cartItemKeys } from "@/lib/constants";
 import { Item } from "@/models/Item";
+import { Favorite } from "@/models/Favorites";
 
 function ProductCard({
   product,
   className,
+  favorites,
 }: {
   product: Item;
   className?: string;
+  favorites: Favorite[] | null;
 }) {
   const { addItemToCart } = useCart();
+  const [isFav, setIsFav] = useState(() => {
+    return !!favorites?.some((favorite) => favorite.itemid === product.id);
+  });
   const { item, totalPrice, quantityToAdd } = useProductDescription(product);
 
   const cartItem = removePropFromObject<CartItem>(cartItemKeys, product);
   return (
     <Card
       className={cn(
-        "w-40 min-[500px]:w-52 min-h-[430px] max-h-[430px] rounded-2xl transition-colors border-2 hover:border-[#fabf2c] flex flex-col",
+        "w-40 min-[500px]:w-52 min-h-[430px] max-h-[450px] rounded-2xl transition-colors border-2 hover:border-primaryOrange flex flex-col",
         className
       )}
     >
       <Link href={`/product/${product.id}`} className="flex-1">
-        <CardHeader title={product.name} className="relative p-2">
+        <CardHeader title={product.name} className="relative p-2 max-w-[200px]">
           <div className="flex items-center w-full justify-center">
             <Image
               // src={`${BASE_URL_IMAGES}/${product.image}`}
@@ -53,10 +59,10 @@ function ProductCard({
               height={100}
               priority
               alt="product-image"
-              className="rounded-2xl object-contain w-full h-auto"
+              className="rounded-2xl object-fill w-full h-auto"
             />
           </div>
-          <LikeButton />
+          <LikeButton itemId={product.id} isFav={isFav} setIsFav={setIsFav} />
         </CardHeader>
         <CardContent
           title={product.description ?? ""}
@@ -67,7 +73,7 @@ function ProductCard({
           </h4>
           {product.description ? (
             <p className="text-sm font-normal text-gray-500 text-center">
-              {textShortner(product.description, 40)}
+              {textShortener(product.description, 40)}
             </p>
           ) : null}
         </CardContent>

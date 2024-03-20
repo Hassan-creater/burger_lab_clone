@@ -8,6 +8,7 @@ import notFound from "@/app/not-found";
 import { Item } from "@/models/Item";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ServiceError from "@/components/ServiceError";
+import { getAllFavorites } from "@/functions";
 
 export async function generateMetadata({
   params: { productId },
@@ -15,7 +16,9 @@ export async function generateMetadata({
   params: { productId?: number };
 }): Promise<Metadata> {
   try {
-    const response = await fetch(`http://localhost:3001/item/get/${productId}`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/item/get/${productId}`
+    );
     response;
     const product: Item = await response.json();
 
@@ -36,13 +39,15 @@ interface ProductPageProps {
 export default async function ProductPage({
   params: { productId },
 }: ProductPageProps) {
+  //TODO Temporary
+  const userId = 80;
   if (!productId) {
     return notFound();
   }
 
   try {
     const response = await fetch(
-      `http://localhost:3001/item/get/${productId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/item/get/${productId}`,
       {
         cache: "no-store",
       }
@@ -52,6 +57,8 @@ export default async function ProductPage({
     if (!product) {
       return notFound();
     }
+
+    const { favorites } = await getAllFavorites(userId);
 
     return (
       <main className="mt-5 mb-10 flex flex-col items-center w-full h-auto gap-5">
@@ -66,7 +73,7 @@ export default async function ProductPage({
             <ChevronRight className="text-gray-500" size={15} />
             <p className="text-xs font-normal text-[#fabf2c]">{product.name}</p>
           </div>
-          <ProductDescription product={product} />
+          <ProductDescription product={product} favorites={favorites} />
         </section>
         <div className="w-[90%] mx-auto relative min-h-12">
           <hr className="bg-categorySeparatorGradient absolute inset-0 w-[30%] min-[400px]:w-[34%] md:w-[37%] my-auto h-px block" />
@@ -80,6 +87,7 @@ export default async function ProductPage({
             <RelatedProducts
               categoryId={product.category_id}
               productId={product.id}
+              favorites={favorites}
             />
           </Suspense>
         </section>

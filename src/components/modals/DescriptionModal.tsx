@@ -40,8 +40,7 @@ export default function DescriptionModal({ product }: DescriptionModalProps) {
           Add to Cart
         </Button>
       </DialogTrigger>
-      <DialogContent
-        className="w-[50%] lg:w-[80%] max-w-full min-h-[80%] h-max lg:h-auto flex flex-col lg:flex-row p-0 gap-0 rounded-3xl border-0 sm:rounded-3xl descriptionModal">
+      <DialogContent className="w-[50%] lg:w-[80%] max-w-full min-h-[80%] h-max lg:h-auto flex flex-col lg:flex-row p-0 gap-0 rounded-3xl border-0 sm:rounded-3xl descriptionModal">
         <div className="flex-1 w-full flex items-center relative">
           <Image
             src={`${BASE_URL_IMAGES}/${product.image}`}

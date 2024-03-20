@@ -1,4 +1,6 @@
 import { MenuProduct, TabsListType } from "@/types";
+import { ReactNode } from "react";
+import { CircleUserRound, ShoppingBag, HeartIcon, MapIcon } from "lucide-react";
 
 export const categories = [
 	{
@@ -162,6 +164,42 @@ export const bannerImages = [
 		alt: "banner-3",
 	},
 ];
+
+export const user = {
+	id: 80,
+	username: "aslam"
+}
+
+type ProfileDropdown = {
+	href: string,
+	name: string,
+	icon?: ReactNode
+}[]
+
+//TODO Fix these Errors
+
+export const profileDropdown: ProfileDropdown = [
+	{
+		href: '/profile',
+		name: 'Profile',
+		icon: <CircleUserRound className="w-5 h-5 text-gray-500"/>,
+	},
+	{
+		href: '/orders',
+		name: 'Orders',
+		icon: <ShoppingBag className="w-5 h-5 text-gray-500"/>
+	},
+	{
+		href: '/favorites',
+		name: 'Favorites',
+		icon: <HeartIcon className="w-5 h-5 text-gray-500"/>
+	},
+	{
+		href: '/addresses',
+		name: 'Addresses',
+		icon: <MapIcon className="w-5 h-5 text-gray-500"/>
+	}
+]
 
 export const BASE_URL_IMAGES = "https://shazal-web.onrender.com";
 

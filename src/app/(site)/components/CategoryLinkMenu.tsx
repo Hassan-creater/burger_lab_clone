@@ -7,10 +7,10 @@ import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useObserverStore } from "@/store";
 import { Category } from "@/models/Category";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const { activeSectionId, isBannerVisible } = useObserverStore();
-  const [windowWidth, setWindowWidth] = useState<number>(0);
 
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
   const activeLinkRef = React.useRef<HTMLLIElement | null>(null);
@@ -26,30 +26,22 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
 
   useEffect(() => {
     if (activeLinkRef.current) {
-      activeLinkRef.current.scrollIntoView();
+      activeLinkRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
   }, [activeSectionId]);
 
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleWidowResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleWidowResize);
-
-    return () => {
-      window.removeEventListener("resize", handleWidowResize);
-    };
-  }, []);
+  const windowWidth = useWindowSize();
 
   return (
     <nav
       className={cn(
-        "sticky top-20 bg-inherit z-20 flex items-center h-20 w-full lg:max-w-[88%] overflow-hidden !focus-visible:outline-0 transition-all duration-500",
+        "sticky top-20 bg-inherit z-20 flex items-center h-[4.5rem] w-full lg:max-w-[88%] overflow-hidden !focus-visible:outline-0 transition-all duration-500",
         isBannerVisible
           ? "lg:h-max"
-          : "lg:h-24 border-b-2 border-b-slate-500 border-opacity-50 bg-slate-100 "
+          : "lg:h-20 border-b-2 border-b-slate-500 border-opacity-50 bg-slate-100 "
       )}
     >
       {!isBannerVisible || windowWidth < 1024 ? (
@@ -76,7 +68,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
                         : undefined
                     }
                     className={cn(
-                      "flex bg-gray-300 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-2xl",
+                      "flex bg-gray-300 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full w-max rounded-2xl focus:ring-2 focus:ring-black focus-visible:rounded-lg",
                       activeSectionId === category.title && "bg-[#fabf2c]",
                       !activeSectionId && index === 0 && "bg-[#fabf2c]"
                     )}
@@ -120,7 +112,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
                     : undefined
                 }
                 className={cn(
-                  "flex bg-slate-200 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full rounded-3xl",
+                  "flex bg-slate-200 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full w-max rounded-3xl",
                   activeSectionId === category.title && "bg-[#fabf2c]",
                   !activeSectionId && index === 0 && "bg-[#fabf2c]"
                 )}

@@ -9,6 +9,12 @@ export type Coupon = {
 
 export type CouponValidation = {
     valid: boolean;
-    discount: number;
-    couponId: number;
+    message: string;
+    discount?: undefined;
+    couponId?: undefined;
+} | {
+    valid: boolean;
+    discount: any;
+    couponId: any;
+    message?: undefined;
 }

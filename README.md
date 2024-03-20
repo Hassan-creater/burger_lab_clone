@@ -16,6 +16,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 10. Replace Sonner with Shadcn Toaster
 11. FIX - Adding other items that donot have addOns is currently breaking <- Look into it 
 12. Add addOns to other products aswell and add non-required addOns to see If they are functioning accordingly.
+13. Add Order Complete Page and Orders Page.
+14. Complete All TODOS
 
 First, run the development server:
 

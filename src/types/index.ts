@@ -1,3 +1,5 @@
+import { Item } from "@/models/Item";
+
 export type AddOnOption = {
 	label: string;
 	price?: number;
@@ -40,4 +42,8 @@ export type CartState = {
 export type TabsListType = {
 	name: "DELIVERY" | "PICK-UP" | "DINE-IN",
 	value: "delivery" | "pickUp" | "dineIn",
+}
+
+export type SearchResults = {
+	items: Record<string, Item[]>
 }

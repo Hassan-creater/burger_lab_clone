@@ -45,6 +45,7 @@ export const useCartStore = create<CartSlice>()(
 			name: "cartStore",
 			storage: createJSONStorage(() => localStorage),
 			partialize: (state) => ({ items: state.items }),
+			skipHydration: true,
 		}
 	)
 );

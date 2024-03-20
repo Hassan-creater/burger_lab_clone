@@ -87,7 +87,6 @@ function QuantityCounter({
       </Button>
       <Input
         type="number"
-        id="quantity"
         value={!stateQuantity ? quantity : stateQuantity}
         min={1}
         max={999}
