@@ -49,7 +49,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
             >
               <DropdownMenuItem className="cursor-pointer text-center flex gap-2 items-center">
                 <>
-                  {dropdownItem.icon}
+                  {dropdownItem.icon && <dropdownItem.icon className="w-5 h-5 text-gray-500"/>}
                   {dropdownItem.name}
                 </>
               </DropdownMenuItem>

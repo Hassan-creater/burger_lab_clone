@@ -1,6 +1,6 @@
 import { MenuProduct, TabsListType } from "@/types";
 import { ReactNode } from "react";
-import { CircleUserRound, ShoppingBag, HeartIcon, MapIcon } from "lucide-react";
+import {CircleUserRound, ShoppingBag, HeartIcon, MapIcon, LucideIcon} from "lucide-react";
 
 export const categories = [
 	{
@@ -173,7 +173,7 @@ export const user = {
 type ProfileDropdown = {
 	href: string,
 	name: string,
-	icon?: ReactNode
+	icon?: LucideIcon
 }[]
 
 //TODO Fix these Errors
@@ -182,22 +182,22 @@ export const profileDropdown: ProfileDropdown = [
 	{
 		href: '/profile',
 		name: 'Profile',
-		icon: <CircleUserRound className="w-5 h-5 text-gray-500"/>,
+		icon: CircleUserRound,
 	},
 	{
 		href: '/orders',
 		name: 'Orders',
-		icon: <ShoppingBag className="w-5 h-5 text-gray-500"/>
+		icon: ShoppingBag
 	},
 	{
 		href: '/favorites',
 		name: 'Favorites',
-		icon: <HeartIcon className="w-5 h-5 text-gray-500"/>
+		icon: HeartIcon
 	},
 	{
 		href: '/addresses',
 		name: 'Addresses',
-		icon: <MapIcon className="w-5 h-5 text-gray-500"/>
+		icon: MapIcon
 	}
 ]
 
