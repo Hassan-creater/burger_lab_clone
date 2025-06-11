@@ -17,6 +17,7 @@ import { addAddress, updateAddress } from "@/functions";
 import { toast } from "sonner";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { Address } from "@/models/Address";
+import { useUserStore } from "@/store/slices/userSlice";
 
 type addressFetch = QueryObserverResult<
   | {
@@ -43,9 +44,7 @@ function AddressModal({
   addressId?: number;
   refetch: (options?: RefetchOptions | undefined) => Promise<addressFetch>;
 }) {
-  //TODO TEMPORARY
-  const userId = 80;
-
+const { user } = useUserStore();
   const localBranchData = useLocalStorage("branch", null);
 
   const [streetAddress, setStreetAddress] = useState(streetAdd || "");
@@ -63,7 +62,7 @@ function AddressModal({
   const addNewAddress = useMutation({
     mutationFn: () =>
       addAddress(
-        userId,
+        user?.userId!,
         streetAddress,
         branchArea.split(",")[0],
         branchArea.split(",")[1].trimStart()

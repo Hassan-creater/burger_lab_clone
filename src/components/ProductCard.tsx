@@ -33,7 +33,7 @@ function ProductCard({
 }: {
   product: Item;
   className?: string;
-  favorites: Favorite[] | null;
+  favorites: Favorite[] | null | undefined;
 }) {
   const { addItemToCart } = useCart();
   const [isFav, setIsFav] = useState(() => {

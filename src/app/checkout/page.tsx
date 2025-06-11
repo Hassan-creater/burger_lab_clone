@@ -15,6 +15,7 @@ import Cart from "@/components/cart/Cart";
 import { useMutation } from "@tanstack/react-query";
 import { placeOrder } from "@/functions";
 import { CartItem } from "@/types";
+import { useUserStore } from "@/store/slices/userSlice";
 
 export type OrderDetails = {
   comment: string;
@@ -30,8 +31,7 @@ export type OrderDetails = {
 export const dynamic = "force-dynamic";
 
 function Checkout() {
-  //TODO TEMPORARY
-  const userId = 80;
+  const { user } = useUserStore();
   const localBranchData = useLocalStorage("branch", null);
   const { storedValue }: CartFromLocalStorage = useLocalStorage(
     "cartStore",
@@ -57,7 +57,7 @@ function Checkout() {
         orderDetails.deliveryCharge,
         orderDetails.comment,
         orderDetails.discount,
-        userId,
+        user?.userId!,
         orderDetails.couponId,
         localBranchData.storedValue?.orderType === "delivery"
           ? orderDetails.addressid

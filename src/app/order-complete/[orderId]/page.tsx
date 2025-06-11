@@ -6,7 +6,8 @@ import Link from "next/link";
 import LoadingFlash from "@/components/LoadingFlash";
 import {OrderItem} from "@/models/Order";
 
-async function OrderComplete({ params }: { params: { orderId: string } }) {
+async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
+  const params = await props.params;
   if (!params.orderId) {
     return (
       <main className="w-[90%] lg:max-w-[85%] mx-auto my-5 min-h-screen flex flex-col gap-5 items-center justify-center">

@@ -21,9 +21,10 @@ import PromoBar from "./PromoBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { OrderDetails } from "@/app/checkout/page";
 import { Order } from "@/models/Order";
-import {usePathname, useRouter} from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LucideChevronRightCircle } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { useUserStore } from "@/store/slices/userSlice";
 
 interface CartProps {
   className?: string;
@@ -68,7 +69,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
   });
 
   const router = useRouter();
-  const pathname = usePathname();
+  const { user } = useUserStore();
 
   const deliveryCharges = useMemo(
     () => (localBranchData.storedValue?.orderType === "delivery" ? 150 : 0),
@@ -171,8 +172,8 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
             <div
               className={cn(
                 "fixed -bottom-1 p-4 py-6 flex md:hidden w-full bg-primaryOrange left-[0.01rem] items-center justify-between",
-                items.length === 0 && "hidden",
-                  // pathname !== "/" && "hidden"
+                items.length === 0 && "hidden"
+                // pathname !== "/" && "hidden"
               )}
             >
               <div className="flex flex-col items-center justify-center">
@@ -252,16 +253,27 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
                     {formatPrice(total)}
                   </p>
                 </div>
-                <Link href="/checkout">
+                {user ? (
+                  <Link href="/checkout">
+                    <Button
+                      variant="outline"
+                      title="checkout"
+                      onClick={() => setIsCartOpen(false)}
+                      className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
+                    >
+                      Checkout
+                    </Button>
+                  </Link>
+                ) : (
                   <Button
                     variant="outline"
                     title="checkout"
-                    onClick={() => setIsCartOpen(false)}
+                    disabled={true}
                     className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
                   >
-                    Checkout
+                    Login to Proceed
                   </Button>
-                </Link>
+                )}
               </SheetFooter>
             </>
           ) : (

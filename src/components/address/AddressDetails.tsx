@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { OrderDetails } from "@/app/checkout/page";
 import LoadingSpinner from "../LoadingSpinner";
 import ServiceError from "../ServiceError";
+import { useUserStore } from "@/store/slices/userSlice";
 
 type AddressDetailsProps = {
   className?: string;
@@ -24,11 +25,10 @@ export default function AddressDetails({
   setOrderDetails,
   className,
 }: AddressDetailsProps) {
-  //TODO TEMPORARY
-  const userId = 80;
+  const { user } = useUserStore();
   const { data, refetch, status } = useQuery({
-    queryKey: ["addresses"],
-    queryFn: () => getAllAddresses(userId),
+    queryKey: ["addresses", user?.userId],
+    queryFn: () => getAllAddresses(user?.userId!),
   });
 
   if (status === "pending")

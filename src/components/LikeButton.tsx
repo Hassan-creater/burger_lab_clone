@@ -9,6 +9,7 @@ import { addFavorite, removeFavorite } from "@/functions";
 import { user } from "@/lib/constants";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/slices/userSlice";
 
 interface LikeButtonProps {
   className?: string;
@@ -18,9 +19,11 @@ interface LikeButtonProps {
 }
 
 function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
+  const { user } = useUserStore();
+
   const router = useRouter();
   const addFav = useMutation({
-    mutationFn: () => addFavorite(user.id, itemId),
+    mutationFn: () => addFavorite(user?.userId!, itemId), // userId will be present because I am only calling this mutation fn when user is not null
     onSuccess() {
       toast.success("Item Added to Favorites", {
         style: { backgroundColor: "green", color: "white" },
@@ -32,7 +35,7 @@ function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
   });
 
   const removeFav = useMutation({
-    mutationFn: () => removeFavorite(user.id, itemId),
+    mutationFn: () => removeFavorite(user?.userId!, itemId),
     onSuccess(data) {
       router.refresh();
       toast.success(data.message?.message, {
@@ -55,7 +58,13 @@ function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     if (e?.currentTarget?.id === itemId.toString()) e.preventDefault();
-    !isFav ? addFav.mutateAsync() : removeFav.mutateAsync();
+    if (!user) {
+      toast.error("Login to Start saving Favorites!", {
+        style: { backgroundColor: "red", color: "white" },
+        closeButton: true,
+        dismissible: true,
+      });
+    } else !isFav ? addFav.mutateAsync() : removeFav.mutateAsync();
   };
 
   return (

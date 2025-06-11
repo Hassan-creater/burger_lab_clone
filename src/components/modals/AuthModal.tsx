@@ -13,8 +13,14 @@ import { LucideEye, LucideEyeOff, XIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Link from "next/link";
-import { useMutation } from "@tanstack/react-query";
-import { checkLoginStatus, login } from "@/functions";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUser, login, register } from "@/functions";
+import { useRouter } from "next/navigation";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { useUserStore } from "@/store/slices/userSlice";
+import LoadingSpinner from "../LoadingSpinner";
+import { toast } from "sonner";
+import RegisterForm from "../RegisterForm";
 
 type Props = {};
 
@@ -28,33 +34,50 @@ function AuthModal({}: Props) {
     password: "",
   });
 
+  const [registerDetails, setRegisterDetails] = React.useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+    countryCode: "+92",
+    phone: "",
+  });
+
+  const [error, setError] = React.useState(() => ({
+    status: false,
+    message: "",
+  }));
+
   const [isPassVisible, setIsPassVisible] = React.useState(false);
 
   const loginMutation = useMutation({
     mutationFn: () => login(loginDetails.email, loginDetails.password),
+    onSuccess(data) {
+      if (data.user?.status === "error") {
+        console.log(data.user);
+        setError(() => ({
+          status: Boolean(data.user?.status),
+          message: data.user?.message || "Something went wrong",
+        }));
+        return;
+      }
+      location.reload();
+    },
   });
 
-  const handleLogin = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      loginMutation.mutate();
-      // if (loginMutation.status === "success")
-    },
-    [loginMutation]
-  );
-
-  useEffect(() => {
-    checkLoginStatus().then(({ isLoggedIn }) => {
-      if (isLoggedIn) alert("Logged in");
-      else alert("Not logged in");
-    });
-  }, [loginMutation.data?.status]);
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    loginMutation.mutate();
+  };
 
   const renderModalContent = () => {
     if (modalType === "LOGIN") {
       return (
         <div className="flex flex-col items-center justify-center">
           <h3 className="text-2xl font-bold mb-3">Welcome Back</h3>
+          {error.status && !loginMutation.isPending && (
+            <p className="text-red-500 mb-3">{error.message}</p>
+          )}
           <form
             className="flex w-full flex-col items-center justify-center mb-1"
             onSubmit={handleLogin}
@@ -110,13 +133,21 @@ function AuthModal({}: Props) {
             </Button>
             <Button
               type="submit"
+              disabled={loginMutation.isPending}
               className="w-full p-2 flex items-center justify-center rounded-2xl mb-3 bg-primaryOrange hover:bg-primaryOrange/80 text-black font-semibold"
             >
-              Login
+              <div className="w-full flex items-center justify-center p-2">
+                {loginMutation.isPending ? (
+                  <LoadingSpinner className="size-6 border-t-white" />
+                ) : (
+                  <span>Login</span>
+                )}
+              </div>
             </Button>
             <Button
               className="rounded-2xl w-full p-2 flex items-center justify-center border-primaryOrange font-semibold"
               variant="outline"
+              disabled={loginMutation.isPending}
               onClick={(e) => {
                 e.preventDefault();
                 setModalType("REGISTER");
@@ -131,62 +162,12 @@ function AuthModal({}: Props) {
     if (modalType === "REGISTER") {
       return (
         <div className="flex flex-col items-center justify-center">
-          <h3 className="text-2xl font-bold mb-3">Enter Your Mobile Number</h3>
-
-          <form className="flex w-full flex-col items-center justify-center">
-            <p className="text-sm font-semibold mb-3 text-left self-start">
-              Please confirm your country code and re-enter your mobile number
-            </p>
-            <Label className="w-full rounded-2xl my-3 mb-5 flex">
-              <span className="sr-only">Email</span>
-              <Input
-                className="rounded-r-none w-14 px-2 focus-visible:ring-primaryOrange focus-visible:ring-offset-0"
-                value={"+92"}
-                readOnly
-              />
-              <Input
-                required
-                type="tel"
-                placeholder="Enter your mobile number"
-                className="w-full focus-visible:ring-primaryOrange focus-visible:ring-offset-0 rounded-l-none"
-              />
-            </Label>
-            <p className="text-sm font-semibold mb-3">
-              This site is protected by reCAPTCHA and the Google{" "}
-              <Link
-                href="https://policies.google.com/privacy"
-                rel="noreferrer"
-                target="_blank"
-              >
-                Privacy Policy
-              </Link>
-              and{" "}
-              <Link
-                href="https://policies.google.com/terms"
-                rel="noreferrer"
-                target="_blank"
-              >
-                Terms of Service
-              </Link>{" "}
-              apply.
-            </p>
-            <Button
-              type="submit"
-              className="w-full p-2 flex items-center justify-center rounded-2xl mb-3 bg-primaryOrange hover:bg-primaryOrange/80 text-black font-semibold"
-            >
-              Proceed
-            </Button>
-            <Button
-              className="rounded-2xl w-full p-2 flex items-center justify-center border-primaryOrange font-semibold"
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                setModalType("LOGIN");
-              }}
-            >
-              Already have an account?
-            </Button>
-          </form>
+          <h3 className="text-2xl font-bold mb-3">Register</h3>
+          <RegisterForm
+            isPassVisible={isPassVisible}
+            setIsPassVisible={setIsPassVisible}
+            setModalType={setModalType}
+          />
         </div>
       );
     }
@@ -234,7 +215,7 @@ function AuthModal({}: Props) {
         <Button
           variant="outline"
           className={
-            "p-4 font-bold text-black bg-primaryOrange rounded-3xl !hover:border-[#fabf2c] hover:bg-primaryOrange"
+            "px-4 py-2 font-bold text-black bg-primaryOrange/60 rounded-xl text-xs !hover:border-[#fabf2c] hover:bg-primaryBg"
           }
         >
           Login / Register

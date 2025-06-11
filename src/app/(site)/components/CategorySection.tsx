@@ -11,6 +11,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { toast } from "sonner";
 import { Item } from "@/models/Item";
 import { Favorite } from "@/models/Favorites";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 
 interface CategorySectionProps {
   name: string;
@@ -57,10 +58,11 @@ function CategorySection({
   const renderProducts = (item: Item, index: number) => {
     if (status === "pending" || fetchStatus === "fetching") {
       return (
-        <LoadingSpinner
-          className="w-40 min-[500px]:w-52 min-h-[400px]"
-          key={index}
-        />
+        // <LoadingSpinner
+        //   className="w-40 min-[500px]:w-52 min-h-[400px]"
+        //   key={index}
+        // />
+        <ProductCardSkeleton />
       );
     }
 

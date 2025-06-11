@@ -176,7 +176,6 @@ type ProfileDropdown = {
 	icon?: LucideIcon
 }[]
 
-//TODO Fix these Errors
 
 export const profileDropdown: ProfileDropdown = [
 	{

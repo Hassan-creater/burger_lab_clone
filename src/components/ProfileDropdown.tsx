@@ -1,3 +1,5 @@
+"use client";
+
 import { capitalizeFirstLetter, textShortener } from "@/lib/utils";
 import { CircleUserIcon } from "./icons";
 import { Button } from "./ui/button";
@@ -12,12 +14,22 @@ import {
 import { profileDropdown } from "@/lib/constants";
 import Link from "next/link";
 import { ChevronDown, LogOut, Menu } from "lucide-react";
+import { logoutAction } from "@/functions";
+import { useUserStore } from "@/store/slices/userSlice";
 
 type ProfileDropdownProps = {
   user: string;
 };
 
 export default function ProfileDropdown({ user }: ProfileDropdownProps) {
+  const { updateUser } = useUserStore();
+
+  const logout = async () => {
+    await logoutAction();
+    updateUser(null);
+    location.href = "/";
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild title="My Account">
@@ -49,7 +61,9 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
             >
               <DropdownMenuItem className="cursor-pointer text-center flex gap-2 items-center">
                 <>
-                  {dropdownItem.icon && <dropdownItem.icon className="w-5 h-5 text-gray-500"/>}
+                  {dropdownItem.icon && (
+                    <dropdownItem.icon className="w-5 h-5 text-gray-500" />
+                  )}
                   {dropdownItem.name}
                 </>
               </DropdownMenuItem>
@@ -57,7 +71,10 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
           ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="bg-red-500 hover:bg-red-400 text-center font-semibold rounded-full px-3 py-2 my-2 text-white cursor-pointer flex gap-3 justify-center">
+        <DropdownMenuItem
+          className="bg-red-500 hover:bg-red-400 text-center font-semibold rounded-full px-3 py-2 my-2 text-white cursor-pointer flex gap-3 justify-center"
+          onClick={logout}
+        >
           <LogOut className="w-5 h-5" />
           Log out
         </DropdownMenuItem>

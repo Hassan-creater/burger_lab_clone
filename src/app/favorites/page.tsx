@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { getAllFavorites, getItemById } from "@/functions";
+import { getAllFavorites } from "@/functions";
 import Link from "next/link";
 import FavoriteItemContainer from "./components/FavoriteItemContainer";
 import { Suspense } from "react";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { Metadata } from "next";
 import ServiceError from "@/components/ServiceError";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
+import { cookies } from "next/headers";
 
 type FavoritesProps = {};
 
@@ -16,9 +17,20 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Favorites({}: FavoritesProps) {
-  //TODO Temporary
-  const userId = 80;
-  const data = await getAllFavorites(userId);
+  const cookieStore = await cookies();
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/get-user`,
+    {
+      credentials: "include",
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+    }
+  );
+  const resData = await res.json();
+
+  const data = await getAllFavorites(resData?.user?.userId);
+
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">
       <h1 className="text-lg font-bold mt-10 mb-7 text-gray-700">
@@ -27,17 +39,13 @@ export default async function Favorites({}: FavoritesProps) {
       {data.favorites && data.favorites.length > 0 ? (
         <section className="flex flex-wrap gap-4">
           {data.favorites.map((favorite) => (
-            <Suspense
-              key={favorite.id}
-              fallback={
-                <LoadingSpinner className="w-40 min-[500px]:w-52 min-h-[430px] max-h-[430px]" />
-              }
-            >
+            (<Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
               <FavoriteItemContainer
                 itemId={favorite.itemid}
                 favorites={data.favorites}
               />
-            </Suspense>
+            </Suspense>)
+            // <ProductCardSkeleton key={favorite.id} />
           ))}
         </section>
       ) : data.status === 500 ? (

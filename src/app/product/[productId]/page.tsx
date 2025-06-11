@@ -8,13 +8,20 @@ import notFound from "@/app/not-found";
 import { Item } from "@/models/Item";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ServiceError from "@/components/ServiceError";
-import { getAllFavorites } from "@/functions";
+import { getAllFavorites, getUser } from "@/functions";
+import { revalidatePath } from "next/cache";
 
-export async function generateMetadata({
-  params: { productId },
-}: {
-  params: { productId?: number };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ productId?: number }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    productId
+  } = params;
+
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/item/get/${productId}`
@@ -33,14 +40,20 @@ export async function generateMetadata({
 }
 
 interface ProductPageProps {
-  params: { productId?: number };
+  params: Promise<{ productId?: number }>;
 }
 
-export default async function ProductPage({
-  params: { productId },
-}: ProductPageProps) {
+export default async function ProductPage(props: ProductPageProps) {
+  const params = await props.params;
+
+  const {
+    productId
+  } = params;
+
   //TODO Temporary
-  const userId = 80;
+
+  const { user } = await getUser();
+
   if (!productId) {
     return notFound();
   }
@@ -58,7 +71,7 @@ export default async function ProductPage({
       return notFound();
     }
 
-    const { favorites } = await getAllFavorites(userId);
+    const { favorites } = await getAllFavorites(user?.userId!);
 
     return (
       <main className="mt-5 mb-10 flex flex-col items-center w-full h-auto gap-5">

@@ -13,10 +13,10 @@ import { useOrders } from "@/hooks/useOrders";
 import { LucideChevronLeft, LucideChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ServiceError from "@/components/ServiceError";
+import { useUserStore } from "@/store/slices/userSlice";
 
 function OrderDetails() {
-  //TODO TEMPORARY
-  const userId = 80;
+  const { user } = useUserStore();
 
   const {
     data,
@@ -27,7 +27,7 @@ function OrderDetails() {
     hasPreviousPage,
     handleSpecificPage,
     pageLinks,
-  } = useOrders(userId);
+  } = useOrders(user?.userId!);
 
   if (status === "pending") {
     return (

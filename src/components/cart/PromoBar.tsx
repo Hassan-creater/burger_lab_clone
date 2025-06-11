@@ -9,6 +9,7 @@ import { validateCoupon } from "@/functions";
 import { toast } from "sonner";
 import { CouponValidation } from "@/models/Coupon";
 import { OrderDetails } from "@/app/checkout/page";
+import { useUserStore } from "@/store/slices/userSlice";
 
 type PromoBarProps = {
   discount: string;
@@ -17,16 +18,15 @@ type PromoBarProps = {
 };
 
 const PromoBar = ({
-                  setDiscount,
-                  discount,
-                  setOrderDetails,
-                }: PromoBarProps) => {
+  setDiscount,
+  discount,
+  setOrderDetails,
+}: PromoBarProps) => {
   const [promoCode, setPromoCode] = useState("");
 
-  //TODO TEMPORARY
-  const userId = 80;
+  const { user } = useUserStore();
   const applyPromo = useMutation({
-    mutationFn: () => validateCoupon(promoCode, userId),
+    mutationFn: () => validateCoupon(promoCode, user?.userId!),
     onSuccess: (data) => {
       if (data.status === 500) {
         toast.error(data.validation as string, {
@@ -96,6 +96,6 @@ const PromoBar = ({
       )}
     </div>
   );
-}
+};
 
 export default PromoBar;
