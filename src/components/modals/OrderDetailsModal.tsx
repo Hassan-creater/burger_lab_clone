@@ -11,6 +11,7 @@ import { XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
 import { OrderItem } from "@/models/Order";
 import { formatPrice } from "@/lib/utils";
+import { parseOrderItems } from "@/lib/orderUtils";
 
 type OrderDetailsModalProps = {
   order: OrderItem;
@@ -31,37 +32,42 @@ function OrderDetailsModal({ order, index }: OrderDetailsModalProps) {
           type="MODAL"
           order={order}
           index={index}
-        />
-        <div className="flex flex-col gap-2 w-full h-[150px] overflow-y-scroll no-scrollbar py-3">
-          {Array.from({ length: 5 }).map((_, index) => (
+        />        <div className="flex flex-col gap-2 w-full h-[150px] overflow-y-scroll no-scrollbar py-3">
+          {parseOrderItems(order.items).map((item: any, index: number) => (
             <div
               className="w-full flex flex-col gap-1 bg-gray-100 rounded-lg p-3"
               key={index}
             >
-              <p className="text-sm">1 x</p>
-              <p className="text-sm">Easypaisa Offer</p>
-              <p className="text-sm text-gray-400 text-semibold">
-                Just Rs.295 for Kruncher + Reg. Fries. Order this deal from the
-                Easypaisa Mini App and get Rs.200 cashback into your Easypaisa
-                account.
-              </p>
-              <p className="text-sm self-end">{formatPrice(495)}</p>
+              <div className="flex justify-between items-center">
+                <p className="text-sm">{item.qty} x {item.name}</p>
+                <p className="text-sm self-end">{formatPrice(parseFloat(item.price) * parseInt(item.qty))}</p>
+              </div>
+              {item.description && (
+                <p className="text-sm text-gray-400 text-semibold">
+                  {item.description}
+                </p>
+              )}
             </div>
           ))}
         </div>
         <div className="w-full flex flex-col gap-1">
           <div className="flex w-full items-center justify-between gap-1">
             <p className="text-sm">SubTotal</p>
-            <p className="text-sm">{formatPrice(495)}</p>
-          </div>
-          <div className="flex w-full items-center justify-between gap-1">
+            <p className="text-sm">{formatPrice(parseFloat(order.total) - parseFloat(order.deliveryCharge) - parseFloat(order.tax) + parseFloat(order.discount))}</p>
+          </div>          <div className="flex w-full items-center justify-between gap-1">
             <p className="text-sm">Tax</p>
-            <p className="text-sm">{formatPrice(0)}</p>
+            <p className="text-sm">{formatPrice(parseFloat(order.tax))}</p>
           </div>
           <div className="flex w-full items-center justify-between gap-1">
             <p className="text-sm">Delivery Charges</p>
-            <p className="text-sm">{formatPrice(0)}</p>
+            <p className="text-sm">{formatPrice(parseFloat(order.deliveryCharge))}</p>
           </div>
+          {parseFloat(order.discount) > 0 && (
+            <div className="flex w-full items-center justify-between gap-1">
+              <p className="text-sm text-red-500">Discount</p>
+              <p className="text-sm text-red-500">-{formatPrice(parseFloat(order.discount))}</p>
+            </div>
+          )}
           <div className="flex w-full items-center justify-between gap-1">
             <p className="text-lg font-bold">Total Amount</p>
             <p className="text-lg font-bold">

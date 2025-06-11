@@ -8,9 +8,9 @@ export type AddOnOption = {
 
 export type AddOn = {
   heading: string;
-  required?: boolean;
+  required: boolean;
   labels?: string[];
-  addOnOptions?: AddOnOption[];
+  addOnOptions: AddOnOption[];
 };
 
 export type CartItem = {

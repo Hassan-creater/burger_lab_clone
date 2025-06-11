@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { validateCoupon } from "@/functions";
 import { toast } from "sonner";
 import { CouponValidation } from "@/models/Coupon";
 import { OrderDetails } from "@/app/checkout/page";
@@ -23,13 +21,47 @@ const PromoBar = ({
   setOrderDetails,
 }: PromoBarProps) => {
   const [promoCode, setPromoCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useUserStore();
-  const applyPromo = useMutation({
-    mutationFn: () => validateCoupon(promoCode, user?.userId!),
-    onSuccess: (data) => {
-      if (data.status === 500) {
-        toast.error(data.validation as string, {
+
+  // Using dummy coupon validation
+  const handleApplyPromo = () => {
+    setIsLoading(true);
+
+    // Simulate API delay
+    setTimeout(() => {
+      // Demo coupon: "SAVE10"
+      if (promoCode.toUpperCase() === "SAVE10") {
+        const validationResult: CouponValidation = {
+          valid: true,
+          discount: "10",
+          couponId: "1",
+        };
+
+        toast.success("Coupon Applied Successfully", {
+          closeButton: true,
+          dismissible: true,
+          style: {
+            color: "white",
+            backgroundColor: "green",
+          },
+        });
+
+        setDiscount(validationResult.discount);
+        setOrderDetails &&
+          setOrderDetails((prev) => ({
+            ...prev,
+            couponId: parseInt(validationResult.couponId),
+            discount: validationResult.discount,
+          }));
+      } else {
+        const validationResult: CouponValidation = {
+          valid: false,
+          message: "Invalid coupon code",
+        };
+
+        toast.error(validationResult.message, {
           closeButton: true,
           dismissible: true,
           style: {
@@ -39,61 +71,30 @@ const PromoBar = ({
         });
       }
 
-      if (data.status === 200) {
-        if ((data.validation as CouponValidation).valid) {
-          toast.success("Coupon Applied Successfully", {
-            closeButton: true,
-            dismissible: true,
-            style: {
-              color: "white",
-              backgroundColor: "green",
-            },
-          });
-          setDiscount((data.validation as CouponValidation).discount);
-          setOrderDetails &&
-            setOrderDetails((prev) => ({
-              ...prev,
-              couponId: parseInt(
-                (data.validation as CouponValidation).couponId
-              ),
-              discount: (data.validation as CouponValidation).discount,
-            }));
-        } else {
-          toast.error((data.validation as CouponValidation).message, {
-            closeButton: true,
-            dismissible: true,
-            style: {
-              color: "white",
-              backgroundColor: "red",
-            },
-          });
-        }
-      }
-    },
-  });
+      setIsLoading(false);
+    }, 500); // Simulate 500ms delay
+  };
 
   return (
-    <div className="flex gap-0 items-center my-3">
+    <div className="flex items-center justify-between w-full h-auto gap-2">
       <Input
+        type="text"
         value={promoCode}
         onChange={(e) => setPromoCode(e.target.value)}
-        disabled={parseInt(discount) > 0}
-        placeholder="Promo code"
-        className={cn(
-          "w-full focus-visible:ring-0 focus-visible:ring-offset-0 border-2 focus-visible:border-primaryOrange",
-          promoCode && "rounded-r-none border-r-0"
-        )}
+        className="focus-visible:ring-black placeholder:text-gray-500 placeholder:italic text-sm"
+        placeholder="Enter Promo Code"
       />
-      {promoCode && (
-        <Button
-          variant="default"
-          onClick={() => applyPromo.mutate()}
-          disabled={parseInt(discount) > 0 || applyPromo.isPending}
-          className="rounded-l-none border-2 border-primaryOrange bg-primaryOrange text-black hover:bg-primaryOrange hover:text-inherit transition-none active:scale-100"
-        >
-          {applyPromo.isPending ? "Applying..." : "Apply"}
-        </Button>
-      )}
+      <Button
+        variant="outline"
+        disabled={isLoading || !promoCode}
+        onClick={handleApplyPromo}
+        className={cn(
+          "text-sm w-max bg-primaryOrange hover:bg-primaryOrange/80 text-black rounded-3xl !h-10",
+          discount !== "0" && "bg-green-600 hover:bg-green-600/80"
+        )}
+      >
+        {isLoading ? "Applying..." : discount !== "0" ? "Applied" : "Apply"}
+      </Button>
     </div>
   );
 };

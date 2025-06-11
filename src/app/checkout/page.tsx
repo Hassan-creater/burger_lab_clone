@@ -1,26 +1,23 @@
 "use client";
 
 import AddressDetails from "@/components/address/AddressDetails";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import useCart, { CartFromLocalStorage } from "@/hooks/useCart";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { ChevronRight, LucideMapPin } from "lucide-react";
+import { LucideMapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PaymentOption from "./components/PaymentOption";
 import Cart from "@/components/cart/Cart";
-import { useMutation } from "@tanstack/react-query";
-import { placeOrder } from "@/functions";
-import { CartItem } from "@/types";
 import { useUserStore } from "@/store/slices/userSlice";
+import { toast } from "sonner";
 
 export type OrderDetails = {
   comment: string;
   addressid: string;
-  items: CartItem[];
+  items: any[];
   total: number;
   deliveryCharge: string;
   discount: string;
@@ -28,16 +25,11 @@ export type OrderDetails = {
   couponId?: string | number;
 };
 
-export const dynamic = "force-dynamic";
-
 function Checkout() {
   const { user } = useUserStore();
   const localBranchData = useLocalStorage("branch", null);
-  const { storedValue }: CartFromLocalStorage = useLocalStorage(
-    "cartStore",
-    []
-  );
   const { items } = useCart();
+  const router = useRouter();
 
   const [orderDetails, setOrderDetails] = useState<OrderDetails>(() => ({
     comment: "",
@@ -49,53 +41,54 @@ function Checkout() {
     discount: "0",
   }));
 
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  /* Original order placement mutation code
   const addOrder = useMutation({
-    mutationFn: () =>
-      placeOrder(
-        orderDetails.total,
-        orderDetails.tax,
-        orderDetails.deliveryCharge,
-        orderDetails.comment,
-        orderDetails.discount,
-        user?.userId!,
-        orderDetails.couponId,
-        localBranchData.storedValue?.orderType === "delivery"
-          ? orderDetails.addressid
-          : localBranchData.storedValue?.orderType === "dineIn"
-          ? "0"
-          : "99999",
-        items
-      ),
+    mutationFn: () => placeOrder(...),
+    onSuccess: (data) => {
+      // ... success handling
+    },
   });
+  */
 
-  const router = useRouter();
+  // Using dummy order placement
+  const addOrder = {
+    mutate: () => {
+      setIsPlacingOrder(true);
+      // Simulate API delay
+      setTimeout(() => {
+        const dummyOrderResult = {
+          status: 200,
+          order: {
+            orderId: Math.floor(Math.random() * 1000) + 1,
+            userId: user?.userId,
+            total: orderDetails.total,
+            status: "pending",
+            created_at: new Date().toISOString(),
+          },
+        };
 
-  useEffect(() => {
-    document.title = "Checkout - Burger Lab";
-  }, []);
+        // Clear cart and redirect
+        router.push("/order-complete/" + dummyOrderResult.order.orderId);
+        setIsPlacingOrder(false);
 
-  useEffect(() => {
-    if (
-      items.length === 0 &&
-      storedValue?.state &&
-      storedValue?.state?.items.length === 0
-    ) {
-      router.push("/");
-    }
-  }, [items, router, storedValue]);
+        toast.success("Order placed successfully!", {
+          closeButton: true,
+          dismissible: true,
+          style: {
+            color: "white",
+            backgroundColor: "green",
+          },
+        });
+      }, 1000);
+    },
+    isPending: isPlacingOrder
+  };
 
   return (
-    <main className="w-[95%] my-5 mx-auto px-5 pt-7 pb-8 min-h-screen bg-white rounded-lg space-y-4">
-      <div className="flex item-center gap-1 w-full h-auto">
-        <Link
-          className="text-xs font-normal text-gray-500 hover:underline"
-          href="/"
-        >
-          Home
-        </Link>
-        <ChevronRight className="text-gray-500" size={15} />
-        <p className="text-xs font-normal text-[#fabf2c]">Checkout</p>
-      </div>
+    <main className="w-[90%] lg:max-w-[85%] mx-auto my-5 min-h-screen">
+      <h1 className="text-lg font-bold mb-5">Checkout</h1>
       <div className="w-full h-auto flex flex-col lg:flex-row gap-5">
         <section className="w-full lg:w-2/3 flex flex-col gap-5 h-max">
           {localBranchData.storedValue?.orderType === "delivery" ? (
@@ -114,30 +107,18 @@ function Checkout() {
               <div className="flex w-full item-center justify-between">
                 <p className="text-gray-500 text-lg">
                   Collect from Branch:{" "}
-                  <span className="text-black">{`${localBranchData.storedValue?.delivery_areas}, ${localBranchData.storedValue?.city}`}</span>
+                  <Link
+                    href="/"
+                    className="font-semibold text-primaryOrange"
+                  >
+                    {localBranchData.storedValue?.name}
+                  </Link>
                 </p>
-                <Link
-                  href={`https://www.google.com/maps/search/?api=1&query=${localBranchData.storedValue?.lat},${localBranchData.storedValue?.lon}`}
-                  className="size-max bg-primaryOrange px-4 py-1 rounded-lg"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <LucideMapPin color="black" />
-                </Link>
+                <LucideMapPin className="w-5 h-5" />
               </div>
             </div>
           )}
-          <div className="bg-primaryBg h-max px-3 py-8 rounded-lg space-y-4">
-            <div className="flex flex-col gap-2">
-              <Label className="text-[1rem] font-normal leading-relaxed">
-                Chose Delivery Time
-              </Label>
-              <Input
-                value="ASAP"
-                readOnly
-                className="focus-visible:ring-primaryOrange text-gray-500"
-              />
-            </div>
+          <div className="bg-primaryBg h-max px-3 py-8 rounded-lg">
             <div className="flex flex-col gap-2">
               <Label className="text-[1rem] font-normal leading-relaxed">
                 Special Instructions ( Optional )

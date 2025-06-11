@@ -3,6 +3,7 @@ import { UserDetails } from "@/types";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { dummyUser } from "@/lib/dummyData";
 
 export const metadata: Metadata = {
   title: "Profile - Burger Lab",
@@ -13,30 +14,11 @@ export const dynamic = "force-dynamic";
 
 //  TODO Properly handle fetch errors.
 export default async function Profile() {
-  const cookieStore = await cookies();
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/get-user`,
-    {
-      credentials: "include",
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-    }
-  );
-  const resData = await res.json();
-  if (!resData?.user?.userId) {
+  // Using dummy data instead
+  const user = dummyUser;
+  if (!user?.userId) {
     redirect("/");
   }
-  const userDetailsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/profile?userId=${resData?.user?.userId}`,
-    {
-      credentials: "include",
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-    }
-  );
-  const user: UserDetails = await userDetailsRes.json();
 
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">

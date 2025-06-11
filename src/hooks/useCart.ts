@@ -1,6 +1,6 @@
 import { AddOn, CartItem, CartState, MenuProduct } from "@/types";
 import { useCallback, useEffect, useState } from "react";
-import { useCartStore } from "@/store";
+import { useCartStore } from "@/store/slices/cartSlice";
 import { cartItemKeys } from "@/lib/constants";
 import { toast } from "sonner";
 import { removePropFromObject } from "@/lib/utils";

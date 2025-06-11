@@ -14,8 +14,6 @@ import { Button } from "../ui/button";
 import useCart from "@/hooks/useCart";
 import React, { useEffect, useMemo, useState } from "react";
 import CartItem from "./CartItem";
-import { UseMutationResult, useQuery } from "@tanstack/react-query";
-import { getTax } from "@/functions";
 import Link from "next/link";
 import PromoBar from "./PromoBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -30,19 +28,7 @@ interface CartProps {
   className?: string;
   type: "CHECKOUT" | "CART";
   setOrderDetails?: React.Dispatch<React.SetStateAction<OrderDetails>>;
-  addOrder?: UseMutationResult<
-    | {
-        status: number;
-        order: Order;
-      }
-    | {
-        status: number;
-        order: null;
-      },
-    Error,
-    void,
-    unknown
-  >;
+  addOrder?: any; // Using any for mutation result type for simplicity
 }
 
 const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
@@ -63,10 +49,18 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
 
+  /* Original tax data fetching code
   const { data } = useQuery({
     queryKey: ["tax"],
     queryFn: getTax,
   });
+  */
+
+  // Using dummy tax data instead
+  const data = {
+    status: 200,
+    tax: "10" // 10% tax rate
+  };
 
   const router = useRouter();
   const { user } = useUserStore();
@@ -110,8 +104,6 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
           total: total,
           discount: discountAmount.toString(),
           deliveryCharge: deliveryCharges.toString(),
-          //Todo temporary
-          addressid: "253".toString(),
         }));
     }
   }, [
@@ -173,7 +165,6 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
               className={cn(
                 "fixed -bottom-1 p-4 py-6 flex md:hidden w-full bg-primaryOrange left-[0.01rem] items-center justify-between",
                 items.length === 0 && "hidden"
-                // pathname !== "/" && "hidden"
               )}
             >
               <div className="flex flex-col items-center justify-center">
@@ -207,12 +198,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
           </SheetHeader>
           {!loading && items.length > 0 ? (
             <>
-              <div
-                className={cn(
-                  "flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll"
-                  // windowWidth < 768 && "h-full"
-                )}
-              >
+              <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll">
                 {items.map((cartItem) => (
                   <CartItem
                     key={cartItem.id}
@@ -229,6 +215,11 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
                     {formatPrice(subTotal)}
                   </p>
                 </div>
+                <PromoBar
+                  discount={discount}
+                  setDiscount={setDiscount}
+                  setOrderDetails={setOrderDetails}
+                />
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className="font-normal text-sm">
                     Tax ({parseInt(data?.tax ?? "0") + "%"})
@@ -306,7 +297,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
             />
           ))}
         </div>
-        <section className="flex flex-col w-full gap-2 ">
+        <section className="flex flex-col w-full gap-2">
           <hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
           <PromoBar
             discount={discount}
@@ -332,8 +323,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
               Discount ({parseInt(discount ?? "0") + "%"})
             </p>
             <p className="font-normal text-gray-500 text-sm">
-              - {/*Calculating Discount from SubTotal without Tax */}
-              {formatPrice(discountAmount)}
+              - {formatPrice(discountAmount)}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">

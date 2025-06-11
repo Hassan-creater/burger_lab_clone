@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useObserverStore } from "@/store";
+import { useObserverStore } from "@/store/slices/observerSlice";
 import { Category } from "@/models/Category";
 import { useWindowSize } from "@/hooks/useWindowSize";
 

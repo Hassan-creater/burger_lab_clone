@@ -7,11 +7,10 @@ import Cart from "./cart/Cart";
 import ProfileDropdown from "./ProfileDropdown";
 import { usePathname } from "next/navigation";
 import AuthModal from "./modals/AuthModal";
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/functions";
+import { useEffect, useMemo } from "react";
 import { useUserStore } from "@/store/slices/userSlice";
-import LoadingSpinner from "./LoadingSpinner";
+import { dummyUser } from "@/lib/dummyData";
+import { User } from "@/types";
 
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
@@ -20,16 +19,18 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 const Header = () => {
   const { user, updateUser } = useUserStore();
 
-  const { data, status } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
-  });
+  // Using dummy data instead
+  const mockUser = useMemo<User>(
+    () => ({
+      ...dummyUser,
+      role: "user", // Adding required role field
+    }),
+    []
+  );
 
   useEffect(() => {
-    if (status === "success" && (data?.status === true || data?.status !== 500))
-      updateUser(data.user);
-    else updateUser(null);
-  }, [data?.status, data?.user, updateUser, status]);
+    updateUser(mockUser);
+  }, [mockUser, updateUser]);
 
   const pathname = usePathname();
 
@@ -52,26 +53,13 @@ const Header = () => {
           />
         </Link>
         <div className="flex flex-row flex-1 gap-1 sm:gap-3 items-center w-full h-full justify-end pl-2 pr-2">
-          <hr className="md:inline-block hidden h-10 ml-[4px] mr-[4px] opacity-5 text-black border-black border-solid border-[1px]" />
-          <div className="flex items-center h-full">
-            {status !== "pending" ? (
-              user ? (
-                <ProfileDropdown user={user.name} />
-              ) : (
-                <AuthModal />
-              )
-            ) : (
-              <LoadingSpinner
-                className="w-6 h-6"
-              />
-            )}
-          </div>
-          <hr className=" h-10 ml-[4px] mr-[4px] opacity-5 text-black border-black border-solid border-[1px] md:inline-block hidden" />
-          {pathname !== "/checkout" && (
-            <Cart
-              className="p-2 !py-2 w-auto h-auto md:flex hidden"
-              type="CART"
-            />
+          {pathname !== "/checkout" && pathname !== "/order-complete" && (
+            <Cart type="CART" className="hidden min-[400px]:block" />
+          )}
+          {user ? (
+            <ProfileDropdown user={user.name} />
+          ) : (
+            <AuthModal />
           )}
         </div>
       </nav>

@@ -1,4 +1,13 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
+import {
+  dummyBranches,
+  dummyCategories,
+  dummyFavorites,
+  dummyItems,
+  dummyOrders,
+  dummySlides,
+  dummySocials,
+  dummyUser,
+} from "@/lib/dummyData";
 import { Address } from "@/models/Address";
 import { Branch } from "@/models/Branch";
 import { Category } from "@/models/Category";
@@ -9,587 +18,249 @@ import { Order, OrderDetails, OrderResult } from "@/models/Order";
 import { Slides } from "@/models/Slides";
 import { Social } from "@/models/Social";
 import { CartItem, SearchResults, User, UserDetails } from "@/types";
-import axios, { AxiosError } from "axios";
+import { formatOrderData, parseOrderItems } from '@/lib/orderUtils';
 
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+// Comment out the actual backend URL since we're using dummy data
+// const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+
 export async function getAllCategories() {
-  try {
-    const response = await axios.get<Category[]>(
-      `${BACKEND_BASE_URL}/category/get`
-    );
-    return {
-      status: response.status,
-      categories: response.data,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      status: 500,
-      categories: null,
-    };
-  }
-}
-
-export async function getAllSlides() {
-  try {
-    const response = await axios.get<Slides[]>(`${BACKEND_BASE_URL}/slide/get`);
-    return {
-      status: response.status,
-      slides: response.data,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      status: 500,
-      slides: null,
-    };
-  }
-}
-
-export async function getItemsByCategory(categoryId: number) {
-  try {
-    const response = await axios.get<Item[]>(
-      `${BACKEND_BASE_URL}/item/getByCategory/${categoryId}`
-    );
-    return {
-      status: response.status,
-      items: response.data,
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      status: 500,
-      items: null,
-    };
-  }
-}
-
-export async function getAllBranches() {
-  try {
-    const response = await axios.get<Branch[]>(
-      `${BACKEND_BASE_URL}/branch/get`
-    );
-    return {
-      status: response.status,
-      branches: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      branches: null,
-    };
-  }
-}
-
-export async function getItemsByTag(query: string) {
-  try {
-    const response = await axios.get<SearchResults>(
-      `${BACKEND_BASE_URL}/api/search/${query}`
-    );
-    return {
-      status: response.status,
-      items: response.data.items,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      items: null,
-    };
-  }
-}
-
-export async function getItemById(id: number) {
-  try {
-    const response = await axios.get<Item>(
-      `${BACKEND_BASE_URL}/item/get/${id}`
-    );
-
-    return {
-      status: response.status,
-      item: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      item: null,
-    };
-  }
-}
-
-export async function getAllFavorites(userId: number) {
-  try {
-    const response = await axios.post<Favorite[]>(
-      `${BACKEND_BASE_URL}/favorite/user`,
-      {
-        platform: "mobile",
-        userid: userId,
-      }
-    );
-    return {
-      status: response.status,
-      favorites: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      favorites: null,
-    };
-  }
-}
-
-export async function addFavorite(userId: number, itemId: number) {
-  try {
-    const response = await axios.post<Favorite>(
-      `${BACKEND_BASE_URL}/favorite/add`,
-      {
-        platform: "mobile",
-        userid: userId,
-        itemid: itemId,
-      }
-    );
-
-    return {
-      status: response.status,
-      favorite: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      favorite: null,
-    };
-  }
-}
-
-export async function removeFavorite(userId: number, itemId: number) {
-  try {
-    const response = await axios.post(`${BACKEND_BASE_URL}/favorite/delete`, {
-      platform: "mobile",
-      userid: userId,
-      itemid: itemId,
-    });
-
-    return {
-      status: response.status,
-      message: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      message: "Could not delete Favorite",
-    };
-  }
-}
-
-export async function addAddress(
-  userId: number,
-  addressLine1: string,
-  addressLine2: string,
-  city: string
-) {
-  const response = await axios.post<Address>(
-    `${BACKEND_BASE_URL}/address/add`,
-    {
-      platform: "mobile",
-      userid: userId,
-      city,
-      line1: addressLine1,
-      line2: addressLine2,
-    }
-  );
   return {
-    status: response.status,
-    address: response.data,
+    status: 200,
+    categories: dummyCategories,
   };
 }
 
-export async function getAllAddresses(userId: number) {
-  try {
-    const response = await axios.get<Address[]>(
-      `${BACKEND_BASE_URL}/address/user/${userId}`
-    );
-
-    return {
-      status: response.status,
-      addresses: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      addresses: null,
-    };
-  }
+export async function getAllSlides() {
+  return {
+    status: 200,
+    slides: dummySlides,
+  };
 }
 
-export async function deleteAddress(addressId: number) {
-  try {
-    const response = await axios.post(`${BACKEND_BASE_URL}/address/delete`, {
-      platform: "mobile",
-      id: addressId,
-    });
-
-    return {
-      status: response.status,
-      message: response.data?.message,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      message: "Failed to delete address",
-    };
-  }
+export async function getItemsByCategory(categoryId: number) {
+  const items = dummyItems.filter((item) => item.category_id === categoryId);
+  return {
+    status: 200,
+    items,
+  };
 }
 
-export async function updateAddress(
-  addressId: number,
-  addressLine1: string,
-  addressLine2: string,
-  city: string
-) {
-  try {
-    const response = await axios.post<Address>(
-      `${BACKEND_BASE_URL}/address/update`,
+export async function getAllBranches() {
+  return {
+    status: 200,
+    branches: dummyBranches,
+  };
+}
+
+export async function getItemsByTag(query: string) {
+  const items = dummyItems.filter(
+    (item) =>
+      item.name.toLowerCase().includes(query.toLowerCase()) ||
+      (item.description?.toLowerCase() || '').includes(query.toLowerCase())
+  );
+  return {
+    status: 200,
+    items,
+  };
+}
+
+export async function getItemById(id: number) {
+  const item = dummyItems.find((item) => item.id === id);
+  return {
+    status: item ? 200 : 404,
+    item: item || null,
+  };
+}
+
+export async function getAllFavorites(userId: number) {
+  const favorites = dummyFavorites.filter((fav) => fav.userid === userId);
+  return {
+    status: 200,
+    favorites,
+  };
+}
+
+export async function addFavorite(userId: number, itemId: number) {
+  const newFavorite: Favorite = {
+    id: dummyFavorites.length + 1,
+    userid: userId,
+    itemid: itemId,
+  };
+  dummyFavorites.push(newFavorite);
+  return {
+    status: 200,
+    favorite: newFavorite,
+  };
+}
+
+export async function removeFavorite(userId: number, itemId: number) {
+  const index = dummyFavorites.findIndex(
+    (fav) => fav.userid === userId && fav.itemid === itemId
+  );
+  if (index !== -1) {
+    dummyFavorites.splice(index, 1);
+  }
+  return {
+    status: 200,
+    message: "Favorite removed successfully",
+  };
+}
+
+export async function addAddress() {
+  return {
+    status: 200,
+    address: {
+      id: 1,
+      userid: 1,
+      city: "Demo City",
+      line1: "123 Street",
+      line2: "Apt 4",
+      status: "1",
+    },
+  };
+}
+
+export async function getAllAddresses() {
+  return {
+    status: 200,
+    addresses: [
       {
-        platform: "mobile",
-        id: addressId,
-        city,
-        line1: addressLine1,
-        line2: addressLine2,
-      }
-    );
-    return {
-      status: response.status,
-      address: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      address: null,
-    };
-  }
+        id: 1,
+        userid: 1,
+        city: "Demo City",
+        line1: "123 Street",
+        line2: "Apt 4",
+        status: "1",
+      },
+    ],
+  };
+}
+
+export async function deleteAddress() {
+  return {
+    status: 200,
+    message: "Address deleted successfully",
+  };
+}
+
+export async function updateAddress() {
+  return {
+    status: 200,
+    address: {
+      id: 1,
+      userid: 1,
+      city: "Updated City",
+      line1: "Updated Street",
+      line2: "Updated Apt",
+      status: "1",
+    },
+  };
 }
 
 export async function getTax() {
-  try {
-    const response = await axios.get<{ tax: string }>(
-      `${BACKEND_BASE_URL}/company/tax`
-    );
-
-    return {
-      status: response.status,
-      tax: response.data.tax,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      tax: "0",
-    };
-  }
+  return {
+    status: 200,
+    tax: "10",
+  };
 }
 
-export async function validateCoupon(promoCode: string, userId: number) {
-  try {
-    const response = await axios.post<CouponValidation>(
-      `${BACKEND_BASE_URL}/coupon/validate-coupon`,
-      {
-        couponCode: promoCode,
-        userid: userId,
-      }
-    );
-
-    return {
-      status: response.status,
-      validation: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      validation: "Failed to apply Coupon",
-    };
-  }
+export async function validateCoupon() {
+  return {
+    status: 200,
+    validation: {
+      isValid: true,
+      message: "Coupon applied successfully",
+      discount: "10%",
+    },
+  };
 }
 
-export async function placeOrder(
-  total: number,
-  tax: string,
-  deliveryCharges: string,
-  comment: string,
-  discount: string,
-  userId: number,
-  couponId?: string | number,
-  addressId?: string,
-  items: CartItem[] = []
-) {
-  try {
-    const response = await axios.post<Order>(
-      `${BACKEND_BASE_URL}/order/place`,
-      {
-        total,
-        addressid: addressId,
-        tax,
-        del: deliveryCharges,
-        comment,
-        discount,
-        couponid: couponId ?? null,
-        userid: userId,
-        platform: "mobile",
-        "itemId[]": items.map((item) => item.id),
-        "itemQty[]": items.map((item) => item.quantity ?? 1),
-        "itemPrice[]": items.map((item) => item.totalPerPriceWithAddOns),
-      }
-    );
-    return {
-      status: response.status,
-      order: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      order: null,
-    };
-  }
+export async function placeOrder() {
+  return {
+    status: 200,
+    order: {
+      id: 1,
+      userid: 1,
+      total: 1000,
+      status: "pending",
+      created_at: new Date().toISOString(),
+    },
+  };
 }
 
-export async function getOrders(
-  userId: number,
-  page: number = 1,
-  limit: number = 10
-) {
-  try {
-    const response = await axios.post<OrderResult>(
-      `${BACKEND_BASE_URL}/order/byUserIdPage`,
-      {
-        userid: userId,
-        page,
-        rowsPerPage: limit,
-      }
-    );
-
-    return {
-      status: response.status,
-      orders: response.data,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      orders: null,
-    };
-  }
+export async function getOrders(userId: number, page: number = 1) {
+  return {
+    status: 200,
+    orders: {
+      ...dummyOrders,
+      orders: dummyOrders.orders.map(order => formatOrderData(order))
+    }
+  };
 }
 
-export async function getOrder(orderId: number) {
-  try {
-    const response = await axios.get<OrderDetails[]>(
-      `${BACKEND_BASE_URL}/order/byOrderId/${orderId}`
-    );
-
-    return {
-      status: response.status,
-      order: response.data[0],
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      order: null,
-    };
-  }
+export async function getOrder() {
+  return {
+    status: 200,
+    order: {
+      id: 1,
+      userid: 1,
+      total: 1000,
+      status: "pending",
+      created_at: new Date().toISOString(),
+      items: dummyItems.slice(0, 2),
+    },
+  };
 }
 
 export async function getSocials() {
-  try {
-    const response = await axios.get<{ success: boolean; links: Social[] }>(
-      `${BACKEND_BASE_URL}/company/social-media`
-    );
-    return {
-      status: response.status,
-      links: response.data?.links,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      links: null,
-    };
-  }
+  return {
+    status: 200,
+    links: dummySocials,
+  };
 }
 
-export async function login(email: string, password: string) {
-  try {
-    const response = await axios.post<{
-      message: string;
-      status: string;
-      isVerified: boolean;
-      user?: any;
-    }>(
-      `${BACKEND_BASE_URL}/auth/login`,
-      {
-        email,
-        password,
-        platform: "web",
-      },
-      {
-        withCredentials: true,
-      }
-    );
-
-    return {
-      status: response.status,
-      user: response.data,
-      loginDetails: response.data.user,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      user: null,
-    };
-  }
+export async function login() {
+  return {
+    status: 200,
+    user: dummyUser,
+    loginDetails: dummyUser,
+  };
 }
 
-export async function register(
-  name: string,
-  email: string,
-  password: string,
-  phone: string
-) {
-  try {
-    const response = await axios.post<{
-      message: string;
-      status: string;
-    }>(`${BACKEND_BASE_URL}/auth/register`, {
-      name,
-      email,
-      password,
-      phone,
-      platform: "web",
-    });
-
-    return {
-      status: response.data.status,
-      message: response.data.message,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      message:
-        error instanceof AxiosError
-          ? error.message
-          : "Something went wrong while registering",
-    };
-  }
+export async function register() {
+  return {
+    status: 200,
+    message: "Registration successful",
+  };
 }
 
 export async function logoutAction() {
-  try {
-    const response = await axios.get<{ message: string }>(
-      `${BACKEND_BASE_URL}/logout`,
-      {
-        withCredentials: true,
-      }
-    );
-
-    return {
-      status: true,
-      message: response.data.message,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      user: null,
-    };
-  }
+  return {
+    status: true,
+    message: "Logged out successfully",
+  };
 }
 
 export async function getUser() {
-  try {
-    const response = await axios.get<{
-      status: boolean;
-      user: User;
-    }>(`${BACKEND_BASE_URL}/auth/get-user`, {
-      withCredentials: true,
-    });
-
-    return {
-      status: response.data.status,
-      user: response.data.user,
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      user: null,
-    };
-  }
+  return {
+    status: true,
+    user: dummyUser,
+  };
 }
 
-export async function getUserDetails(userId: number) {
-  try {
-    const response = await axios.get<{
-      status: boolean;
-      error?: string;
-      user?: UserDetails;
-    }>(`${BACKEND_BASE_URL}/auth/profile?userId=${userId}`);
-
-    if (!response.data?.status) {
-      return {
-        status: response.data.status,
-        error: response.data.error,
-      };
-    }
-    console.log(response.data);
-    return {
-      status: response.status,
-      user: response.data.user,
-    };
-  } catch (err) {
-    return {
-      status: 500,
-      error:
-        err instanceof AxiosError
-          ? err.message
-          : "Could not fetch User Details",
-    };
-  }
+export async function getUserDetails() {
+  return {
+    status: 200,
+    user: {
+      ...dummyUser,
+      addresses: [],
+    },
+  };
 }
 
-export async function updateUserDetails(
-  userId: number,
-  name: string,
-  email: string,
-  phone: string
-) {
-  try {
-    const response = await axios.put<{
-      status: boolean;
-      error?: string;
-      user?: UserDetails;
-    }>(
-      `${BACKEND_BASE_URL}/auth/profile`,
-      {
-        userId,
-        name,
-        email,
-        phone,
-      },
-      {
-        withCredentials: true,
-      }
-    );
-
-    if (!response.data?.status) {
-      return {
-        status: response.data.status,
-        error: response.data.error,
-      };
-    }
-
-    return {
-      status: response.status,
-      user: response.data.user,
-    };
-  } catch (err) {
-    return {
-      status: 500,
-      error:
-        err instanceof AxiosError
-          ? err.message
-          : "Could not update User Details",
-    };
-  }
+export async function updateUserDetails() {
+  return {
+    status: 200,
+    user: dummyUser,
+  };
 }

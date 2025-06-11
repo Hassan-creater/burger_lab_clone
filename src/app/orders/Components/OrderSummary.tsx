@@ -1,6 +1,7 @@
 import PaymentOption from "@/app/checkout/components/PaymentOption";
 import InputIndicator from "@/app/product/components/InputIndicator";
 import { cn, formatIntlDate, formatPrice } from "@/lib/utils";
+import { parseOrderItems } from "@/lib/orderUtils";
 import { OrderItem } from "@/models/Order";
 import React from "react";
 
@@ -74,35 +75,33 @@ const OrderSummary = React.forwardRef<HTMLElement, OrderSummaryProps>(
         </section>
         <section className="bg-white rounded-b-lg space-y-2 p-2 px-6 w-full">
           <div className="w-full flex flex-col gap-1 max-h-48 overflow-y-scroll no-scrollbar  py-4 my-0">
-            <h5>Items</h5>
-            {Array.from({ length: 5 }).map((_, index) => (
+            <h5>Items</h5>            {parseOrderItems(order.items).map((item: any, index: number) => (
               <div
                 className="w-full flex flex-col gap-1 bg-transparent rounded-lg p-3"
                 key={index}
               >
                 <div className="flex w-full items-center justify-between text-gray-500 font-medium">
-                  <p className="text-sm">1 x Easypaisa Offer</p>
-                  <p className="text-sm self-end">{formatPrice(495)}</p>
+                  <p className="text-sm">{item.qty} x {item.name}</p>
+                  <p className="text-sm self-end">{formatPrice(parseFloat(item.price) * parseInt(item.qty))}</p>
                 </div>
-                <p className="text-sm bg-neutral-200/60 p-3 text-gray-700 font-normal rounded-lg">
-                  Just Rs.295 for Kruncher + Reg. Fries. Order this deal from
-                  the Easypaisa Mini App and get Rs.200 cashback into your
-                  Easypaisa account.
-                </p>
+                {item.description && (
+                  <p className="text-sm bg-neutral-200/60 p-3 text-gray-700 font-normal rounded-lg">
+                    {item.description}
+                  </p>
+                )}
               </div>
             ))}
           </div>
           <div className="border-t border-t-neutral-200 py-2 mt-0 space-y-1">
             <div className="flex w-full items-center justify-between gap-1">
-              <p className="text-sm text-gray-500 font-normal">SubTotal</p>
-              <p className="text-sm text-gray-500 font-normal">
-                {formatPrice(495)}
+              <p className="text-sm text-gray-500 font-normal">SubTotal</p>              <p className="text-sm text-gray-500 font-normal">
+                {formatPrice(parseFloat(order.total) - parseFloat(order.deliveryCharge || "0") - parseFloat(order.tax || "0") + parseFloat(order.discount || "0"))}
               </p>
             </div>
             <div className="flex w-full items-center justify-between gap-1">
               <p className="text-sm text-gray-500 font-normal">Tax</p>
               <p className="text-sm text-gray-500 font-normal">
-                {formatPrice(0)}
+                {formatPrice(parseFloat(order.tax || "0"))}
               </p>
             </div>
             <div className="flex w-full items-center justify-between gap-1">
@@ -110,7 +109,7 @@ const OrderSummary = React.forwardRef<HTMLElement, OrderSummaryProps>(
                 Delivery Charges
               </p>
               <p className="text-sm text-gray-500 font-normal">
-                {formatPrice(0)}
+                {formatPrice(parseFloat(order.deliveryCharge || "0"))}
               </p>
             </div>
             <div className="flex w-full items-center justify-between gap-1">

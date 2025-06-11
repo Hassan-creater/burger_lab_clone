@@ -40,12 +40,18 @@ export type OrderDetails = {
 };
 
 export type OrderItem = {
+    id: number;
+    userid: number;
     items: string;
     order_created_on: string | null;
     order_completed_on: string | null;
     order_returned_on: string | null;
     order_total: number;
+    total: string;
     status: string;
+    deliveryCharge: string;
+    tax: string;
+    discount: string;
 }
 
 export type OrderResult = {

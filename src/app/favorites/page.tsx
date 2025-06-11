@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { getAllFavorites } from "@/functions";
 import Link from "next/link";
 import FavoriteItemContainer from "./components/FavoriteItemContainer";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import ServiceError from "@/components/ServiceError";
 import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
-import { cookies } from "next/headers";
+import { dummyFavorites } from "@/lib/dummyData";
 
 type FavoritesProps = {};
 
@@ -17,19 +16,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Favorites({}: FavoritesProps) {
-  const cookieStore = await cookies();
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/get-user`,
-    {
-      credentials: "include",
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-    }
-  );
-  const resData = await res.json();
-
-  const data = await getAllFavorites(resData?.user?.userId);
+  // Using dummy data instead
+  const data = {
+    status: 200,
+    favorites: dummyFavorites,
+  };
 
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">
@@ -39,13 +30,12 @@ export default async function Favorites({}: FavoritesProps) {
       {data.favorites && data.favorites.length > 0 ? (
         <section className="flex flex-wrap gap-4">
           {data.favorites.map((favorite) => (
-            (<Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
+            <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
               <FavoriteItemContainer
                 itemId={favorite.itemid}
                 favorites={data.favorites}
               />
-            </Suspense>)
-            // <ProductCardSkeleton key={favorite.id} />
+            </Suspense>
           ))}
         </section>
       ) : data.status === 500 ? (

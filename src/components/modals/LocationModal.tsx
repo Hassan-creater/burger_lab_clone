@@ -71,18 +71,20 @@ export default function LocationModal() {
   };
 
   const handleModalOpen = () => {
-    setOpen(() => {
-      if (
-        open &&
-        (!localBranchData.storedValue ||
-          localBranchData.storedValue.length === 0)
-      )
-        return true;
+    // setOpen(() => {
+    //   if (
+    //     open &&
+    //     (!localBranchData.storedValue ||
+    //       localBranchData.storedValue.length === 0)
+    //   )
+    //     return true;
 
-      if (!open) return true;
+    //   if (!open) return true;
 
-      return false;
-    });
+    //   return false;
+    // });
+
+    setOpen(!open);
   };
 
   return (

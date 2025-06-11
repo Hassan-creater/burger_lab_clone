@@ -19,12 +19,20 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import LikeButton from "./LikeButton";
-import DescriptionModal from "./modals/DescriptionModal";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "./ui/dialog";
+import { XIcon } from "lucide-react";  
 import { Button } from "./ui/button";
 import useProductDescription from "@/hooks/useProductDescription";
 import { cartItemKeys } from "@/lib/constants";
 import { Item } from "@/models/Item";
 import { Favorite } from "@/models/Favorites";
+import ProductDescription from "@/app/product/components/ProductDescription";
+import DescriptionModal from "./modals/DescriptionModal";
 
 function ProductCard({
   product,
@@ -49,35 +57,44 @@ function ProductCard({
         className
       )}
     >
-      <Link href={`/product/${product.id}`} className="flex-1">
-        <CardHeader title={product.name} className="relative p-2 max-w-[200px]">
-          <div className="flex items-center w-full justify-center">
-            <Image
-              // src={`${BASE_URL_IMAGES}/${product.image}`}
-              src={"/cards-img2.jpeg"}
-              width={100}
-              height={100}
-              priority
-              alt="product-image"
-              className="rounded-2xl object-fill w-full h-auto"
-            />
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="flex-1 cursor-pointer">
+            <CardHeader title={product.name} className="relative p-2 max-w-[200px]">
+              <div className="flex items-center w-full justify-center">
+                <Image
+                  src={"/cards-img2.jpeg"}
+                  width={100}
+                  height={100}
+                  priority
+                  alt="product-image"
+                  className="rounded-2xl object-fill w-full h-auto"
+                />
+              </div>
+              <LikeButton itemId={product.id} isFav={isFav} setIsFav={setIsFav} />
+            </CardHeader>
+            <CardContent
+              title={product.description ?? ""}
+              className="flex flex-col items-center justify-center py-3 min-h-[88px] px-2"
+            >
+              <h4 className="font-bold text-md text-center min-h-12 flex items-center justify-center">
+                {product.name}
+              </h4>
+              {product.description ? (
+                <p className="text-sm font-normal text-gray-500 text-center">
+                  {textShortener(product.description, 40)}
+                </p>
+              ) : null}
+            </CardContent>
           </div>
-          <LikeButton itemId={product.id} isFav={isFav} setIsFav={setIsFav} />
-        </CardHeader>
-        <CardContent
-          title={product.description ?? ""}
-          className="flex flex-col items-center justify-center py-3 min-h-[88px] px-2"
-        >
-          <h4 className="font-bold text-md text-center min-h-12 flex items-center justify-center">
-            {product.name}
-          </h4>
-          {product.description ? (
-            <p className="text-sm font-normal text-gray-500 text-center">
-              {textShortener(product.description, 40)}
-            </p>
-          ) : null}
-        </CardContent>
-      </Link>
+        </DialogTrigger>
+        <DialogContent className="w-[95%] sm:w-[80%] max-w-full min-h-[80%] h-max sm:h-auto flex flex-col sm:flex-row p-0 gap-0 rounded-3xl border-0">
+          <ProductDescription product={product} favorites={favorites || null} />
+          <DialogClose className="bg-black/80 p-1 rounded-xl text-white right-2 top-2">
+            <XIcon className="w-6 h-6" />
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
       <hr className="bg-categorySeparatorGradient w-[95%] mx-auto h-px my-1 block" />
       <CardFooter
         title="Add to cart"

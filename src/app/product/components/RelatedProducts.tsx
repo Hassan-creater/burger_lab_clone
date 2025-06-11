@@ -1,34 +1,35 @@
 import ProductCard from "@/components/ProductCard";
+import { Favorite } from "@/models/Favorites";
+import { dummyItems } from "@/lib/dummyData";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Favorite } from "@/models/Favorites";
-import { Item } from "@/models/Item";
-import React from "react";
 
-interface RelatedProductsProps {
+type RelatedProductsProps = {
   categoryId: number;
   productId: number;
-  favorites: Favorite[] | null;
-}
+  favorites: Favorite[];
+};
 
-async function RelatedProducts({
+export default async function RelatedProducts({
   categoryId,
   productId,
   favorites,
 }: RelatedProductsProps) {
+  /* Original data fetching code
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/item/getByCategory/${categoryId}`
   );
   const products: Item[] = await response.json();
+  */
 
-  const filteredProducts = products.filter(
-    (product) => product.id !== productId
+  // Using dummy data instead
+  const filteredProducts = dummyItems.filter(
+    (product) => product.category_id === categoryId && product.id !== productId
   );
+
   return (
     <Carousel className="w-full" autoplay={false}>
       <CarouselContent>
@@ -46,17 +47,9 @@ async function RelatedProducts({
             </CarouselItem>
           ))
         ) : (
-          <CarouselItem className="basis-full min-h-[250px] h-full flex items-center justify-center w-full">
-            <p className="text-2xl font-bold text-gray-700">
-              No Related Products
-            </p>
-          </CarouselItem>
+          <div>No related products found</div>
         )}
       </CarouselContent>
-      <CarouselPrevious className="hidden lg:inline-flex bg-[#fabf2c] !rounded-[36px] !w-14 !h-20 text-gray-700 hover:bg-[#fabf2a] disabled:hidden opacity-70" />
-      <CarouselNext className="hidden lg:inline-flex bg-[#fabf2c] !rounded-[36px] !w-14 !h-20 text-gray-700 hover:bg-[#fabf2a] disabled:hidden opacity-70" />
     </Carousel>
   );
 }
-
-export default RelatedProducts;
