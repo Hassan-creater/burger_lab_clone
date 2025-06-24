@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -129,7 +128,7 @@ export default function LocationModal() {
         return "Select Area / Sub Region"
       case "pickup":
         return "Select Branch"
-      case "dinein":
+      case "dine_in":
         return "Select Branch"
       default:
         return "Select Option"
@@ -142,7 +141,7 @@ export default function LocationModal() {
         return "Where should we deliver your order?"
       case "pickup":
         return "Which branch would you like to pick up from?"
-      case "dinein":
+      case "dine_in":
         return "Which outlet would you like to dine-in at?"
       default:
         return "Select your preference"

@@ -1,21 +1,16 @@
 "use client";
 
-import AddressDetails from "@/components/address/AddressDetails";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import useCart, { CartFromLocalStorage } from "@/hooks/useCart";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { LucideMapPin } from "lucide-react";
-import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+
+import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import PaymentOption from "./components/PaymentOption";
 import Cart from "@/components/cart/Cart";
-import { useUserStore } from "@/store/slices/userSlice";
-import { toast } from "sonner";
+
 import { getClientCookie } from "@/lib/getCookie";
 import { useCartContext } from "@/context/context";
-import { apiClient, apiClientCustomer } from "@/lib/api";
+import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -36,22 +31,22 @@ export type OrderDetails = {
 
 function Checkout() {
   const token = getClientCookie('accessToken');
-  const { user } = useUserStore();
+  // const { user } = useUserStore();
 
-  const { items } = useCart();
-  const router = useRouter();
+  // const { items } = useCart();
+  // const router = useRouter();
 
-  const [orderDetails, setOrderDetails] = useState<OrderDetails>(() => ({
-    comment: "",
-    addressid: "",
-    items: items,
-    orderType : "dine_in",
-    total: 0,
-    deliveryCharge: "0",
-    tax: "0",
-    discount: "0",
-    status : "pending"
-  }));
+  // const [orderDetails, setOrderDetails] = useState<OrderDetails>(() => ({
+  //   comment: "",
+  //   addressid: "",
+  //   items: items,
+  //   orderType : "dine_in",
+  //   total: 0,
+  //   deliveryCharge: "0",
+  //   tax: "0",
+  //   discount: "0",
+  //   status : "pending"
+  // }));
 
   // const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
@@ -127,7 +122,7 @@ function Checkout() {
 
     const canCheckout = sessionStorage.getItem("canCheckout");
     if(!canCheckout){
-      router.push("/home");
+      redirect("/home");
     }
   },[])
  

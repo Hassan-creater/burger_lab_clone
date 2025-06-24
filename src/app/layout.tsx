@@ -33,6 +33,7 @@ export default function RootLayout({
           "flex min-h-screen flex-col bg-primaryBg",
           inter.className
         )}
+        suppressHydrationWarning={true}
       >
 
            <LayoutShell>

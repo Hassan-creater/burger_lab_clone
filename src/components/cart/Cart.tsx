@@ -18,17 +18,16 @@ import Link from "next/link";
 import PromoBar from "./PromoBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { OrderDetails } from "@/app/checkout/page";
-import { Order } from "@/models/Order";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2, LucideChevronRightCircle } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
-import { useUserStore } from "@/store/slices/userSlice";
+
 import { apiClient } from "@/lib/api";
-import { loadCartFromStorage } from "@/cartStorage/cartStorage";
+
 
 import Cookies from "js-cookie";
 import { useCartContext } from "@/context/context";
-import { placeOrder } from "@/functions";
+
 import { toast } from "sonner";
 import ShoppingBagIcon from "../icons/cart-shopping";
 
@@ -222,13 +221,10 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
     setIsLoading(false);
   }
     
-    
-  
-   
-  
+
   };
 
-  const canCheckout = sessionStorage.getItem("canCheckout");
+
 
   
 

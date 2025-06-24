@@ -7,12 +7,13 @@ import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/app/providers";
 import { CartProvider } from "@/context/context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React from "react";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
  const showHeaderFooter = pathname !== "/login" && pathname !== "/register";
 
- const queryClient = new QueryClient();
+ const [queryClient] = React.useState(() => new QueryClient());
 
 
   return (
