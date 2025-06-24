@@ -2,7 +2,7 @@ import { BookXIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-function notFound() {
+function NotFound() {
   return (
     <div className="w-full flex flex-col items-center gap-5 justify-center my-20">
       <BookXIcon size={150} />
@@ -14,4 +14,4 @@ function notFound() {
   );
 }
 
-export default notFound;
+export default NotFound;
