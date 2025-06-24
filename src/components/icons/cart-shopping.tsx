@@ -7,13 +7,13 @@ interface IconProps {
     className?: string;
 }
 
-const ShoppingCartIcon = ({ width, height, className }: IconProps) => {
+const ShoppingBagIcon = ({ width, height, className }: IconProps) => {
 	return (
 		<Image
-			src="/icons/cart-shopping.svg"
-			alt="shopping-cart-icon"
+			src="/icons/shopping-bag.svg"
+			alt="shopping-bag-icon"
 			className={cn(
-				"cursor-pointer transition-colors hover:opacity-75",
+				"cursor-pointer  transition-colors hover:opacity-75",
 				className
 			)}
 			width={width}
@@ -22,4 +22,4 @@ const ShoppingCartIcon = ({ width, height, className }: IconProps) => {
 	);
 };
 
-export default ShoppingCartIcon;
+export default ShoppingBagIcon;

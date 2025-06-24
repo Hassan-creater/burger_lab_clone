@@ -9,7 +9,9 @@ import { Item } from "@/models/Item";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ServiceError from "@/components/ServiceError";
 import { getAllFavorites, getUser } from "@/functions";
-import { revalidatePath } from "next/cache";
+import { getServerCookie } from "@/app/(site)/page";
+import { redirect } from "next/navigation";
+
 
 export async function generateMetadata(
   props: {
@@ -17,6 +19,10 @@ export async function generateMetadata(
   }
 ): Promise<Metadata> {
   const params = await props.params;
+  const token = await getServerCookie("accessToken");
+  if(!token){
+    redirect("/");
+  }
 
   const {
     productId
@@ -90,7 +96,7 @@ export default async function ProductPage(props: ProductPageProps) {
         </section>
         <div className="w-[90%] mx-auto relative min-h-12">
           <hr className="bg-categorySeparatorGradient absolute inset-0 w-[30%] min-[400px]:w-[34%] md:w-[37%] my-auto h-px block" />
-          <h3 className="text-sm sm:text-lg lg:text-xl font-bold absolute inset-0 w-1/2 mx-auto flex items-center justify-center">{`More in ${product.cat_name}`}</h3>
+          <h3 className="text-sm sm:text-lg lg:text-xl font-bold absolute inset-0 w-1/2 mx-auto flex items-center justify-center">{`More in ${product.categoryName}`}</h3>
           <hr className="bg-categorySeparatorGradient absolute inset-0 w-[30%] min-[400px]:w-[34%] md:w-[37%] my-auto ml-auto h-px block" />
         </div>
         <section className="w-[90%] mx-auto p-4 pt-2 bg-white rounded-lg shadow-md">
@@ -98,7 +104,7 @@ export default async function ProductPage(props: ProductPageProps) {
             fallback={<LoadingSpinner className="w-full min-h-[500px]" />}
           >
             <RelatedProducts
-              categoryId={product.category_id}
+              categoryId={product.categoryId}
               productId={product.id}
               favorites={favorites}
             />

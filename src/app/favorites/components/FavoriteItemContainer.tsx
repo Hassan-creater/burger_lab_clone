@@ -3,7 +3,7 @@ import { Favorite } from "@/models/Favorites";
 import { dummyItems } from "@/lib/dummyData";
 
 type FavoriteItemContainerProps = {
-  itemId: number;
+  itemId: string;
   favorites: Favorite[];
 };
 

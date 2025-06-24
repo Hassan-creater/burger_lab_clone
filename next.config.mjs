@@ -14,6 +14,12 @@ const nextConfig = {
 				port: "3001",
 				pathname: "/**",
 			},
+			{
+				protocol: "https", // Adding the missing hostname
+				hostname: "zestup-8jvc0.kinsta.app",
+				port: "",
+				pathname: "/**",
+			},
 		],
 	},
 	typescript: {

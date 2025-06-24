@@ -1,6 +1,6 @@
 import { CartItem } from "@/types";
-import { StateCreator } from "zustand";
-import { ObserverSlice } from "./observerSlice";
+// import { StateCreator } from "zustand";
+// import { ObserverSlice } from "./observerSlice";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -10,8 +10,8 @@ export interface CartSlice {
 	persisted: boolean;
 	setItems: (items: CartItem[]) => void;
 	addItemToCart: (item: CartItem) => void;
-	updateQuantity: (itemId: number, quantity: number) => void;
-	removeItemFromCart: (itemId: number) => void;
+	updateQuantity: (itemId: string, quantity: number) => void;
+	removeItemFromCart: (itemId: string) => void;
 	clearCart: () => void;
 }
 
@@ -25,14 +25,14 @@ export const useCartStore = create<CartSlice>()(
 			addItemToCart: (item: CartItem) => {
 				set((state) => ({ items: [...state.items, item] }));
 			},
-			updateQuantity: async (itemId: number, quantity: number) => {
+			updateQuantity: async (itemId: string, quantity: number) => {
 				set((state) => ({
 					items: state.items.map((item) =>
 						item.id === itemId ? { ...item, quantity } : item
 					),
 				}));
 			},
-			removeItemFromCart: (itemId: number) => {
+			removeItemFromCart: (itemId: string) => {
 				set((state) => ({
 					items: state.items.filter((item) => item.id !== itemId),
 				}));

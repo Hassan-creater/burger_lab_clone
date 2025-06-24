@@ -20,18 +20,28 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { OrderDetails } from "@/app/checkout/page";
 import { Order } from "@/models/Order";
 import { usePathname, useRouter } from "next/navigation";
-import { LucideChevronRightCircle } from "lucide-react";
+import { Loader2, LucideChevronRightCircle } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { useUserStore } from "@/store/slices/userSlice";
+import { apiClient } from "@/lib/api";
+import { loadCartFromStorage } from "@/cartStorage/cartStorage";
+
+import Cookies from "js-cookie";
+import { useCartContext } from "@/context/context";
+import { placeOrder } from "@/functions";
+import { toast } from "sonner";
+import ShoppingBagIcon from "../icons/cart-shopping";
+
 
 interface CartProps {
   className?: string;
   type: "CHECKOUT" | "CART";
   setOrderDetails?: React.Dispatch<React.SetStateAction<OrderDetails>>;
   addOrder?: any; // Using any for mutation result type for simplicity
+  orderDetails? : any
 }
 
-const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
+const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: CartProps) => {
   const {
     items,
     clearCart,
@@ -63,7 +73,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
   };
 
   const router = useRouter();
-  const { user } = useUserStore();
+
 
   const deliveryCharges = useMemo(
     () => (localBranchData.storedValue?.orderType === "delivery" ? 150 : 0),
@@ -84,9 +94,9 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
     [data?.tax, subTotal]
   );
 
-  const handleCheckout = async () => {
-    addOrder?.mutate();
-  };
+
+
+
 
   useEffect(() => {
     if (addOrder?.data?.order) {
@@ -141,23 +151,104 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
 
   const windowWidth = useWindowSize();
 
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment} = useCartContext();
+  const [isLoading, setIsLoading] = useState(false);
+
+ 
+
+  const userData = Cookies.get("userData");
+
+
+
+  const handlePlaceOrder = async () => {
+    const payload = {
+      status: "pending",
+      orderType: AddressData?.orderType,
+      ...(defaultAddress && {addressId: defaultAddress}),  
+      ...(deliveryAddress && {deliveryAddress: deliveryAddress}),
+      ...(deliveryName && {deliveryName: deliveryName}),
+      ...(deliveryPhone && {deliveryPhone: deliveryPhone}),
+      ...(comment && {comment: comment}),
+      items: AddedInCart.map((item) => ({
+        variantId: item.variantId,
+        quantity: item.quantity,
+    
+        // only include addons if present
+        ...(item.addons?.length
+          ? { addons: item.addons.map(addon => ({ id: addon.id, quantity: addon.quantity })) }
+          : {}),
+    
+        // only include extras if present
+        ...(item.extras?.length
+          ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
+          : {}),
+      })),
+    };
+    
+    
+    
+  if(AddressData?.orderType != "delivery"  && AddressData?.orderType ){
+    setIsLoading(true);
+    const res = await apiClient.post("/order/add",payload);
+    if(res.status === 201){
+      ClearCart();
+      toast.success("Order placed successfully");
+      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+      existingOrders.push(res.data.data.orderId);
+      localStorage.setItem("orders", JSON.stringify(existingOrders));
+      localStorage.removeItem("orderType")
+      sessionStorage.clear();
+      router.push("/order-complete/" + res.data.data.orderId);
+      setIsLoading(false);
+    }
+
+  }else if(AddressData?.orderType == "delivery"  && deliveryAddress && deliveryName && deliveryPhone && AddressData?.orderType){
+    setIsLoading(true);
+    const res = await apiClient.post("/order/add",payload);
+    if(res.status === 201){
+      ClearCart();
+      toast.success("Order placed successfully");
+      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+      existingOrders.push(res.data.data.orderId);
+      localStorage.setItem("orders", JSON.stringify(existingOrders));
+      localStorage.removeItem("orderType")
+      sessionStorage.clear();
+      router.push("/order-complete/" + res.data.data.orderId);
+      setIsLoading(false);
+    }
+  } 
+  else{
+    toast.error("Please select required fields");
+    setIsLoading(false);
+  }
+    
+    
+  
+   
+  
+  };
+
+  const canCheckout = sessionStorage.getItem("canCheckout");
+
+  
+
   if (type === "CART") {
     return (
       <Sheet open={isCartOpen} onOpenChange={() => setIsCartOpen(!isCartOpen)}>
         <SheetTrigger asChild>
-          {windowWidth >= 768 ? (
+          {windowWidth >= 200 ? (
             <Button
               className={cn(
-                "flex items-center gap-2 h-full relative hover:bg-inherit",
+                "flex items-center  gap-2 h-full relative hover:bg-inherit",
                 className
               )}
               size="icon"
               variant="ghost"
             >
-              <span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute -top-2 right-3 z-30 text-xs flex items-center justify-center">
-                {cartItemsQuantity}
+              <span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute -top-0 right-3 z-30 text-xs flex items-center justify-center">
+                {AddedInCart.length}
               </span>
-              <ShoppingCartIcon width={26} height={26} />
+              <ShoppingBagIcon width={26} height={26} />
               <CaretDown width={7} height={7} />
             </Button>
           ) : (
@@ -190,42 +281,42 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
             <SheetTitle className="font-bold text-md">Your Cart</SheetTitle>
             <Button
               variant="link"
-              onClick={clearCart}
+              onClick={()=>{ClearCart()}}
               className="text-[#fabf2c] !p-2 underline font-bold text-md"
             >
               Clear Cart
             </Button>
           </SheetHeader>
-          {!loading && items.length > 0 ? (
+          {AddedInCart.length > 0 ? (
             <>
-              <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll">
-                {items.map((cartItem) => (
+              <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll pb-[2em] ">
+                {AddedInCart?.map((cartItem : any) => (
                   <CartItem
-                    key={cartItem.id}
+                    key={cartItem.variantId}
                     cartItem={cartItem}
                     removeItem={removeItemFromCart}
                   />
                 ))}
               </div>
-              <SheetFooter className="flex flex-col w-[93%] gap-2 absolute bottom-3 z-50">
+              <SheetFooter className="flex bg-white flex-col w-[93%] gap-2 absolute bottom-3 z-50">
                 <hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className="font-normal text-sm">Subtotal</p>
                   <p className="font-normal text-gray-500 text-sm">
-                    {formatPrice(subTotal)}
+                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
                   </p>
                 </div>
-                <PromoBar
+                {/* <PromoBar
                   discount={discount}
                   setDiscount={setDiscount}
                   setOrderDetails={setOrderDetails}
-                />
+                /> */}
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className="font-normal text-sm">
                     Tax ({parseInt(data?.tax ?? "0") + "%"})
                   </p>
                   <p className="font-normal text-gray-500 text-sm">
-                    {formatPrice(taxAmount)}
+                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
                   </p>
                 </div>
                 <div className="flex items-center justify-between w-full h-auto">
@@ -241,15 +332,15 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
                     Grand Total (Incl. Tax)
                   </p>
                   <p className="font-bold text-gray-500 text-lg">
-                    {formatPrice(total)}
+                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
                   </p>
                 </div>
-                {user ? (
+                {userData ? (
                   <Link href="/checkout">
                     <Button
                       variant="outline"
                       title="checkout"
-                      onClick={() => setIsCartOpen(false)}
+                      onClick={() => {setIsCartOpen(false) ; sessionStorage.setItem("canCheckout", "true")}}
                       className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
                     >
                       Checkout
@@ -289,11 +380,11 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
     return (
       <>
         <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-max min-h-[calc(100dvh-290px)]">
-          {items.map((cartItem) => (
+          {  AddedInCart?.map((cartItem : any) => (
             <CartItem
-              key={cartItem.id}
+              key={cartItem.variantId}
               cartItem={cartItem}
-              removeItem={removeItemFromCart}
+              
             />
           ))}
         </div>
@@ -307,7 +398,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
           <div className="flex items-center justify-between w-full h-auto">
             <p className="font-normal text-sm">Subtotal</p>
             <p className="font-normal text-gray-500 text-sm">
-              {formatPrice(subTotal)}
+              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -315,7 +406,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
               Tax ({parseInt(data?.tax ?? "0") + "%"})
             </p>
             <p className="font-normal text-gray-500 text-sm">
-              {formatPrice(taxAmount)}
+              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -323,7 +414,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
               Discount ({parseInt(discount ?? "0") + "%"})
             </p>
             <p className="font-normal text-gray-500 text-sm">
-              - {formatPrice(discountAmount)}
+              - {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(discount ?? "0") / 100), 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -337,17 +428,19 @@ const Cart = ({ type, setOrderDetails, addOrder, className }: CartProps) => {
               Grand Total (Incl. Tax)
             </p>
             <p className="font-bold text-gray-500 text-lg">
-              {formatPrice(total)}
+              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
             </p>
           </div>
           <Button
             variant="outline"
             title="checkout"
-            disabled={items.length === 0 || addOrder?.isPending}
-            onClick={handleCheckout}
+            disabled={AddedInCart.length === 0 || addOrder?.isPending }
+            onClick={handlePlaceOrder}
             className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
           >
-            Place order
+            {
+              isLoading ? <Loader2 className="size-4 animate-spin" /> : "Place order"
+            }
           </Button>
         </section>
       </>

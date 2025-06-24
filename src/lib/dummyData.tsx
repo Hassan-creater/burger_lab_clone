@@ -5,7 +5,10 @@ import { Favorite } from "@/models/Favorites";
 import { Item } from "@/models/Item";
 import { Slides } from "@/models/Slides";
 import { Social } from "@/models/Social";
-import { AddOn, User } from "@/types";
+import { AddOn } from "@/types";
+
+
+
 
 export const dummyCategories: Category[] = [
   {
@@ -66,26 +69,26 @@ const burgerAddOns: AddOn[] = [
 
 export const dummyItems: Item[] = [
   {
-    id: 1,
+    id: "1",
     name: "Classic Burger",
     description: "Juicy beef patty with fresh vegetables",
     price: 499,
     image: "/Special-Pizza.jpg",
-    category_id: 1,
-    status: 1,
-    cat_name: "Burgers",
+    categoryId: "",
+    status: "acitve",
+    categoryName: "Burgers",
     tags: "burger,beef,classic",
     addOns: burgerAddOns
   },
   {
-    id: 2,
+    id: "2",
     name: "Margherita Pizza",
     description: "Classic Italian pizza with tomato and mozzarella",
     price: 899,
     image: "/Special-Pizza.jpg", 
-    category_id: 2,
-    status: 1,
-    cat_name: "Pizzas",
+    categoryId: "2",
+    status: "active",
+    categoryName: "Pizzas",
     tags: "pizza,margherita,vegetarian",
     addOns: [
       {
@@ -100,33 +103,33 @@ export const dummyItems: Item[] = [
     ]
   },
   {
-    id: 3,
+    id: "3",
     name: "Cola",
     description: "Refreshing cola drink",
     price: 100,
     image: "/Special-Pizza.jpg",
-    category_id: 3,
-    status: 1,
-    cat_name: "Drinks",
+    categoryId: "3",
+    status: "actie",
+    categoryName: "Drinks",
     tags: "drinks,cola,cold"
   }
 ];
 
 export const dummyFavorites: Favorite[] = [
   {
-    id: 1,
-    userid: 1,
-    itemid: 1
+    id: "1",
+    userid: "1",
+    itemid: "1"
   },
   {
-    id: 2,
-    userid: 1,
-    itemid: 2
+    id: "2",
+    userid: "1",
+    itemid: "3"
   }
 ];
 
 export const dummyUser = {
-  userId: 1,
+  userId: "2",
   name: "Demo User",
   email: "demo@example.com",
   phone: "1234567890",

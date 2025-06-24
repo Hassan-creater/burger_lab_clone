@@ -20,7 +20,7 @@ export default function ImageModal({ imageSrc, imageAlt }: ImageModalProps) {
         <DialogTrigger asChild>
           <Image
             // src={`${BASE_URL_IMAGES}/${imageSrc}`}
-            src={"/cards-img2.jpeg"}
+            src={imageSrc}
             alt={imageAlt}
             width={500}
             height={500}

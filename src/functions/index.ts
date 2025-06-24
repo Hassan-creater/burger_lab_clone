@@ -37,8 +37,8 @@ export async function getAllSlides() {
   };
 }
 
-export async function getItemsByCategory(categoryId: number) {
-  const items = dummyItems.filter((item) => item.category_id === categoryId);
+export async function getItemsByCategory(categoryId: string) {
+  const items = dummyItems.filter((item) => item.categoryId === categoryId);
   return {
     status: 200,
     items,
@@ -64,7 +64,7 @@ export async function getItemsByTag(query: string) {
   };
 }
 
-export async function getItemById(id: number) {
+export async function getItemById(id: string) {
   const item = dummyItems.find((item) => item.id === id);
   return {
     status: item ? 200 : 404,
@@ -72,7 +72,7 @@ export async function getItemById(id: number) {
   };
 }
 
-export async function getAllFavorites(userId: number) {
+export async function getAllFavorites(userId: string) {
   const favorites = dummyFavorites.filter((fav) => fav.userid === userId);
   return {
     status: 200,
@@ -80,9 +80,9 @@ export async function getAllFavorites(userId: number) {
   };
 }
 
-export async function addFavorite(userId: number, itemId: number) {
+export async function addFavorite(userId: string, itemId: string) {
   const newFavorite: Favorite = {
-    id: dummyFavorites.length + 1,
+    id: "1",
     userid: userId,
     itemid: itemId,
   };
@@ -93,7 +93,7 @@ export async function addFavorite(userId: number, itemId: number) {
   };
 }
 
-export async function removeFavorite(userId: number, itemId: number) {
+export async function removeFavorite(userId: string, itemId: string) {
   const index = dummyFavorites.findIndex(
     (fav) => fav.userid === userId && fav.itemid === itemId
   );
@@ -188,7 +188,7 @@ export async function placeOrder() {
   };
 }
 
-export async function getOrders(userId: number, page: number = 1) {
+export async function getOrders(userId: string, page: number = 1) {
   return {
     status: 200,
     orders: {

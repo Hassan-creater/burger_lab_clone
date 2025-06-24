@@ -11,6 +11,10 @@ import { OrderDetails } from "@/app/checkout/page";
 import LoadingSpinner from "../LoadingSpinner";
 import ServiceError from "../ServiceError";
 import { useUserStore } from "@/store/slices/userSlice";
+import { useCartContext } from "@/context/context";
+import AddressForm from "@/app/addresses/compoenent/AddressForm";
+import { apiClient } from "@/lib/api";
+import Cookies from "js-cookie";
 
 type AddressDetailsProps = {
   className?: string;
@@ -25,11 +29,25 @@ export default function AddressDetails({
   setOrderDetails,
   className,
 }: AddressDetailsProps) {
-  const { user } = useUserStore();
-  const { data, refetch, status } = useQuery({
-    queryKey: ["addresses", user?.userId],
-    queryFn: () => getAllAddresses(user?.userId!),
+  
+
+  const Data = Cookies.get("userData");
+  const parsedData = Data ? JSON.parse(Data) : null;
+  const userid = parsedData?.id;
+  const {setNewAddress , newAddress} = useCartContext();
+
+
+  const getAddresses = async ()=>{
+    const res = await apiClient.get(`/address/user/${userid}`);
+    return res.data;
+  }
+
+  const { data , status } = useQuery({
+    queryKey: ["addresses", userid],
+    queryFn: getAddresses,
   });
+ 
+  const Addresses = data?.data;
 
   if (status === "pending")
     return (
@@ -42,25 +60,37 @@ export default function AddressDetails({
     return <ServiceError />;
   }
 
+
+
+
   return (
-    <>
-      <div className="flex items-center justify-between">
+    <div className="w-full h-full ">
+      { 
+        newAddress && (
+      <div className="absolute w-full h-screen bg-black/50 z-10">
+        <AddressForm />
+      </div>
+
+      )}
+     
+      <div className="flex items-center justify-between ">
         <h2 className="text-sm min-[500px]:text-lg font-semibold text-gray-800">
           My Addresses
         </h2>
-        <AddressModal type="ADD" refetch={refetch}>
+    
           <Button
             className="text-primaryOrange space-x-1 hover:text-primaryOrange"
             variant="ghost"
-          >
+            onClick={()=>{setNewAddress(true)}}
+           >
             <LucidePlus className="size-4 min-[500px]:size-6" />
             <p className="text-sm min-[500px]:text-lg font-medium">
               Add new address
             </p>
           </Button>
-        </AddressModal>
+      
       </div>
-      {!data?.addresses || data?.addresses.length === 0 ? (
+      {!Addresses || Addresses.length === 0 ? (
         <div className="min-h-72 flex items-center justify-center w-full font-normal text-lg text-gray-800 text-center">
           You don&apos;t have a stored address.
         </div>
@@ -71,16 +101,14 @@ export default function AddressDetails({
             className
           )}
         >
-          {data?.addresses.map((address) => (
+          {Addresses?.map((address : any) => (
             <AddressCard
               key={address.id}
-              setOrderDetails={setOrderDetails}
               address={address}
-              refetch={refetch}
             />
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }

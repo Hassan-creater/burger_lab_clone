@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 interface QuantityCounterProps {
   quantity: number;
-  itemId: number;
+  itemId: string; // Fixed type
   className?: string;
   buttonClassName?: string;
   stateQuantity?: number;
@@ -34,7 +34,7 @@ function QuantityCounter({
     const itemToUpdate = items.find((item) => item.id === itemId);
 
     if (itemToUpdate) {
-      setStateQuantity && setStateQuantity(itemToUpdate.quantity ?? 1);
+      setStateQuantity?.(itemToUpdate.quantity ?? 1);
     }
   }, [items, itemId, setStateQuantity]);
 
@@ -43,7 +43,7 @@ function QuantityCounter({
       if (!stateQuantity) {
         updateQuantity(itemId, quantity + 1);
       } else {
-        setStateQuantity && setStateQuantity((stateQuant) => stateQuant + 1);
+        setStateQuantity?.((prev) => prev + 1);
       }
     }
 
@@ -55,21 +55,40 @@ function QuantityCounter({
           updateQuantity(itemId, quantity - 1);
         }
       } else {
-        setStateQuantity && setStateQuantity((stateQuant) => stateQuant - 1);
+        setStateQuantity?.((prev) => {
+          const newQuantity = prev - 1;
+          if (newQuantity < 1) {
+            removeItemFromCart(itemId);
+            return 1;
+          }
+          return newQuantity;
+        });
       }
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    stateQuantity &&
-      setStateQuantity!(() => {
-        if (Number.isNaN(parseInt(e.target.value))) return 1;
-
-        if (parseInt(e.target.value) > 999) return 999;
-
-        return parseInt(e.target.value);
-      });
+    if (!setStateQuantity) return;
+    
+    const newValue = parseInt(e.target.value);
+    
+    if (isNaN(newValue)) {
+      setStateQuantity(1);
+      return;
+    }
+    
+    const clampedValue = Math.min(Math.max(newValue, 1), 999);
+    
+    setStateQuantity(clampedValue);
+    
+    // Sync with cart if not using local state
+    if (!stateQuantity) {
+      updateQuantity(itemId, clampedValue);
+    }
   };
+
+  // Determine the display quantity
+  const displayQuantity = stateQuantity !== undefined ? stateQuantity : quantity;
 
   return (
     <div className={cn("flex flex-1 gap-2 items-center h-full", className)}>
@@ -77,7 +96,7 @@ function QuantityCounter({
         variant="ghost"
         onClick={() => handleQuantityChange("DECREASE")}
         title="remove"
-        disabled={stateQuantity && stateQuantity === 1 ? true : false}
+        disabled={displayQuantity === 1}
         className={cn(
           "p-2 w-7 h-7 bg-[#fabf2c] transition-colors rounded-full text-xl text-black hover:ring-2 hover:ring-[#fabf2c]",
           buttonClassName
@@ -85,19 +104,26 @@ function QuantityCounter({
       >
         -
       </Button>
+      
       <Input
         type="number"
-        value={!stateQuantity ? quantity : stateQuantity}
+        value={displayQuantity}
         min={1}
         max={999}
         onChange={handleInputChange}
-        className="w-12 h-auto text-center p-1 focus-visible:ring-0 focus-visible:ring-[#fabf2c]  focus-visible:ring-offset-0"
+        onBlur={() => {
+          if (setStateQuantity && stateQuantity !== undefined) {
+            updateQuantity(itemId, stateQuantity);
+          }
+        }}
+        className="w-12 h-auto text-center p-1 focus-visible:ring-0 focus-visible:ring-[#fabf2c] focus-visible:ring-offset-0"
       />
+      
       <Button
         variant="ghost"
         onClick={() => handleQuantityChange("INCREASE")}
         title="add"
-        disabled={stateQuantity && stateQuantity >= 999 ? true : false}
+        disabled={displayQuantity >= 999}
         className={cn(
           "p-2 w-7 h-7 bg-[#fabf2c] transition-colors rounded-full text-xl text-black hover:ring-2 hover:ring-[#fabf2c]",
           buttonClassName

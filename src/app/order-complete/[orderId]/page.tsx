@@ -5,8 +5,15 @@ import OrderSummary from "@/app/orders/Components/OrderSummary";
 import Link from "next/link";
 import LoadingFlash from "@/components/LoadingFlash";
 import {OrderItem} from "@/models/Order";
+import { getServerCookie } from "@/app/(site)/page";
+import { redirect } from "next/navigation";
 
 async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
+
+  const token = await getServerCookie("accessToken");
+  if(!token){
+    redirect("/");
+  }
   const params = await props.params;
   if (!params.orderId) {
     return (
@@ -21,7 +28,8 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
     );
   }
 
-  const orderDetails = await getOrder(parseInt(params.orderId));
+  const orderDetails = await getOrder();
+  // parseInt(params.orderId)
 
   console.log(orderDetails);
 

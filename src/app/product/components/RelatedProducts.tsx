@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/carousel";
 
 type RelatedProductsProps = {
-  categoryId: number;
-  productId: number;
+  categoryId: string;
+  productId: string;
   favorites: Favorite[];
 };
 
@@ -27,7 +27,7 @@ export default async function RelatedProducts({
 
   // Using dummy data instead
   const filteredProducts = dummyItems.filter(
-    (product) => product.category_id === categoryId && product.id !== productId
+    (product) => product.categoryId === categoryId && product.id !== productId
   );
 
   return (

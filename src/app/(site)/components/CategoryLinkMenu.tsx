@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 import { useObserverStore } from "@/store/slices/observerSlice";
 import { Category } from "@/models/Category";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { apiClient } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+
 
 function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const { activeSectionId, isBannerVisible } = useObserverStore();
@@ -31,12 +34,27 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
     }
   }, [activeSectionId]);
 
+  const Categories = async ()=>{
+    const res = await apiClient.get("/category/view/customer");
+
+    return res.data
+  }
+
+  const {data}= useQuery({
+    queryKey : ['categories'],
+    queryFn : Categories
+  })
+
+  const CatData = data?.data?.categories;
+
+
+
   const windowWidth = useWindowSize();
 
   return (
     <nav
       className={cn(
-        "sticky top-20 bg-inherit z-20 flex items-center h-[4.5rem] w-full lg:max-w-[88%] overflow-hidden !focus-visible:outline-0 transition-all duration-500",
+        "sticky top-20 bg-inherit z-20  flex items-center h-[4.5rem] w-full lg:max-w-[88%] overflow-hidden !focus-visible:outline-0 transition-all duration-500",
         isBannerVisible
           ? "lg:h-max"
           : "lg:h-20 border-b-2 border-b-slate-500 border-opacity-50 bg-slate-100 "
@@ -56,7 +74,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
               )}
             >
               {categories &&
-                categories.map((category, index) => (
+                categories.map((category : any, index : number) => (
                   <li
                     key={category.title}
                     ref={
@@ -100,7 +118,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
       ) : (
         <ul className="flex-1 my-10 flex w-[80%] px-10 flex-wrap gap-3 items-center justify-center h-full">
           {categories &&
-            categories.map((category, index) => (
+            categories.map((category : any, index : number) => (
               <li
                 key={category.title}
                 ref={

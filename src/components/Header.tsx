@@ -6,31 +6,48 @@ import Link from "next/link";
 import Cart from "./cart/Cart";
 import ProfileDropdown from "./ProfileDropdown";
 import { usePathname } from "next/navigation";
-import AuthModal from "./modals/AuthModal";
-import { useEffect, useMemo } from "react";
+// import AuthModal from "./modals/AuthModal";
+import { useEffect, useMemo, useState } from "react";
 import { useUserStore } from "@/store/slices/userSlice";
 import { dummyUser } from "@/lib/dummyData";
 import { User } from "@/types";
+import { getClientCookie } from "@/lib/getCookie";
+import Cookies from "js-cookie";
+import { Button } from "./ui/button";
+
+
 
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
 });
 
 const Header = () => {
-  const { user, updateUser } = useUserStore();
+  // const { user, updateUser } = useUserStore();
+
+
+
+  const token = getClientCookie("accessToken");
+  const storedUser =  Cookies.get("userData");
+
+  
+   if(storedUser)
+    var parsedUser = JSON.parse(storedUser);
+
+
+
 
   // Using dummy data instead
-  const mockUser = useMemo<User>(
-    () => ({
-      ...dummyUser,
-      role: "user", // Adding required role field
-    }),
-    []
-  );
+  // const mockUser = useMemo<User>(
+  //   () => ({
+  //     ...dummyUser,
+  //     role: "user", // Adding required role field
+  //   }),
+  //   []
+  // );
 
-  useEffect(() => {
-    updateUser(mockUser);
-  }, [mockUser, updateUser]);
+  // useEffect(() => {
+  //   updateUser(mockUser);
+  // }, [mockUser, updateUser]);
 
   const pathname = usePathname();
 
@@ -54,12 +71,12 @@ const Header = () => {
         </Link>
         <div className="flex flex-row flex-1 gap-1 sm:gap-3 items-center w-full h-full justify-end pl-2 pr-2">
           {pathname !== "/checkout" && pathname !== "/order-complete" && (
-            <Cart type="CART" className="hidden min-[400px]:block" />
+            <Cart type="CART" className="block min-[400px]:block" />
           )}
-          {user ? (
-            <ProfileDropdown user={user.name} />
+          {token ? (
+            <ProfileDropdown user={`${parsedUser.firstName} ${parsedUser.lastName}`} />
           ) : (
-            <AuthModal />
+           <Link href="/login"><Button className="bg-orange-500 cursor-pointer hover:bg-transparent hover:text-orange-500 duration-300 text-white">Login</Button></Link>
           )}
         </div>
       </nav>

@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import ServiceError from "@/components/ServiceError";
 import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 import { dummyFavorites } from "@/lib/dummyData";
+import { getServerCookie } from "../(site)/page";
+import { redirect } from "next/navigation";
 
 type FavoritesProps = {};
 
@@ -17,10 +19,16 @@ export const dynamic = "force-dynamic";
 
 export default async function Favorites({}: FavoritesProps) {
   // Using dummy data instead
+
+  const token = await getServerCookie("accessToken");
   const data = {
     status: 200,
     favorites: dummyFavorites,
   };
+
+  if(!token){
+    redirect("/");
+  }
 
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">

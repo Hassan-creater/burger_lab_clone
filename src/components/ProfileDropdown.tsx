@@ -16,6 +16,9 @@ import Link from "next/link";
 import { ChevronDown, LogOut, Menu } from "lucide-react";
 import { logoutAction } from "@/functions";
 import { useUserStore } from "@/store/slices/userSlice";
+import { apiClient } from "@/lib/api";
+import Cookies from "js-cookie";
+import { redirect } from "next/navigation";
 
 type ProfileDropdownProps = {
   user: string;
@@ -25,9 +28,14 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
   const { updateUser } = useUserStore();
 
   const logout = async () => {
-    await logoutAction();
-    updateUser(null);
-    location.href = "/";
+     const res = await apiClient.get("/auth/logout");
+     
+     if(res.status == 204){
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("userData" , {path : "/"});
+        window.location.reload();
+     }
+
   };
 
   return (

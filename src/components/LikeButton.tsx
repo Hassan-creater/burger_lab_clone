@@ -13,7 +13,7 @@ import { useUserStore } from "@/store/slices/userSlice";
 
 interface LikeButtonProps {
   className?: string;
-  itemId: number;
+  itemId: string;
   isFav: boolean;
   setIsFav: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -36,7 +36,7 @@ function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
 
   const removeFav = useMutation({
     mutationFn: () => removeFavorite(user?.userId!, itemId),
-    onSuccess(data) {
+    onSuccess(data : any) {
       router.refresh();
       toast.success(data.message?.message, {
         style: { backgroundColor: "green", color: "white" },

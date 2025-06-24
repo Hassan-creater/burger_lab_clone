@@ -12,8 +12,8 @@ export function textShortener(text: string, charactersLimit: number) {
 		: text;
 }
 
-export function formatPrice(price: number) {
-	return `Rs. ${price.toFixed(2)}`;
+export function formatPrice(price?: number) {
+	return `Rs. ${price?.toFixed(2)}`;
 }
 
 export function removePropFromObject<T>(keysToInclude: string[], objectToRemovePropsFrom: Record<string, any>): T {

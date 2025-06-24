@@ -15,7 +15,7 @@ export type AddOn = {
 
 export type CartItem = {
   image: string;
-  id: number;
+  id: string;
   name: string;
   description?: string;
   quantity?: number;
@@ -41,7 +41,7 @@ export type CartState = {
 
 export type TabsListType = {
   name: "DELIVERY" | "PICK-UP" | "DINE-IN";
-  value: "delivery" | "pickUp" | "dineIn";
+  value: "delivery" | "pickUp" | "dine_in";
 };
 
 export type SearchResults = {
@@ -49,7 +49,7 @@ export type SearchResults = {
 };
 
 export type User = {
-  userId: number;
+  userId: string;
   email: string;
   role: any;
   name: string;

@@ -213,6 +213,6 @@ export const deliveryModalTabList: TabsListType[] = [
 	},
 	{
 		name: 'DINE-IN',
-		value: 'dineIn',
+		value: 'dine_in',
 	}
 ]

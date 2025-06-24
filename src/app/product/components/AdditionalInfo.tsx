@@ -14,7 +14,7 @@ import useCart from "@/hooks/useCart";
 type AdditionalInfoProps = {
   extraOptions: AddOn[];
   setExtraOptions: React.Dispatch<React.SetStateAction<AddOn[]>>;
-  productId: number;
+  productId: string;
 };
 
 function AdditionalInfo({

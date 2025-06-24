@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Providers from "./providers";
 import Script from "next/script";
 import React from "react";
+import LayoutShell from "./layoutShell";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+  
   return (
     <html lang="en">
       <Script src={process.env.FONT_AWESOME_SCRIPT} crossOrigin="anonymous" />
@@ -30,13 +34,11 @@ export default function RootLayout({
           inter.className
         )}
       >
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster position="bottom-left" />
-        </Providers>
-      </body>
+
+           <LayoutShell>
+            {children}
+           </LayoutShell>
+        </body>
     </html>
   );
 }

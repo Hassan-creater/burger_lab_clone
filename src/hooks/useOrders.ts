@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useSearchParam } from "./useSearchParam";
 import { getOrders } from "@/functions";
 
-export const useOrders = (userId: number) => {
+export const useOrders = (userId: string) => {
   const [page, setPage] = useSearchParam("page");
 
   useEffect(() => {

@@ -5,81 +5,318 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { XIcon } from "lucide-react";
+import { Badge, Calendar, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
-import { OrderItem } from "@/models/Order";
+
 import { formatPrice } from "@/lib/utils";
 import { parseOrderItems } from "@/lib/orderUtils";
+import { Card, CardContent } from "../ui/card";
+import { Separator } from "@radix-ui/react-select";
 
 type OrderDetailsModalProps = {
-  order: OrderItem;
+  order: any;
   //TODO TEMPORARY
   index: number;
 };
 
+interface OrderItem {
+  id: string
+  price: number
+  createdAt: string
+  updatedAt: string
+  variant: {
+    addons: any[]
+    extras: any[]
+    name: string
+    price: number
+  }
+}
+
+interface Order {
+  id: string
+  displayId: number
+  status: string
+  total: number
+  type: string
+  createdAt: string
+  completedOn: string | null
+  deliveryAddress: string | null
+  deliveryName: string | null
+  deliveryPhone: string | null
+  discount: number | null
+  coupon: string | null
+  items: OrderItem[]
+  itemsCount: number
+  rating: number | null
+  rateComment: string | null
+  user: {
+    firstName: string
+    lastName: string
+    phone: string
+    userId: string
+  }
+  rider: string | null
+  riderId: string | null
+}
+
+
+
+
 function OrderDetailsModal({ order, index }: OrderDetailsModalProps) {
+ console.log(order);
+
+ const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+
+const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case "pending":
+      return "bg-orange-100 text-orange-800 border-orange-200"
+    case "completed":
+      return "bg-green-100 text-green-800 border-green-200"
+    case "cancelled":
+      return "bg-red-100 text-red-800 border-red-200"
+    case "processing":
+      return "bg-blue-100 text-blue-800 border-blue-200"
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-200"
+  }
+}
+  
   return (
-    <Dialog>
-      <DialogTrigger className="rounded-lg outline-primaryOrange">
-        <OrderSummary type="MODAL" order={order} index={index} />
-      </DialogTrigger>
-      <DialogContent className="w-[95%] lg:w-[50%] max-w-full min-h-[250px] h-max flex flex-col  p-5 gap-2 rounded-lg border-0 descriptionModal">
-        <h3 className="text-2xl font-bold mb-3">Order Details</h3>
-        <OrderSummary
-          className="p-0 border-0"
-          type="MODAL"
-          order={order}
-          index={index}
-        />        <div className="flex flex-col gap-2 w-full h-[150px] overflow-y-scroll no-scrollbar py-3">
-          {parseOrderItems(order.items).map((item: any, index: number) => (
-            <div
-              className="w-full flex flex-col gap-1 bg-gray-100 rounded-lg p-3"
-              key={index}
-            >
-              <div className="flex justify-between items-center">
-                <p className="text-sm">{item.qty} x {item.name}</p>
-                <p className="text-sm self-end">{formatPrice(parseFloat(item.price) * parseInt(item.qty))}</p>
+
+<div className="space-y-4">
+  <Dialog key={order?.order?.id}> {/* Changed to order.order.id */}
+    <DialogTrigger asChild>
+      <Card className="w-full cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500 hover:border-l-orange-600">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
+                <Package className="w-6 h-6 text-white" />
               </div>
-              {item.description && (
-                <p className="text-sm text-gray-400 text-semibold">
-                  {item.description}
-                </p>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Order #{order?.order?.displayId}</h3> {/* Fixed */}
+                <p className="text-sm text-gray-600">{formatDate(order?.order?.createdAt)}</p> {/* Fixed */}
+              </div>
+            </div>
+            <div className="text-right space-y-2">
+              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
+              <p className="text-lg font-bold text-orange-600">Rs: {order?.order?.total}</p> {/* Fixed */}
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+            <span className="flex items-center gap-1">
+              <Package className="w-4 h-4" />
+              {order?.order?.itemsCount} items {/* Fixed */}
+            </span>
+            <span className="flex items-center gap-1">
+              <User className="w-4 h-4" />
+              {order?.order?.user?.firstName} {order?.order?.user?.lastName} {/* Fixed */}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </DialogTrigger>
+
+    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-xl">
+          <Package className="w-6 h-6 text-orange-500" />
+          Order Details #{order?.order?.displayId} {/* Fixed */}
+        </DialogTitle>  
+      </DialogHeader>
+
+      <div className="space-y-6">
+        {/* Order Status & Basic Info */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-600">Status</label>
+            <div className="text-center max-w-[15em] space-y-2">
+              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-600">Total Amount</label>
+            <p className="text-2xl font-bold text-orange-600">Rs: {order?.order?.total}</p> {/* Fixed */}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Customer Information */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <User className="w-5 h-5 text-orange-500" />
+            Customer Information
+          </h3>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <label className="font-medium text-gray-600">Name</label>
+              <p>
+                {order?.order?.user?.firstName} {order?.order?.user?.lastName} {/* Fixed */}
+              </p>
+            </div>
+            <div>
+              <label className="font-medium text-gray-600">Phone</label>
+              <p className="flex items-center gap-1">
+                <Phone className="w-4 h-4" />
+                {order?.order?.user?.phone} {/* Fixed */}
+              </p>
+            </div>
+          </div>
+        </div>
+
+          {/* Delivery Information */}
+          {order?.deliveryAddress && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-orange-500" />
+                      Delivery Information
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <label className="font-medium text-gray-600">Delivery Name</label>
+                        <p>{order?.deliveryName}</p>
+                      </div>
+                      <div>
+                        <label className="font-medium text-gray-600">Delivery Phone</label>
+                        <p>{order?.deliveryPhone}</p>
+                      </div>
+                      <div>
+                        <label className="font-medium text-gray-600">Address</label>
+                        <p>{order?.deliveryAddress}</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
-            </div>
-          ))}
-        </div>
-        <div className="w-full flex flex-col gap-1">
-          <div className="flex w-full items-center justify-between gap-1">
-            <p className="text-sm">SubTotal</p>
-            <p className="text-sm">{formatPrice(parseFloat(order.total) - parseFloat(order.deliveryCharge) - parseFloat(order.tax) + parseFloat(order.discount))}</p>
-          </div>          <div className="flex w-full items-center justify-between gap-1">
-            <p className="text-sm">Tax</p>
-            <p className="text-sm">{formatPrice(parseFloat(order.tax))}</p>
-          </div>
-          <div className="flex w-full items-center justify-between gap-1">
-            <p className="text-sm">Delivery Charges</p>
-            <p className="text-sm">{formatPrice(parseFloat(order.deliveryCharge))}</p>
-          </div>
-          {parseFloat(order.discount) > 0 && (
-            <div className="flex w-full items-center justify-between gap-1">
-              <p className="text-sm text-red-500">Discount</p>
-              <p className="text-sm text-red-500">-{formatPrice(parseFloat(order.discount))}</p>
-            </div>
-          )}
-          <div className="flex w-full items-center justify-between gap-1">
-            <p className="text-lg font-bold">Total Amount</p>
-            <p className="text-lg font-bold">
-              {formatPrice(order.order_total)}
-            </p>
-          </div>
-        </div>
-        <DialogClose className="bg-black/80 p-1 rounded-xl text-white right-2 top-2 sm:right-2 sm:top-2">
-          <XIcon className="w-6 h-6" />
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
+
+              <Separator />
+
+              {/* Order Items */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Package className="w-5 h-5 text-orange-500" />
+                  Order Items ({order?.order?.itemsCount})
+                </h3>
+                <div className="space-y-3">
+                  {order?.order?.items.map((item: any, itemIndex: number) => (
+                    <div key={item.id} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{item.variant.name}</h4>
+                          <p className="text-sm text-gray-600">Item #{itemIndex + 1}</p>
+                          {item.variant.addons.length > 0 && (
+                            <div className="mt-2">
+                              <p className="text-xs font-medium text-gray-600">Add-ons:</p>
+                              <p className="text-xs text-gray-500">
+                                {item.variant.addons.map((addon: any) => addon.name).join(", ")}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-orange-600">${item.price}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Order Timeline */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-orange-500" />
+                  Order Timeline
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Order Created:</span>
+                    <span>{formatDate(order?.order?.createdAt)}</span>
+                  </div>
+                  {order?.order?.completedOn && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Completed:</span>
+                      <span>{formatDate(order?.order?.completedOn)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Rating & Review */}
+              {order?.order?.rating && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Star className="w-5 h-5 text-orange-500" />
+                      Customer Review
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < order?.order?.rating! ? "fill-orange-400 text-orange-400" : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                        <span className="ml-2 text-sm font-medium">{order?.order?.rating}/5</span>
+                      </div>
+                      {order?.order?.rateComment && <p className="text-sm text-gray-600 italic">"{order?.order?.rateComment}"</p>}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Pricing Breakdown */}
+              <Separator />
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-orange-500" />
+                  Pricing Details
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>${(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
+                  </div>
+                  {order?.order?.discount && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount:</span>
+                      <span>-${order?.order?.discount}</span>
+                    </div>
+                  )}
+                  <Separator />
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total:</span>
+                    <span className="text-orange-600">${order?.order?.total}</span>
+                  </div>
+                </div>
+              </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+</div>
   );
 }
 
