@@ -26,7 +26,7 @@ type FormData = {
   image: FileList | null;
 };
 
-const page  = () => {
+const Page  = () => {
   // Initialize react-hook-form
   const {
     register,
@@ -282,4 +282,4 @@ const page  = () => {
   );
 }
 
-export default page
+export default Page

@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { login } from "@/functions"
+
 import { apiClient } from "@/lib/api"
-import { log } from "console"
+
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { getClientCookie } from "@/lib/getCookie";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { getServerCookie } from "../(site)/page";
+
 
 
 
@@ -24,7 +24,7 @@ type Login = {
   password : string
 }
 
-const page = () => {
+const Page = () => {
   
   const [loading , setLoading] = useState(false);
   const router = useRouter();
@@ -193,11 +193,11 @@ useEffect(()=>{
           </form>
 
           
-          <p className="w-full text-center mt-[1em]">Don't have an account ? <Link className="cursor-pointer text-orange-500 underline" href="/register">Register</Link></p>
+          <p className="w-full text-center mt-[1em]">Don&apos;t have an account ? <Link className="cursor-pointer text-orange-500 underline" href="/register">Register</Link></p>
         </CardContent>
       </Card>
     </div>
   )
 }
 
-export default page
+export default Page

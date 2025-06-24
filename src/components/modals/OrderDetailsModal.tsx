@@ -282,7 +282,11 @@ const getStatusColor = (status: string) => {
                         ))}
                         <span className="ml-2 text-sm font-medium">{order?.order?.rating}/5</span>
                       </div>
-                      {order?.order?.rateComment && <p className="text-sm text-gray-600 italic">"{order?.order?.rateComment}"</p>}
+                      {/* {order?.order?.rateComment && (
+                     <p className="text-sm text-gray-600 italic">
+                      &quot;{order?.order?.rateComment}&quot;
+                      </p>
+                         )} */}
                     </div>
                   </div>
                 </>
