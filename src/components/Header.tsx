@@ -34,7 +34,7 @@ const Header = () => {
     var parsedUser = JSON.parse(storedUser);
 
 
-
+  console.log(parsedUser);
 
   // Using dummy data instead
   // const mockUser = useMemo<User>(
@@ -74,7 +74,7 @@ const Header = () => {
             <Cart type="CART" className="block min-[400px]:block" />
           )}
           {token ? (
-            <ProfileDropdown user={`${parsedUser.firstName} ${parsedUser.lastName}`} />
+            <ProfileDropdown user={`${parsedUser?.firstName} ${parsedUser?.lastName}`} />
           ) : (
            <Link href="/login"><Button className="bg-orange-500 cursor-pointer hover:bg-transparent hover:text-orange-500 duration-300 text-white">Login</Button></Link>
           )}

@@ -32,7 +32,7 @@ function HeroBanner() {
 	};
 
 	const getAllSlides = async () => {
-		const res = await apiClientCustomer.get("/slide");
+		const res = await apiClientCustomer.get("/slide/view/customer");
 		return res.data.data?.slides;
 	}
 

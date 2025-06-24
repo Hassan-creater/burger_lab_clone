@@ -249,7 +249,7 @@ useEffect(() => {
 }, [])
 
 
-  console.log(data);
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
