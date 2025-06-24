@@ -14,7 +14,6 @@ import { Loader2, LucideChevronLeft, LucideChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ServiceError from "@/components/ServiceError";
 import { useUserStore } from "@/store/slices/userSlice";
-import { getServerCookie } from "@/app/(site)/page";
 import { apiClient } from "@/lib/api";
 import { useEffect, useState } from "react";
 import axios from "axios";
