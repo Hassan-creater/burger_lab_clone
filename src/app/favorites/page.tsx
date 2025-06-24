@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import FavoriteItemContainer from "./components/FavoriteItemContainer";
+// import FavoriteItemContainer from "./components/FavoriteItemContainer";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import ServiceError from "@/components/ServiceError";
@@ -36,16 +36,17 @@ export default async function Favorites({}: FavoritesProps) {
         My Favorite Items
       </h1>
       {data.favorites && data.favorites.length > 0 ? (
-        <section className="flex flex-wrap gap-4">
-          {data.favorites.map((favorite) => (
-            <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
-              <FavoriteItemContainer
-                itemId={favorite.itemid}
-                favorites={data.favorites}
-              />
-            </Suspense>
-          ))}
-        </section>
+        // <section className="flex flex-wrap gap-4">
+        //   {data.favorites.map((favorite) => (
+        //     <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
+        //       {/* <FavoriteItemContainer
+        //         itemId={favorite.itemid}
+        //         favorites={data.favorites}
+        //       /> */}
+        //     </Suspense>
+        //   ))}
+        // </section>
+        <></>
       ) : data.status === 500 ? (
         <ServiceError />
       ) : (
