@@ -176,6 +176,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     
     
   if(AddressData?.orderType != "delivery"  && AddressData?.orderType ){
+ 
     setIsLoading(true);
     const res = await apiClient.post("/order/add",payload);
     if(res.status === 201){
@@ -188,6 +189,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       sessionStorage.clear();
       router.push("/order-complete/" + res.data.data.orderId);
       setIsLoading(false);
+      
     }
 
   }else if(AddressData?.orderType == "delivery"  && deliveryAddress && deliveryName && deliveryPhone && AddressData?.orderType){
@@ -206,7 +208,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     }
   } 
   else{
-    toast.error("Please select required fields");
+    toast.error("Please select City and Area for placing order");
     setIsLoading(false);
   }
     
