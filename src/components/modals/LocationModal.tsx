@@ -58,13 +58,27 @@ export default function LocationModal() {
 
   const handleSelect = () => {
     const AddressData =  {
+
       orderType: selectedOrderType,
       city: selectedCity,
-      ...(selectedOrderType === "delivery" && { area: selectedArea }),
-      ...(selectedOrderType === "pickup" && { branch: selectedPickupBranch }),
+      ...(selectedOrderType === "delivery" && { area: selectedArea , 
+        openTime :   convertTo12HourFormat(areaInfo?.openTime) || "",
+        endTime : convertTo12HourFormat(areaInfo?.endTime) || "",
+       }),
+      ...(selectedOrderType === "pickup" && { branch: selectedPickupBranch ,
+        openTime :   convertTo12HourFormat(selectedPickupBranchData?.openTime) || "",
+        endTime : convertTo12HourFormat(selectedPickupBranchData?.endTime) || "",
+        address : selectedPickupBranchData?.address || "",
+        
+       }),
       ...(selectedOrderType === "dine_in" && {
         branch: selectedDineInBranch,
+        openTime :   convertTo12HourFormat(selectedDineInBranchData?.openTime) || "",
+        endTime : convertTo12HourFormat(selectedDineInBranchData?.endTime) || "",
+        address : selectedDineInBranchData?.address || "",
+       
       })
+      
     }
     UpdateAddressData(AddressData);
     setOpen(false)
@@ -237,7 +251,7 @@ export default function LocationModal() {
     }
   }, [isDeliveryOpen]);
 
-  console.log(AddressData)
+  
 
  
   
@@ -315,6 +329,8 @@ useEffect(() => {
 
  
 /// open pop up
+
+console.log(selectedPickupBranchData);
  
 useEffect(() => {
   if (!AddressData.orderType) {

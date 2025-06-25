@@ -1,5 +1,7 @@
 'use client'
 
+import { apiClientCustomer } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,10 +9,17 @@ import Link from "next/link";
 const FooterNav = dynamic(() => import("./FooterNav"), { ssr: false });
 
 const Footer = () => {
+
+
+  
+
+  
+
+
   return (
-    <footer className="w-[95%] min-h-80 border-[2px] flex flex-col gap-4 border-neutral-200 shadow-neutral-300 shadow-sm lg:w-[85%] m-auto mt-6 pt-8 pb-4 pl-12 pr-12 bg-white rounded-t-2xl rounded-b-none">
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-3 w-full h-full justify-center">
-        <div className="flex w-full lg:w-1/4 items-center justify-center">
+    <footer className="w-[95%]  min-h-80 border-[2px] flex flex-col gap-4 border-neutral-200 shadow-neutral-300 shadow-sm lg:w-[85%] m-auto mt-6 mb-[1em] pt-[1.5em]  rounded-t-2xl rounded-b-none">
+      <div className="flex flex-col  lg:flex-row gap-5 lg:gap-3 w-full h-[12em] justify-between">
+        <div className="flex w-full lg:w-1/4 items-center justify-center ">
           <Image
             src="/logo.webp"
             alt="website-logo-showing-its-name"
