@@ -23,11 +23,7 @@ import { Loader2, LucideChevronRightCircle } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { apiClient } from "@/lib/api";
-
-
-import Cookies from "js-cookie";
 import { useCartContext } from "@/context/context";
-
 import { toast } from "sonner";
 import ShoppingBagIcon from "../icons/cart-shopping";
 
@@ -40,7 +36,7 @@ interface CartProps {
   orderDetails? : any
 }
 
-const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: CartProps) => {
+const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const {
     items,
     clearCart,
@@ -57,13 +53,6 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
   const [subTotal, setSubTotal] = useState(0.0);
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
-
-  /* Original tax data fetching code
-  const { data } = useQuery({
-    queryKey: ["tax"],
-    queryFn: getTax,
-  });
-  */
 
   // Using dummy tax data instead
   const data = {
@@ -150,12 +139,12 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
 
   const windowWidth = useWindowSize();
 
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment} = useCartContext();
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen} = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
 
  
 
-  const userData = Cookies.get("userData");
+
 
 
 
@@ -331,7 +320,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
                     {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
                   </p>
                 </div>
-                {userData ? (
+             
                   <Link href="/checkout">
                     <Button
                       variant="outline"
@@ -342,16 +331,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
                       Checkout
                     </Button>
                   </Link>
-                ) : (
-                  <Button
-                    variant="outline"
-                    title="checkout"
-                    disabled={true}
-                    className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
-                  >
-                    Login to Proceed
-                  </Button>
-                )}
+               
               </SheetFooter>
             </>
           ) : (
@@ -431,7 +411,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className , orderDetails }: Car
             variant="outline"
             title="checkout"
             disabled={AddedInCart.length === 0 || addOrder?.isPending }
-            onClick={handlePlaceOrder}
+            onClick={()=>{
+              if(user){
+                handlePlaceOrder();
+              }else{
+                setAuthOpen(true);
+              }
+            }}
             className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
           >
             {

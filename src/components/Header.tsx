@@ -6,48 +6,28 @@ import Link from "next/link";
 import Cart from "./cart/Cart";
 import ProfileDropdown from "./ProfileDropdown";
 import { usePathname } from "next/navigation";
-// import AuthModal from "./modals/AuthModal";
-import { useEffect, useMemo, useState } from "react";
-import { useUserStore } from "@/store/slices/userSlice";
-import { dummyUser } from "@/lib/dummyData";
-import { User } from "@/types";
 import { getClientCookie } from "@/lib/getCookie";
 import Cookies from "js-cookie";
-import { Button } from "./ui/button";
-
-
-
+import AuthModal from "./modals/AuthModal";
+import { useCartContext } from "@/context/context";
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
 });
 
 const Header = () => {
-  // const { user, updateUser } = useUserStore();
 
 
 
-  const token = getClientCookie("accessToken");
-  const storedUser =  Cookies.get("userData");
+  const {token , user } = useCartContext();
+  // const storedUser =  Cookies.get("userData");
 
   
-   if(storedUser)
-    var parsedUser = JSON.parse(storedUser);
+  //  if(storedUser)
+  //   var parsedUser = JSON.parse(storedUser);
+
+  
 
 
-  console.log(parsedUser);
-
-  // Using dummy data instead
-  // const mockUser = useMemo<User>(
-  //   () => ({
-  //     ...dummyUser,
-  //     role: "user", // Adding required role field
-  //   }),
-  //   []
-  // );
-
-  // useEffect(() => {
-  //   updateUser(mockUser);
-  // }, [mockUser, updateUser]);
 
   const pathname = usePathname();
 
@@ -74,9 +54,9 @@ const Header = () => {
             <Cart type="CART" className="block min-[400px]:block" />
           )}
           {token ? (
-            <ProfileDropdown user={`${parsedUser?.firstName} ${parsedUser?.lastName}`} />
+            <ProfileDropdown user={`${user?.firstName} ${user?.lastName}`} />
           ) : (
-           <Link href="/login"><Button className="bg-orange-500 cursor-pointer hover:bg-transparent hover:text-orange-500 duration-300 text-white">Login</Button></Link>
+          <AuthModal/>
           )}
         </div>
       </nav>

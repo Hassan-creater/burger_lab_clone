@@ -4,6 +4,8 @@
 import { loadCartFromStorage, mergeAndSaveCart, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
 import { Josefin_Sans } from "next/font/google";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { getClientCookie } from "@/lib/getCookie";
 
 // Define the shape of your cart item
 export interface CartItem {
@@ -47,8 +49,12 @@ interface CartContextType {
   setDeliveryPhone: (phone: string) => void;
   comment: string;
   setComment: (comment: string) => void;
-  
- 
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  token: string | null;
+  authOpen: boolean;
+  setAuthOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoggedIn: (user: any, token: string) => void;
 }
 
 // Create the context
@@ -65,6 +71,35 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [deliveryName, _setDeliveryName] = useState<string>("");
   const [deliveryPhone, _setDeliveryPhone] = useState<string>("");
   const [comment, _setComment] = useState<string>("");
+  const [user, setUser] = useState<any>(null);
+  const [token, setToken] = useState<string | null>("");
+  const [authOpen, setAuthOpen] = useState<boolean>(false);
+
+
+
+  const setLoggedIn = (user: any, token: string) => {
+    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    Cookies.set("userData", JSON.stringify(user), { expires: 1, path: "/", secure: !isLocalhost , sameSite : "lax" });
+    Cookies.set("accessToken", token, {
+      expires: 1, // 1 day
+      path: "/",
+      secure: !isLocalhost, // Secure in production only
+      sameSite: "lax",
+    });
+
+    setUser(user);
+    setToken(token);
+    
+  }
+
+  useEffect(() => {
+    const user = Cookies.get("userData");
+     const token = getClientCookie("accessToken");
+    if(user){
+      setUser(JSON.parse(user));
+      setToken(token ?? null);
+    }
+  }, []);
 
   const setDeliveryPhone = (phone: string) => {
     _setDeliveryPhone(phone ?? "");
@@ -132,9 +167,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   const UpdateAddressData = (orderType: any) => {
+    // write into sessionStorage instead of localStorage
     localStorage.setItem("addressData", JSON.stringify(orderType));
-    const AddressData = JSON.parse(localStorage.getItem("addressData") || "{}");
-    setAddressData(AddressData ?? {});
+  
+    // read it back out
+    const raw = localStorage.getItem("addressData");
+    const AddressData = raw ? JSON.parse(raw) : {};
+  
+    setAddressData(AddressData);
   };
 
 
@@ -151,7 +191,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen }}>
       {children}
     </CartContext.Provider>
   );

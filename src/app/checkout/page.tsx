@@ -116,9 +116,7 @@ function Checkout() {
   console.log(data);   
 
   useEffect(()=>{
-    if(!token){
-      redirect("/")
-    }
+  
 
     const canCheckout = sessionStorage.getItem("canCheckout");
     if(!canCheckout){

@@ -41,7 +41,7 @@ export default async function Profile() {
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">
       <h1 className="text-lg font-bold mt-10 mb-7 text-gray-700">Profile</h1>
       <section className="bg-white rounded-lg  border-gray-200 border shadow-sm ">
-        <RegisterForm user={user} type="UPDATE" />
+        
       </section>
     </main>
   );

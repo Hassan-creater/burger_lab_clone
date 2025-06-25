@@ -60,7 +60,7 @@ function ProductCard({
   return (
     <Card
     className={cn(
-      'w-full max-w-[30em] min-h-[13em] rounded-2xl transition-all border-2 border-gray-200 hover:border-orange-400 flex flex-row overflow-hidden shadow-lg hover:shadow-xl',
+      'w-full max-w-[29em] min-h-[12em] rounded-2xl transition-all border-2 border-gray-200 hover:border-orange-400 flex flex-row overflow-hidden shadow-lg hover:shadow-xl',
       className
     )}
   >
@@ -76,7 +76,7 @@ function ProductCard({
                 height={300}
                 priority
                 alt="product-image"
-                className="w-[95%] h-[95%] object-contain transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
               {product.discountPercent > 0 && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -90,7 +90,7 @@ function ProductCard({
           {/* Content Section */}
           <CardContent className="flex flex-col justify-between p-4 w-2/3">
             <div>
-              <h4 className="font-bold text-orange-500 text-[1.5em] mb-1">{textShortener(product.name, 19)}</h4>
+              <h4 className="font-bold text-orange-500 text-[1.4em] mb-1">{textShortener(product.name, 16)}</h4>
               {product.description && (
                 <p className="text-sm text-gray-600 line-clamp-2 mb-2">
                   {textShortener(product.description, 100)}

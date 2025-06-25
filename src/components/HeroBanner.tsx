@@ -56,7 +56,7 @@ function HeroBanner() {
 
 	return (
 		<CarouselContainer
-			className="w-full lg:max-w-[88%]  h-[25em] flex justify-center items-center"
+			className="w-full lg:max-w-[88%] h-[25em] lg:h-[30em] flex justify-center items-center"
 			opts={{ loop: true }}
 			autoplay={true}
 			ref={carouselRef}>

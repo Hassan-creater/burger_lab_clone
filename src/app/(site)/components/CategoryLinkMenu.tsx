@@ -29,7 +29,6 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
 
   useEffect(() => {
     if (activeLinkRef.current) {
-      console.log(activeLinkRef.current);
       activeLinkRef.current.scrollIntoView();
     }
   }, [activeSectionId]);

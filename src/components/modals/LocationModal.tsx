@@ -52,6 +52,7 @@ export default function LocationModal() {
   const [dineInClose , setDineInClose] = useState("");
   const [pickupClose , setPickupClose] = useState("");
   const {UpdateAddressData , AddressData} = useCartContext();
+  const [deliveryClose , setDeliveryClose] = useState("");
 
   const [open, setOpen] = useState(false)
 
@@ -72,29 +73,38 @@ export default function LocationModal() {
 
   function convertTo12HourFormat(time24: string): string {
     // Accepts "HH:mm:ss" or "HH:mm"
-    const [hourStr, minuteStr] = time24.split(":");
+    const [hourStr, minuteStr] = time24?.split(":") || [];
     let hour = parseInt(hourStr, 10);
-    const minute = minuteStr.padStart(2, "0");
+    const minute = minuteStr?.padStart(2, "0") || "";
     const ampm = hour >= 12 ? "PM" : "AM";
     hour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
     return `${hour}:${minute} ${ampm}`;
   }
 
 
-
-  function isBranchOpen(branch: any): boolean {
+  function isBranchOpen(branch: { openTime: string; endTime: string }): boolean {
     if (!branch) return false;
+  
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
   
-    // Parse open and close times (assume "HH:mm:ss" or "HH:mm")
-    const [openHour, openMinute] = branch.openTime.split(":").map(Number);
-    const [closeHour, closeMinute] = branch.endTime.split(":").map(Number);
+    // Parse "HH:mm(:ss)" but take only hours & minutes
+    const [oH, oM] = branch?.openTime?.split(":").map(Number) || [];
+    const [cH, cM] = branch?.endTime?.split(":").map(Number) || [];
   
-    const openMinutes = openHour * 60 + openMinute;
-    const closeMinutes = closeHour * 60 + closeMinute;
+    const openMinutes  = oH * 60 + oM;
+    const closeMinutes = cH * 60 + cM;
   
-    return currentMinutes >= openMinutes && currentMinutes <= closeMinutes;
+    const isOvernight = closeMinutes <= openMinutes;
+  
+    if (isOvernight) {
+      // e.g. 13:37 → 01:37 next day
+      return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+    } else {
+      // e.g. 09:00 → 17:00 same day
+      return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+    }
   }
 
   const handleUseCurrentLocation = () => {
@@ -148,6 +158,39 @@ export default function LocationModal() {
     }
   }
 
+  function utcTimeToLocalTimeString(utcTimeStr : string) {
+    const [hours, minutes, seconds] = utcTimeStr?.split(":")?.map(Number) || [];
+    const now = new Date();
+    // Create a date in UTC for today with the given time
+    const utcDate = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      hours,
+      minutes,
+      seconds
+    ));
+    // Convert to local time string (e.g., "09:00 PM")
+    return utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+
+  function isAreaOpen(openTime : string, closeTime : string) {
+    const now = new Date();
+    const [oh, om, os] = openTime.split(":").map(Number);
+    const [ch, cm, cs] = closeTime.split(":").map(Number);
+  
+    // Create UTC dates for today
+    const open = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), oh, om, os));
+    const close = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), ch, cm, cs));
+  
+    // Convert to local time
+    const localOpen = new Date(open.getTime() + (now.getTimezoneOffset() * 60000 * -1));
+    const localClose = new Date(close.getTime() + (now.getTimezoneOffset() * 60000 * -1));
+  
+    // Compare using Date objects (handles AM/PM automatically)
+    return now >= localOpen && now <= localClose;
+  }
 
   const getAllBranches = async ()=>{
     const res = await apiClientCustomer.get("/branch/view/customer");
@@ -162,10 +205,43 @@ export default function LocationModal() {
 
 
  
-
+// delivery areas
   const cities = data?.cities || [];
   const areas = data?.deliveryAreas || [];
-  const deliveryAreas = areas?.find((item: any) => item.city === selectedCity)?.areas || [];
+  const city = areas.find((item: any) => item.city === selectedCity) || [];
+  const area = city.areas || [];
+  const deliveryAreas : any[] =  area.map((item: any) => item.areaName) || [];
+  const areaInfo = area.find((a: any) => a.areaName === selectedArea)  || {};
+  // const openTime = utcTimeToLocalTimeString(areaInfo.openTime);
+  // const closeTime = utcTimeToLocalTimeString(areaInfo.endTime);
+  // const isOpen = isAreaOpen(openTime, closeTime);
+  const isDeliveryOpen = areaInfo.isSpecialClosed;
+
+  useEffect(() => {
+   
+  
+    if(areaInfo.openTime && areaInfo.endTime){
+    if(!isBranchOpen(areaInfo)){
+      const openTime = convertTo12HourFormat(areaInfo.openTime);
+      const closeTime = convertTo12HourFormat(areaInfo.endTime);
+      setDeliveryClose(`Branch is closed. It will open at ${openTime} and close at ${closeTime}.`);
+    }else{
+        setDeliveryClose("");
+      }
+    }else{
+      if(isDeliveryOpen){
+        setDeliveryClose(areaInfo.specialClosedMessage);
+      }else{
+        setDeliveryClose("");
+      }
+    }
+  }, [isDeliveryOpen]);
+
+  console.log(AddressData)
+
+ 
+  
+  
 
   // pickup branches data 
   const pickupBranches = data?.takeAwayBranches
@@ -177,6 +253,7 @@ export default function LocationModal() {
     (branch: any) => branch.name === selectedPickupBranch
   );
   const isPickupClose = selectedPickupBranchData?.isSpecialClosed;
+
 
   // dine in branches data 
   const dineInBranches = data?.dineInBranches || [];
@@ -240,12 +317,29 @@ useEffect(() => {
 /// open pop up
  
 useEffect(() => {
-  if (typeof window !== "undefined" && window.location.pathname == "/" && !AddressData.orderType) {
+  if (!AddressData.orderType) {
     setOpen(true)
   } else {
     setOpen(false)
   }
+
+
+  setDeliveryClose("")
+  setDineInClose("")
+  setPickupClose("")
+  
+
 }, [])
+
+
+
+
+const isButtonDisabled =
+  !Boolean(selectedCity) ||
+  !Boolean(selectedArea || selectedDineInBranch || selectedPickupBranch) ||
+  Boolean(deliveryClose) ||
+  Boolean(dineInClose) ||
+  Boolean(pickupClose);
 
 
 
@@ -256,7 +350,7 @@ useEffect(() => {
       <MapPin className="w-5 h-5 text-orange-500" />
       </DialogTrigger>
 
-      <DialogContent className="h-auto bg-white flex flex-col gap-6 items-center sm:w-[70%] md:w-[55%] lg:w-[50%] max-w-[90%] mx-auto rounded-lg p-6 border-0">
+      <DialogContent className="h-auto bg-white flex flex-col gap-6 items-center sm:w-[70%] md:w-[55%] lg:w-[40%] max-w-[90%] mx-auto rounded-lg p-6 border-0">
         {/* Logo */}
         <div className="w-24 h-16 bg-gradient-to-br  flex items-center justify-center ">
           <img src="/logo.webp" alt="logo" className="w-full h-full object-contain" />
@@ -274,6 +368,12 @@ useEffect(() => {
           </div>
         )}
 
+        {deliveryClose && (
+          <div className="w-full bg-red-500 text-white p-2 rounded-md text-center">
+            {deliveryClose}
+          </div>
+        )}
+
         {/* Title */}
         <h3 className="text-xl text-gray-900 font-bold text-center">Select your order type</h3>
 
@@ -288,6 +388,8 @@ useEffect(() => {
             setDineInClose("")
             setSelectedPickupBranch("")
             setPickupClose("")
+            setDeliveryClose("")
+            
           }}
           className="w-full"
         >
@@ -296,7 +398,15 @@ useEffect(() => {
               <TabsTrigger
                 key={value}
                 value={value}
-               
+                onClick={()=>{
+                  setSelectedCity("")
+                  setSelectedArea("")
+                  setSelectedDineInBranch("")
+                  setDineInClose("")
+                  setSelectedPickupBranch("")
+                  setPickupClose("")
+                  setDeliveryClose("")
+                }}
                 className="flex-1 py-3 data-[state=active]:bg-orange-500 data-[state=active]:text-white text-gray-600 font-semibold rounded-md transition-all"
               >
                 {name}
@@ -420,6 +530,8 @@ useEffect(() => {
       ))}
     </SelectContent>
   </Select>
+
+  
 )}
             </TabsContent>
           ))}
@@ -428,7 +540,7 @@ useEffect(() => {
         {/* Select Button */}
         <Button
           className="w-full bg-orange-500 disabled:bg-gray-200 disabled:text-gray-500 text-white hover:bg-orange-600 py-3 font-semibold"
-          disabled={isClose || !selectedCity}
+          disabled={isButtonDisabled}
           onClick={handleSelect}
         >
           Select
@@ -436,7 +548,11 @@ useEffect(() => {
 
         {/* Close Button */}
         <button
-          onClick={() => setOpen(false)}
+          onClick={() => {setOpen(false) 
+            setDeliveryClose("")
+            setDineInClose("")
+            setPickupClose("")
+          }}
           className="absolute top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors"
         >
           <X className="w-5 h-5" />
