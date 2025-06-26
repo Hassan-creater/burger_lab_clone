@@ -62,7 +62,7 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
         <div className="w-full">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
-              Search Results for "{currentQuery}"
+              Search Results for {currentQuery}
             </h2>
             <p className="text-gray-600 mt-2">
               Found {filteredItems.length} items in {filteredCategories.length} categories
