@@ -8,6 +8,12 @@ import Cookies from "js-cookie";
 import { getClientCookie } from "@/lib/getCookie";
 
 // Define the shape of your cart item
+type Favorite = {
+  itemId: string;
+  favId:  string;
+};
+
+
 export interface CartItem {
   variantId: string;
   variantName: string;
@@ -55,6 +61,10 @@ interface CartContextType {
   authOpen: boolean;
   setAuthOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setLoggedIn: (user: any, token: string) => void;
+  favorite: any;
+  setFavorite: React.Dispatch<React.SetStateAction<any>>;
+  couponData: any;
+  setCouponData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 // Create the context
@@ -74,8 +84,38 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<string | null>("");
   const [authOpen, setAuthOpen] = useState<boolean>(false);
+  const [favorite, _setFavorite] = useState<any[]>([]);
+  const [couponData, setCouponData] = useState<any>({});
 
 
+
+  const setFavorite = ({ itemId, favId }: Favorite) => {
+    // 1. Load current favorites (or empty array)
+    const raw = localStorage.getItem("favorite");
+    const favorites: Favorite[] = raw ? JSON.parse(raw) : [];
+  
+    // 2. Check if itemId is already in favorites
+    const exists = favorites.some(fav => fav.itemId === itemId);
+  
+    // 3. Build the new favorites array
+    const newFavorites = exists
+      ? favorites.filter(fav => fav.itemId !== itemId)           // remove it
+      : [...favorites, { itemId, favId }];                      // add it
+  
+    // 4. Persist back to localStorage
+    localStorage.setItem("favorite", JSON.stringify(newFavorites));
+  
+    // 5. Update your React state (or other state manager)
+    _setFavorite(newFavorites);
+  };
+
+
+  useEffect(() => {
+    const fav = localStorage.getItem("favorite");
+    if(fav){
+      _setFavorite(JSON.parse(fav));
+    }
+  }, []);
 
   const setLoggedIn = (user: any, token: string) => {
     const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
@@ -191,7 +231,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData}}>
       {children}
     </CartContext.Provider>
   );

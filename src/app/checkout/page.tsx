@@ -113,14 +113,14 @@ function Checkout() {
     queryFn : getAddresses,
     enabled : !!userid
    })
-  console.log(data);   
+  
 
   useEffect(()=>{
   
 
     const canCheckout = sessionStorage.getItem("canCheckout");
     if(!canCheckout){
-      redirect("/home");
+      redirect("/");
     }
   },[])
  

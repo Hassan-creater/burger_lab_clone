@@ -12,15 +12,20 @@ export default async function FavoriteItemContainer({
   favorites,
 }: FavoriteItemContainerProps) {
   // Using dummy data instead
-  const response = {
-    status: 200,
-    item: dummyItems.find((item) => item.id === itemId),
-  };
+
+
+
+const data = favorites.find((favorite : any) => favorite?.itemId === itemId)
+
+
+// Get the actual item data from dummyItems
+
 
   return (
-    <div className="w-auto h-auto flex flex-wrap items-center justify-center">
-      {response.item && (
-        <ProductCard product={response.item} favorites={favorites} />
+    
+    <div className="w-[30em]  h-auto  flex flex-wrap ">
+      {data && (
+        <ProductCard product={data.item} favorites={favorites} status={data.favoriteStatus} />
       )}
     </div>
   );

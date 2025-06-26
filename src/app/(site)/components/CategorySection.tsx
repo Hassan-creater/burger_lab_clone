@@ -1,13 +1,11 @@
 "use client";
 
-// import { useRef } from "react";
+
 import ProductCard from "../../../components/ProductCard";
 import { Item } from "@/models/Item";
 import { Favorite } from "@/models/Favorites";
-// import { dummyItems } from "@/lib/dummyData";
-// import { apiClient } from "@/lib/api";
-// import { useQueries, useQuery } from "@tanstack/react-query";
-// import { log } from "console";
+
+
 
 interface CategorySectionProps {
   name: string;
@@ -27,28 +25,31 @@ function CategorySection({
   allItems
 }: CategorySectionProps) {
 
+/// filter items by tags and name
 
+
+function filterItems(allItems: any[], query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return allItems;
+
+  return allItems.filter((item: any) => {
+    if (!item.tags) return false;
+    return item.tags
+      .split(',')
+      .map((t: string) => t.trim().toLowerCase())
+      .some((t: string) => t.includes(q));
+  });
+}
+
+
+
+  const filteredItems =filterItems(allItems.filter((item :any) => item.categoryId == id), query || "") || [];
   
-
-
+  
 
  
 
-  
 
-  // Using dummy data instead
-  // const filteredItems = !query
-  //   ? Items?.filter((item : any) => item.categoryId == id)
-  //   : Items?.filter(
-  //       (item : any) =>
-  //         item.name.toLowerCase().includes(query.toLowerCase()) ||
-  //         (item.description?.toLowerCase() || "").includes(query.toLowerCase())
-  //     );
-
-
-
-
-     const filteredItems = allItems.filter((item :any) => item.categoryId == id);
      
 
 
@@ -66,11 +67,11 @@ function CategorySection({
         >
           <h3 className="text-2xl font-bold">{name}</h3>
           <div className="flex flex-wrap items-center justify-start gap-5">
-            {filteredItems.map((item : any, index : number) => renderProducts(item, index))}
+            {filteredItems?.map((item : any, index : number) => renderProducts(item, index))}
           </div>
           <hr className="self-center bg-categorySeparatorGradient w-full h-px mt-5 mb-3 block" />
         </section>
-      )}
+      ) }
     </>
   );
 }

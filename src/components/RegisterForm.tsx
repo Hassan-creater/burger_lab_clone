@@ -385,7 +385,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
   };
 
   return (
-    <div className=" flex items-center justify-center w-full h-[38em] overflow-scroll">
+    <div className=" flex items-center justify-center w-full h-[38em] overflow-y-scroll">
       <Card className="w-full">
         <CardHeader className="text-center space-y-2 pb-4">
           <CardTitle className="text-2xl font-extrabold text-gray-800">

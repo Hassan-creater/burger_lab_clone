@@ -1,5 +1,7 @@
 export type Favorite = {
     id: string;
-    itemid: string;
+    item : any[];
+    itemId: string;
     userid: string;
+    favoriteStatus: string;
 }

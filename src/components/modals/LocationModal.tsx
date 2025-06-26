@@ -1,41 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MapPin, X } from "lucide-react"
+import { MapPin, X, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogClose,  DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { apiClientCustomer } from "@/lib/api"
 import { useQuery } from "@tanstack/react-query"
 import { useCartContext } from "@/context/context"
+import { VisuallyHidden } from "../ui/visually-hidden"
 
 // Dummy data
-const dummyData = {
-  cities: ["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad"],
-  branches: {
-    Karachi: {
-      delivery_areas: ["Gulshan-e-Iqbal", "DHA", "Clifton", "Nazimabad", "North Nazimabad"],
-      branches: ["Main Branch Karachi", "DHA Branch", "Gulshan Branch", "Clifton Branch"],
-    },
-    Lahore: {
-      delivery_areas: ["DHA", "Gulberg", "Model Town", "Johar Town", "Cantt"],
-      branches: ["Main Branch Lahore", "DHA Branch", "Gulberg Branch", "Model Town Branch"],
-    },
-    Islamabad: {
-      delivery_areas: ["F-6", "F-7", "F-8", "G-9", "G-10"],
-      branches: ["Main Branch Islamabad", "F-7 Branch", "Blue Area Branch"],
-    },
-    Rawalpindi: {
-      delivery_areas: ["Saddar", "Commercial Market", "Committee Chowk", "Murree Road"],
-      branches: ["Main Branch Rawalpindi", "Saddar Branch", "Committee Chowk Branch"],
-    },
-    Faisalabad: {
-      delivery_areas: ["Civil Lines", "Peoples Colony", "Samanabad", "Millat Town"],
-      branches: ["Main Branch Faisalabad", "Civil Lines Branch", "Peoples Colony Branch"],
-    },
-  },
-}
+
 
 const orderTypes = [
   { name: "DELIVERY", value: "delivery" },
@@ -330,7 +307,7 @@ useEffect(() => {
  
 /// open pop up
 
-console.log(selectedPickupBranchData);
+
  
 useEffect(() => {
   if (!AddressData.orderType) {
@@ -361,14 +338,206 @@ const isButtonDisabled =
 
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-      <MapPin className="w-5 h-5 text-orange-500" />
-      </DialogTrigger>
+//     <Dialog open={open} onOpenChange={setOpen}>
+//       <DialogTrigger asChild>
+//       <MapPin className="w-5 h-5 text-orange-500" />
+//       </DialogTrigger>
 
-      <DialogContent className="h-auto bg-white flex flex-col gap-6 items-center sm:w-[70%] md:w-[55%] lg:w-[40%] max-w-[90%] mx-auto rounded-lg p-6 border-0">
-        {/* Logo */}
-        <div className="w-24 h-16 bg-gradient-to-br  flex items-center justify-center ">
+//       <DialogContent className="h-auto bg-white flex flex-col gap-6 items-center sm:w-[3em] md:w-[30em] lg:w-[30em]  mx-auto rounded-lg p-6 border-0">
+//         {/* Logo */}
+//         <DialogHeader>
+//           <DialogTitle asChild>
+//             <VisuallyHidden>Authentication</VisuallyHidden>
+//           </DialogTitle>
+//         </DialogHeader>
+//         <div className="w-24 h-16 bg-gradient-to-br  flex items-center justify-center ">
+//           <img src="/logo.webp" alt="logo" className="w-full h-full object-contain" />
+//         </div>
+
+//         {dineInClose && (
+//           <div className="w-full bg-red-500 text-white p-2 rounded-md text-center">
+//             {dineInClose}
+//           </div>
+//         )}
+
+//         {pickupClose && (
+//           <div className="w-full bg-red-500 text-white p-2 rounded-md text-center">
+//             {pickupClose}
+//           </div>
+//         )}
+
+//         {deliveryClose && (
+//           <div className="w-full bg-red-500 text-white p-2 rounded-md text-center">
+//             {deliveryClose}
+//           </div>
+//         )}
+
+//         {/* Title */}
+//         <h3 className="text-xl text-gray-900 font-bold text-center">Select your order type</h3>
+
+//         {/* Order Type Tabs */}
+//         <Tabs
+//           value={selectedOrderType}
+//           onValueChange={(value) => {
+//             setSelectedOrderType(value as "delivery" | "pickup" | "dine_in")
+//             setSelectedCity("")
+//             setSelectedArea("")
+//             setSelectedDineInBranch("")
+//             setDineInClose("")
+//             setSelectedPickupBranch("")
+//             setPickupClose("")
+//             setDeliveryClose("")
+            
+//           }}
+//           className="w-full"
+//         >
+//           <TabsList className="bg-gray-100 flex gap-1 mb-6 w-full rounded-md">
+//             {orderTypes.map(({ name, value }) => (
+//               <TabsTrigger
+//                 key={value}
+//                 value={value}
+//                 onClick={()=>{
+//                   setSelectedCity("")
+//                   setSelectedArea("")
+//                   setSelectedDineInBranch("")
+//                   setDineInClose("")
+//                   setSelectedPickupBranch("")
+//                   setPickupClose("")
+//                   setDeliveryClose("")
+//                 }}
+//                 className="flex-1 py-3 data-[state=active]:bg-orange-500 data-[state=active]:text-white text-gray-600 font-semibold rounded-md transition-all"
+//               >
+//                 {name}
+//               </TabsTrigger>
+//             ))}
+//           </TabsList>
+
+//           {orderTypes.map(({ value }) => (
+//             <TabsContent key={value} value={value} className="w-full flex flex-col gap-4 mt-0">
+//               {/* Dynamic Title */}
+//               <h4 className="text-lg font-semibold text-gray-800 text-center">{getModalTitle()}</h4>
+
+//               {/* Use Current Location Button */}
+//               <Button
+//                 variant="outline"
+//                 onClick={handleUseCurrentLocation}
+//                 className="w-full border-orange-200 text-orange-600 hover:bg-orange-50 flex items-center gap-2"
+//               >
+//                 <MapPin className="w-4 h-4" />
+//                 Use Current Location
+//               </Button>
+
+//               {/* City Selection */}
+//               <Select value={selectedCity} onValueChange={setSelectedCity}>
+//                 <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
+//                   <SelectValue placeholder="Select City / Region" />
+//                 </SelectTrigger>
+//                 <SelectContent>
+//                   {cities?.map((city:any) => (
+//                     <SelectItem key={city} value={city} className="text-black">
+//                       {city}
+//                     </SelectItem>
+//                   ))}
+//                 </SelectContent>
+//               </Select>
+
+
+//               {selectedOrderType === "delivery" && (
+//   <Select
+//     value={selectedArea}
+//     onValueChange={setSelectedArea}
+//     disabled={!selectedCity}
+//   >
+//     <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
+//       <SelectValue placeholder={getPlaceholderText()} />
+//     </SelectTrigger>
+//     <SelectContent>
+//       {deliveryAreas?.map((option: any) => (
+//         <SelectItem key={option} value={option} className="text-black">
+//           {option}
+//         </SelectItem>
+//       ))}
+//     </SelectContent>
+//   </Select>
+// )}
+
+// {selectedOrderType === "pickup" && (
+//   <Select
+//     value={selectedPickupBranch}
+//     onValueChange={setSelectedPickupBranch}
+//     disabled={!selectedCity}
+//   >
+//     <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
+//       <SelectValue placeholder={getPlaceholderText()} />
+//     </SelectTrigger>
+//     <SelectContent>
+//       {branchNames?.map((option: any) => (
+//         <SelectItem key={option} value={option} className="text-black">
+//           {option}
+//         </SelectItem>
+//       ))}
+//     </SelectContent>
+//   </Select>
+// )}
+
+// {selectedOrderType === "dine_in" && (
+//   <Select
+//     value={selectedDineInBranch}
+//     onValueChange={setSelectedDineInBranch}
+    
+//   >
+//     <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
+//       <SelectValue placeholder={getPlaceholderText()} />
+//     </SelectTrigger>
+//     <SelectContent>
+//       {dineInBranchNames?.map((option: any) => (
+//         <SelectItem key={option} value={option} className="text-black">
+//           {option}
+//         </SelectItem>
+//       ))}
+//     </SelectContent>
+//   </Select>
+
+  
+// )}
+//             </TabsContent>
+//           ))}
+//         </Tabs>
+
+//         {/* Select Button */}
+//         <Button
+//           className="w-full bg-orange-500 disabled:bg-gray-200 disabled:text-gray-500 text-white hover:bg-orange-600 py-3 font-semibold"
+//           disabled={isButtonDisabled}
+//           onClick={handleSelect}
+//         >
+//           Select
+//         </Button>
+
+//         {/* Close Button */}
+//         <button
+//           onClick={() => {setOpen(false) 
+//             setDeliveryClose("")
+//             setDineInClose("")
+//             setPickupClose("")
+//           }}
+//           className="absolute top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors"
+//         >
+//           <X className="w-5 h-5" />
+//         </button>
+//       </DialogContent>
+//     </Dialog>
+
+ <Dialog open={open} onOpenChange={setOpen}>
+<DialogTrigger asChild>
+        <MapPin className="w-5 h-5 text-orange-500" />
+       </DialogTrigger>
+       <DialogContent className="w-[80%] sm:w-[30em] justify-center items-center  flex flex-col px-5 py-6 gap-[1em] rounded-xl border-0 descriptionModal">
+         <DialogHeader>
+           <DialogTitle asChild>
+             <VisuallyHidden>Authentication</VisuallyHidden>
+           </DialogTitle>
+         </DialogHeader>
+         <div className="w-24 h-16 bg-gradient-to-br  flex items-center justify-center ">
           <img src="/logo.webp" alt="logo" className="w-full h-full object-contain" />
         </div>
 
@@ -459,38 +628,7 @@ const isButtonDisabled =
                 </SelectContent>
               </Select>
 
-              {/* Area/Branch Selection */}
-              {/* <Select value={selectedArea} onValueChange={setSelectedArea} disabled={!selectedCity}>
-                <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
-                  <SelectValue placeholder={getPlaceholderText()} />
-                </SelectTrigger>
-                <SelectContent>
-                {selectedOrderType === "delivery" && deliveryAreas?.map((option: any) => (
-                <SelectItem key={option} value={option} className="text-black">
-               {option}
-                </SelectItem>
-                ))}
 
-
-                {selectedOrderType === "pickup" && branchNames?.map((option: any) => (
-                <SelectItem key={option} value={option} className="text-black">
-               {option}
-                </SelectItem>
-                ))}
-
-
-
-                 {selectedOrderType === "dine_in" && dineInBranchNames?.map((option: any) => (
-                <SelectItem key={option} value={option} className="text-black">
-               {option}
-                </SelectItem>
-                ))}
-
-
-
-                  
-                </SelectContent>
-              </Select> */}
               {selectedOrderType === "delivery" && (
   <Select
     value={selectedArea}
@@ -573,8 +711,12 @@ const isButtonDisabled =
         >
           <X className="w-5 h-5" />
         </button>
-      </DialogContent>
-    </Dialog>
+         {/* <DialogClose  className="bg-black/80 p-1 rounded-xl text-white right-2 top-2 sm:right-2 sm:top-2">
+           <XIcon className="w-6 h-6" />
+         </DialogClose> */}
+       </DialogContent>
+  </Dialog> 
+
   )
 }
 

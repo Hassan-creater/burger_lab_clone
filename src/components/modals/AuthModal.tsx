@@ -1,28 +1,26 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogTrigger,
+  DialogHeader,
+  DialogTitle,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { LucideEye, LucideEyeOff, XIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import Link from "next/link";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser, login, register } from "@/functions";
-import { useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { useUserStore } from "@/store/slices/userSlice";
+import { VisuallyHidden } from "../ui/visually-hidden";
+
 import LoadingSpinner from "../LoadingSpinner";
 import { toast } from "sonner";
 import RegisterForm from "../RegisterForm";
 import { useForm } from "react-hook-form";
-import Cookies from "js-cookie";
+
 import { apiClient } from "@/lib/api";
 import { useCartContext } from "@/context/context";
 
@@ -38,7 +36,7 @@ function AuthModal() {
 
 
 
-  const {register, handleSubmit, formState: {errors, isDirty}} = useForm<Login>();
+  const {register, handleSubmit, formState: { isDirty}} = useForm<Login>();
 
 
 
@@ -49,21 +47,6 @@ function AuthModal() {
 
   const {setLoggedIn , authOpen , setAuthOpen} = useCartContext()
 
-
-//   const loginMutation = useMutation({
-//     mutationFn: () => login(loginDetails.email, loginDetails.password),
-//     onSuccess(data) {
-//       if (data.user?.status === "error") {
-//         console.log(data.user);
-//         setError(() => ({
-//           status: Boolean(data.user?.status),
-//           message: data.user?.message || "Something went wrong",
-//         }));
-//         return;
-//       }
-//       location.reload();
-//     },
-//   });
 
   const handleLogin = async (data: {email: string, password: string}) => {
     try {
@@ -111,9 +94,6 @@ function AuthModal() {
       return (
         <div className="flex flex-col items-center justify-center">
           <h3 className="text-2xl font-bold mb-3">Welcome Back</h3>
-          {/* {error.status && !loginMutation.isPending && (
-            <p className="text-red-500 mb-3">{error.message}</p>
-          )} */}
           <form
             className="flex w-full flex-col items-center justify-center mb-1"
             onSubmit={handleSubmit(handleLogin)}
@@ -187,7 +167,6 @@ function AuthModal() {
     if (modalType === "REGISTER") {
       return (
         <div className="flex flex-col items-center justify-center">
-       
           <RegisterForm setModalType={setModalType} />
         </div>
       );
@@ -243,6 +222,11 @@ function AuthModal() {
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[80%] sm:w-[40%] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
+        <DialogHeader>
+          <DialogTitle asChild>
+            <VisuallyHidden>Authentication</VisuallyHidden>
+          </DialogTitle>
+        </DialogHeader>
         {renderModalContent()}
         <DialogClose disabled={loading} className="bg-black/80 p-1 rounded-xl text-white right-2 top-2 sm:right-2 sm:top-2">
           <XIcon className="w-6 h-6" />

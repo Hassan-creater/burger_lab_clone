@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
@@ -8,72 +8,63 @@ import { toast } from "sonner";
 import { CouponValidation } from "@/models/Coupon";
 import { OrderDetails } from "@/app/checkout/page";
 import { useUserStore } from "@/store/slices/userSlice";
+import { useCartContext } from "@/context/context";
+import { apiClient } from "@/lib/api";
 
 type PromoBarProps = {
   discount: string;
   setDiscount: React.Dispatch<React.SetStateAction<string>>;
   setOrderDetails?: React.Dispatch<React.SetStateAction<OrderDetails>>;
+  setCouponValidation: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const PromoBar = ({
   setDiscount,
   discount,
   setOrderDetails,
+  setCouponValidation,
 }: PromoBarProps) => {
   const [promoCode, setPromoCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { user } = useUserStore();
+  const { user , setAuthOpen , setCouponData , couponData } = useCartContext();
 
-  // Using dummy coupon validation
-  const handleApplyPromo = () => {
+
+  //  coupon vali
+  // dation
+  const handleApplyPromo = async () => {
     setIsLoading(true);
-
-    // Simulate API delay
-    setTimeout(() => {
-      // Demo coupon: "SAVE10"
-      if (promoCode.toUpperCase() === "SAVE10") {
-        const validationResult: CouponValidation = {
-          valid: true,
-          discount: "10",
-          couponId: "1",
-        };
-
-        toast.success("Coupon Applied Successfully", {
-          closeButton: true,
-          dismissible: true,
-          style: {
-            color: "white",
-            backgroundColor: "green",
-          },
-        });
-
-        setDiscount(validationResult.discount);
-        setOrderDetails &&
-          setOrderDetails((prev) => ({
-            ...prev,
-            couponId: parseInt(validationResult.couponId),
-            discount: validationResult.discount,
-          }));
-      } else {
-        const validationResult: CouponValidation = {
-          valid: false,
-          message: "Invalid coupon code",
-        };
-
-        toast.error(validationResult.message, {
-          closeButton: true,
-          dismissible: true,
-          style: {
-            color: "white",
-            backgroundColor: "red",
-          },
-        });
+    setCouponValidation(true);
+  
+    try {
+      const res = await apiClient.post(`/coupon/${promoCode}/redeem`);
+      if (res.data.success === false) {
+        toast.error(res.data.error || "Coupon redemption failed");
+        return;
       }
-
+      // Success path
+      const couponResult = res.data.data; // { valid, discount, couponId }
+      setCouponData(couponResult);
+      setDiscount(couponData.discount);
+      toast.success(res.data.message || "Coupon applied!");
+      setCouponValidation(false);
+  
+    } catch (err: any) {
+      const serverError =
+        err.response?.data?.error ||
+        err.message ||
+        "An unexpected error occurred";
+      toast.error(serverError);
+      setCouponValidation(false);
+    } finally {
+      setPromoCode("");
       setIsLoading(false);
-    }, 500); // Simulate 500ms delay
+      setCouponValidation(false);
+    }
   };
+
+
+  
 
   return (
     <div className="flex items-center justify-between w-full h-auto gap-2">
@@ -87,7 +78,13 @@ const PromoBar = ({
       <Button
         variant="outline"
         disabled={isLoading || !promoCode}
-        onClick={handleApplyPromo}
+        onClick={()=>{
+          if(user){
+            handleApplyPromo();
+          }else{
+            setAuthOpen(true);
+          }
+        }}
         className={cn(
           "text-sm w-max bg-primaryOrange hover:bg-primaryOrange/80 text-black rounded-3xl !h-10",
           discount !== "0" && "bg-green-600 hover:bg-green-600/80"

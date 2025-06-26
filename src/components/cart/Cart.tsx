@@ -22,10 +22,11 @@ import { useRouter } from "next/navigation";
 import { Loader2, LucideChevronRightCircle } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
-import { apiClient } from "@/lib/api";
+import { apiClient, apiClientCustomer } from "@/lib/api";
 import { useCartContext } from "@/context/context";
 import { toast } from "sonner";
 import ShoppingBagIcon from "../icons/cart-shopping";
+import { useQuery } from "@tanstack/react-query";
 
 
 interface CartProps {
@@ -53,11 +54,25 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [subTotal, setSubTotal] = useState(0.0);
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
+  const [couponValidation, setCouponValidation] = useState<boolean>(false);
 
   // Using dummy tax data instead
+  const  getTax = async () => {
+    const res = await apiClientCustomer.get("/company")
+     return res.data.data;
+  }
+
+  const {data : taxData , isLoading : taxLoading} = useQuery({
+    queryKey : ["tax"],
+    queryFn : getTax,
+  })
+ 
+
+ 
+
   const data = {
     status: 200,
-    tax: "10" // 10% tax rate
+    tax: taxData?.tax // 10% tax rate
   };
 
   const router = useRouter();
@@ -139,7 +154,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
   const windowWidth = useWindowSize();
 
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen} = useCartContext();
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData} = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
 
  
@@ -152,6 +167,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     const payload = {
       status: "pending",
       orderType: AddressData?.orderType,
+      ...(couponData?.couponId && {couponId: couponData?.couponId}),
       ...(defaultAddress && {addressId: defaultAddress}),  
       ...(deliveryAddress && {deliveryAddress: deliveryAddress}),
       ...(deliveryName && {deliveryName: deliveryName}),
@@ -173,10 +189,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       })),
     };
     
-    
-    
   if(AddressData?.orderType != "delivery"  && AddressData?.orderType ){
- 
     setIsLoading(true);
     const res = await apiClient.post("/order/add",payload);
     if(res.status === 201){
@@ -192,7 +205,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       
     }
 
-  }else if(AddressData?.orderType == "delivery"  && deliveryAddress && deliveryName && deliveryPhone && AddressData?.orderType){
+  }else if(AddressData?.orderType == "delivery"  || deliveryAddress && deliveryName || deliveryPhone || AddressData?.orderType){
     setIsLoading(true);
     const res = await apiClient.post("/order/add",payload);
     if(res.status === 201){
@@ -372,6 +385,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
             discount={discount}
             setDiscount={setDiscount}
             setOrderDetails={setOrderDetails}
+            setCouponValidation={setCouponValidation}
           />
           <div className="flex items-center justify-between w-full h-auto">
             <p className="font-normal text-sm">Subtotal</p>
@@ -389,10 +403,10 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           </div>
           <div className="flex items-center justify-between w-full h-auto">
             <p className="font-normal text-sm">
-              Discount ({parseInt(discount ?? "0") + "%"})
+              Discount ({parseInt(couponData?.discount ?? "0") + "%"})
             </p>
             <p className="font-normal text-gray-500 text-sm">
-              - {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(discount ?? "0") / 100), 0))}
+              - {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(couponData?.discount ?? "0") / 100), 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -412,7 +426,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           <Button
             variant="outline"
             title="checkout"
-            disabled={AddedInCart.length === 0 || addOrder?.isPending }
+            disabled={AddedInCart.length === 0 || addOrder?.isPending || taxLoading || couponValidation}
             onClick={()=>{
               if(user){
                 handlePlaceOrder();

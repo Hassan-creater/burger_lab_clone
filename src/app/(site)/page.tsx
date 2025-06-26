@@ -7,12 +7,14 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import ServiceError from "@/components/ServiceError";
-import SearchBox from "./components/SearchBox";
+
 import { dummyCategories, dummyFavorites } from "@/lib/dummyData";
 import { Category } from "@/models/Category";
 
-import { redirect } from "next/navigation";
+
 import { cookies } from "next/headers";
+import SearchBox from "./components/SearchBox";
+import { toast } from "sonner";
 
 
 
@@ -56,7 +58,32 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 
+const getFavorites = async ({id, token} : {id : string, token : string}) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_BASE_URL}/favorite/user/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
 
+    if (!res.ok) {
+      return []
+    }
+
+    // assuming response shape { data: { categories: Category[] } }
+    const body = await res.json();
+    return body.data?.favorites as any[];
+  } catch (err) {
+    console.error("Favorites fetch error:", err);
+    // Fallback to dummy data
+    
+  }
+}  
 
 
 
@@ -69,7 +96,7 @@ export default async function Home(
   const searchParams = await props.searchParams;
   const queryClient = new QueryClient();
   
-  const token = await getServerCookie("accessToken")
+
 
   // if(!token){
   //   redirect("/");
@@ -80,16 +107,29 @@ export default async function Home(
   
 
 
-  const allItems = data.flatMap((category: any) =>
-    category.items.map((item: any) => ({
+  const allItems = data?.flatMap((category: any) =>
+    category?.items?.map((item: any) => ({
       ...item,
       categoryId: category.id,
     }))
   );
 
   // Using dummy data instead
+  const token = await getServerCookie("accessToken");
+  const cookieStore = await cookies();
+  const userData = cookieStore.get("userData")?.value;
+  const userDataJson = JSON.parse(userData || "{}");
+  const userId = userDataJson.id;
+
+
   const categories = data;
-  const favorites = dummyFavorites;
+  const favorites = await getFavorites({id: userId, token: token || ""});
+
+  
+
+  // Get the real-time search query
+ 
+
 
   if (!categories) {
     return <ServiceError />;
@@ -104,14 +144,14 @@ export default async function Home(
 
         <SearchBox/>
 
-        {categories.map((category : any, index : number) => (
+        {categories?.map((category : any, index : number) => (
           <CategorySection
             key={index}
             name={category.title}
             href={`#${category.title}`}
             id={category.id}
             query={searchParams.query === "" ? undefined : searchParams.query}
-            favorites={favorites}
+            favorites={favorites || []}
             allItems={allItems}
           />
         ))}

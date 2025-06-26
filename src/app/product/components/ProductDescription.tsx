@@ -183,7 +183,7 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
     });
   }, [cartItems, product]);
 
-  console.log(cartPayload);
+
 
   // Update cart context
   const prevPayloadRef = useRef<string | null>(null);

@@ -1,75 +1,87 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { HeartIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { addFavorite, removeFavorite } from "@/functions";
-import { user } from "@/lib/constants";
+
+
 import { toast } from "sonner";
+
+
+import { useCartContext } from "@/context/context";
+import { apiClient } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/slices/userSlice";
+
 
 interface LikeButtonProps {
   className?: string;
   itemId: string;
   isFav: boolean;
+  id?: string;
   setIsFav: React.Dispatch<React.SetStateAction<boolean>>;
+  favorites?: any[];
 }
 
-function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
-  const { user } = useUserStore();
-
+function LikeButton({ className, itemId, isFav, setIsFav , id , favorites }: LikeButtonProps) {
+  const {  setFavorite , favorite } = useCartContext();
+  const [initialFavorites, setInitialFavorites] = useState(favorites);
   const router = useRouter();
-  const addFav = useMutation({
-    mutationFn: () => addFavorite(user?.userId!, itemId), // userId will be present because I am only calling this mutation fn when user is not null
-    onSuccess() {
-      toast.success("Item Added to Favorites", {
-        style: { backgroundColor: "green", color: "white" },
-        closeButton: true,
-        dismissible: true,
-      });
+
+  
+
+  
+  const addFav = async ()=>{
+
+    const res = await apiClient.post(`/favorite/add` , {
+      itemId : itemId,
+     });
+     if(res.status === 200 || res.status === 201 || res.status === 204){
+      toast.success("Item Added to Favorites");
       setIsFav(true);
-    },
-  });
-
-  const removeFav = useMutation({
-    mutationFn: () => removeFavorite(user?.userId!, itemId),
-    onSuccess(data : any) {
-      router.refresh();
-      toast.success(data.message?.message, {
-        style: { backgroundColor: "green", color: "white" },
-        closeButton: true,
-        dismissible: true,
-      });
+      //Extract favoriteId from response and pass both itemId and favId
+      const favoriteId = res.data.data.favoriteId;
+      setFavorite({ itemId, favId: favoriteId });
+     }else{
       setIsFav(false);
-    },
-    onError(data) {
-      toast.error(data.message, {
-        style: { backgroundColor: "red", color: "white" },
-        closeButton: true,
-        dismissible: true,
-      });
-    },
-  });
+      toast.error("Something went wrong");
+     }
+  }
 
-  const handleFavLogic = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    if (e?.currentTarget?.id === itemId.toString()) e.preventDefault();
-    if (!user) {
-      toast.error("Login to Start saving Favorites!", {
-        style: { backgroundColor: "red", color: "white" },
-        closeButton: true,
-        dismissible: true,
-      });
-    } else !isFav ? addFav.mutateAsync() : removeFav.mutateAsync();
-  };
+ 
+
+  const removeFav = async ()=>{
+    const Id = favorite?.find((fav: any) => fav.itemId == itemId)?.favId;
+    console.log(Id)
+     if(Id){
+      const res = await apiClient.delete(`favorite/${Id}`)
+    if(res.status === 200 || res.status === 201 || res.status === 204){
+      toast.success("Item Removed from Favorites");
+      setIsFav(false);
+      setFavorite({ itemId, favId: "" }); // Pass empty favId for removal
+      setInitialFavorites((prev) => prev?.filter(fav => fav.itemId !== itemId));
+      router.refresh();
+    }else{
+      toast.error("Something went wrong");
+      setIsFav(true);
+    }
+     }else{
+      const res = await apiClient.delete(`favorite/${id}`)
+    if(res.status === 200 || res.status === 201 || res.status === 204){
+      toast.success("Item Removed from Favorites");
+      setIsFav(false);
+      setFavorite({ itemId, favId: "" }); // Pass empty favId for removal
+      
+    }else{
+      toast.error("Something went wrong");
+      setIsFav(true);
+    }
+     }
+    
+  }
 
   return (
     <Button
-      onClick={handleFavLogic}
       id={itemId.toString()}
       variant="default"
       className={cn(
@@ -79,7 +91,17 @@ function LikeButton({ className, itemId, isFav, setIsFav }: LikeButtonProps) {
       )}
     >
       <HeartIcon
-        className={cn("hover:text-red-500", isFav && "text-red-500")}
+        onClick={(e)=>{
+          e.stopPropagation()
+          if(isFav){
+              setIsFav(false)
+             removeFav();
+          }else{
+            setIsFav(true)
+            addFav()
+          }
+        }}
+        className={`${isFav ? "text-red-500" : "text-gray-500"}`}
         fill={isFav ? "rgb(239 68 68)" : "none"}
       />
     </Button>

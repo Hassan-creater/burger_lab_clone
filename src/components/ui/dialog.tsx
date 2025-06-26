@@ -57,7 +57,7 @@ const DialogContent: typeof DialogPrimitive.DialogContent = React.forwardRef<
       className={cn(
         className &&
           className.includes("descriptionModal") &&
-          "bg-black/80 cursor-default backdrop-blur-md",
+          "bg-black/50 cursor-default backdrop-blur-md",
         className &&
           className.includes("loadingModal") &&
           "bg-black/50 cursor-default backdrop-blur-md"
