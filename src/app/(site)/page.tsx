@@ -140,7 +140,7 @@ export default async function Home(
       {
         categories.length == 0 ? (
            <>  <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
-           <h1 className="text-2xl font-semibold text-red-600">You're Offline</h1>
+           <h1 className="text-2xl font-semibold text-red-600">You are Offline</h1>
            <p className="text-gray-600 mt-2 max-w-md">
              Please check your internet connection. This page requires an active connection to load product data.
            </p>
