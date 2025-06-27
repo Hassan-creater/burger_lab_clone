@@ -4,6 +4,7 @@
 import ProductCard from "../../../components/ProductCard";
 import { Item } from "@/models/Item";
 import { Favorite } from "@/models/Favorites";
+import { designVar } from "@/designVar/desighVar";
 
 
 
@@ -41,18 +42,8 @@ function filterItems(allItems: any[], query: string) {
   });
 }
 
-
-
   const filteredItems =filterItems(allItems.filter((item :any) => item.categoryId == id), query || "") || [];
   
-  
-
- 
-
-
-     
-
-
   const renderProducts = (item: Item, index: number) => {
     return <ProductCard key={index} product={item} favorites={favorites} />;
   };
@@ -65,7 +56,7 @@ function filterItems(allItems: any[], query: string) {
           id={href.slice(1)}
           className="flex flex-col  gap-4 h-full w-[95%] lg:max-w-[85%]"
         >
-          <h3 className="text-2xl font-bold">{name}</h3>
+          <h3 className={`${designVar.categoryHeading.fontSize} ${designVar.categoryHeading.fontWeight} ${designVar.categoryHeading.color} ${designVar.fontFamily}`}>{name}</h3>
           <div className="flex flex-wrap items-center justify-start gap-5">
             {filteredItems?.map((item : any, index : number) => renderProducts(item, index))}
           </div>

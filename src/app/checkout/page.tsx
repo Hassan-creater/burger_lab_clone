@@ -15,6 +15,7 @@ import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SelectItem } from "@radix-ui/react-select";
+import { designVar } from "@/designVar/desighVar";
 
 export type OrderDetails = {
   comment: string;
@@ -127,43 +128,20 @@ function Checkout() {
 
   return (
     <main className="w-[100%] bg-white p-[0.5em] lg:max-w-[85%] mx-auto my-5 min-h-screen">
-      <h1 className="text-lg font-bold mb-5">Checkout</h1>
+      <h1 className={`text-lg font-bold mb-5 ${designVar.fontFamily}`}>Checkout</h1>
 
       
       <div className="w-full h-auto flex flex-col lg:flex-row gap-5">
         <section className="w-full lg:w-[55%] flex flex-col gap-5 h-max">
 
-        
-         
-
-{/* <div className="px-3  py-8 space-y-1 text-lg rounded-lg bg-primaryBg">
-              <div className="bg-primaryBg p-4 rounded-lg mb-4 flex flex-col gap-4">
-  <h2 className="text-md">Choose Order Type <span className="text-red-500">*</span></h2>
-  <div className="flex gap-4 flex-wrap">
-    {["delivery", "dine_in", "pickup"].map((type) => (
-      <button
-        key={type}
-        onClick={() =>updateOrderType(type)}
-        className={`px-4 py-2 rounded-md border ${
-          orderType == type
-            ? "bg-primaryOrange text-white border-primaryOrange"
-            : "bg-white text-black border-gray-300"
-        }`}
-      >
-        {type.replace("_", " ").toUpperCase()}
-      </button>
-    ))}
-  </div>
-</div>
-
-            </div> */}
+  
 
 
             {
               AddressData?.orderType == "delivery" && (
                 <>
                  <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className="text-md">Delivery Address <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address <span className="text-red-500">*</span></label>
                 <Select  value={deliveryAddressValue} onValueChange={(value) => {setDeliveryAddressValue(value); setDeliveryAddress(value)}}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Address">
@@ -182,13 +160,13 @@ function Checkout() {
 
 
               <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className="text-md">Delivery Name <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Name <span className="text-red-500">*</span></label>
                 <input type="text" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter delivery name" onChange={(e) => setDeliveryName(e.target.value)}/>
               </div>
 
 
               <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className="text-md ">Delivery Phone <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Phone <span className="text-red-500">*</span></label>
                 <input type="number" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter your phone number" onChange={(e) => setDeliveryPhone(e.target.value)}/>
               </div>
 
@@ -204,7 +182,7 @@ function Checkout() {
             }
           <div className="bg-primaryBg h-max px-3 py-8 rounded-lg">
             <div className="flex flex-col gap-2">
-              <Label className="text-[1rem] font-normal leading-relaxed">
+              <Label className={`text-[1rem] font-normal leading-relaxed ${designVar.fontFamily}`}>
                 Special Instructions ( Optional )
               </Label>
               <Textarea
@@ -217,14 +195,14 @@ function Checkout() {
             </div>
           </div>
           <div className="bg-primaryBg h-max px-3 py-8 rounded-lg space-y-4">
-            <h3 className="text-[1rem] font-normal leading-relaxed">
+            <h3 className={`text-[1rem] font-normal leading-relaxed ${designVar.fontFamily}`}>
               Select Payment Method
             </h3>
             <PaymentOption type="COD" />
           </div>
         </section>
         <section className="w-full lg:w-[45%] relative bg-primaryBg rounded-lg px-5 py-8 h-max">
-          <h3 className="text-lg font-semibold leading-relaxed">Your cart</h3>
+        <h3 className={`text-lg font-semibold leading-relaxed ${designVar.fontFamily}`}>Your cart</h3>
           <Cart
             type="CHECKOUT"
           />

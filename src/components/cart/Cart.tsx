@@ -27,6 +27,7 @@ import { useCartContext } from "@/context/context";
 import { toast } from "sonner";
 import ShoppingBagIcon from "../icons/cart-shopping";
 import { useQuery } from "@tanstack/react-query";
+import { designVar } from "@/designVar/desighVar";
 
 
 interface CartProps {
@@ -245,7 +246,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               size="icon"
               variant="ghost"
             >
-              <span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute -top-0 right-3 z-30 text-xs flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute -top-4 right-2 z-30 text-xs flex items-center justify-center">
                 {AddedInCart.length}
               </span>
               <ShoppingBagIcon width={26} height={26} />
@@ -257,7 +258,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                 "fixed -bottom-1 p-4 py-6 flex md:hidden w-full bg-primaryOrange left-[0.01rem] items-center justify-between",
                 items.length === 0 && "hidden"
               )}
-            >
+            >     
               <div className="flex flex-col items-center justify-center">
                 <p className="text-black font-normal">
                   {cartItemsQuantity} Item(s)
@@ -278,11 +279,11 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           side={windowWidth >= 768 ? "right" : "bottom"}
         >
           <SheetHeader className="flex flex-row w-full items-center justify-between mt-2 rounded-3xl">
-            <SheetTitle className="font-bold text-md">Your Cart</SheetTitle>
+            <SheetTitle className={`font-bold text-md ${designVar.fontFamily}`}>Your Cart</SheetTitle>
             <Button
               variant="link"
               onClick={()=>{ClearCart()}}
-              className="text-[#fabf2c] !p-2 underline font-bold text-md"
+              className={`text-[#fabf2c] !p-2 underline font-bold text-md ${designVar.fontFamily}`}
             >
               Clear Cart
             </Button>
@@ -292,7 +293,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll pb-[2em] ">
                 {AddedInCart?.map((cartItem : any) => (
                   <CartItem
-                    key={cartItem.variantId}
+                    key={cartItem.totalPrice + cartItem.variantId}
                     cartItem={cartItem}
                     removeItem={removeItemFromCart}
                   />
@@ -301,8 +302,8 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               <SheetFooter className="flex bg-white flex-col w-[93%] gap-2 absolute bottom-3 z-50">
                 <hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className="font-normal text-sm">Subtotal</p>
-                  <p className="font-normal text-gray-500 text-sm">
+                  <p className={`font-normal text-sm ${designVar.fontFamily}`}>Subtotal</p>
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
                     {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
                   </p>
                 </div>
@@ -312,26 +313,26 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                   setOrderDetails={setOrderDetails}
                 /> */}
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className="font-normal text-sm">
+                  <p className={`font-normal text-sm ${designVar.fontFamily}`}>
                     Tax ({parseInt(data?.tax ?? "0") + "%"})
                   </p>
-                  <p className="font-normal text-gray-500 text-sm">
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
                     {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
                   </p>
                 </div>
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className="font-normal text-sm">Delivery Charges</p>
-                  <p className="font-normal text-gray-500 text-sm">
+                  <p className={`font-normal text-sm ${designVar.fontFamily}`}>Delivery Charges</p>
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
                     {deliveryCharges > 0
                       ? formatPrice(deliveryCharges)
                       : "Free"}
                   </p>
                 </div>
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className="font-bold text-[1rem] sm:text-lg">
+                  <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>
                     Grand Total (Incl. Tax)
                   </p>
-                  <p className="font-bold text-gray-500 text-lg">
+                  <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
                     {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
                   </p>
                 </div>
@@ -341,7 +342,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                       variant="outline"
                       title="checkout"
                       onClick={() => {setIsCartOpen(false) ; sessionStorage.setItem("canCheckout", "true")}}
-                      className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
+                      className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor}`}
                     >
                       Checkout
                     </Button>
@@ -356,10 +357,10 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                 width={60}
                 height={60}
               />
-              <p className="text-sm font-normal text-gray-500">
+              <p className={`text-sm font-normal text-gray-500 ${designVar.fontFamily}`}>
                 Looks pretty Empty.
               </p>
-              <p className="text-sm font-normal text-gray-500">
+              <p className={`text-sm font-normal text-gray-500 ${designVar.fontFamily}`}>
                 Start Shopping Now!
               </p>
             </div>
@@ -388,38 +389,38 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
             setCouponValidation={setCouponValidation}
           />
           <div className="flex items-center justify-between w-full h-auto">
-            <p className="font-normal text-sm">Subtotal</p>
-            <p className="font-normal text-gray-500 text-sm">
+            <p className={`font-normal text-sm ${designVar.fontFamily}`}>Subtotal</p>
+            <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className="font-normal text-sm">
+            <p className={`font-normal text-sm ${designVar.fontFamily}`}>
               Tax ({parseInt(data?.tax ?? "0") + "%"})
             </p>
-            <p className="font-normal text-gray-500 text-sm">
+            <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className="font-normal text-sm">
+            <p className={`font-normal text-sm ${designVar.fontFamily}`}>
               Discount ({parseInt(couponData?.discount ?? "0") + "%"})
             </p>
-            <p className="font-normal text-gray-500 text-sm">
+            <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               - {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(couponData?.discount ?? "0") / 100), 0))}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className="font-normal text-sm">Delivery Charges</p>
-            <p className="font-normal text-gray-500 text-sm">
+          <p className={`font-normal text-sm ${designVar.fontFamily}`}>Delivery Charges</p>
+            <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               {deliveryCharges > 0 ? formatPrice(deliveryCharges) : "Free"}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className="font-bold text-[1rem] sm:text-lg">
+              <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>
               Grand Total (Incl. Tax)
             </p>
-            <p className="font-bold text-gray-500 text-lg">
+            <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
               {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
             </p>
           </div>
@@ -434,7 +435,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                 setAuthOpen(true);
               }
             }}
-            className="text-center w-full p-2 text-black font-bold rounded-3xl bg-[#fabf2c] hover:bg-[#fabf2a] outline-0 border-0"
+            className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor}`}
           >
             {
               isLoading ? <Loader2 className="size-4 animate-spin" /> : "Place order"

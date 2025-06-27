@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import { toast } from "sonner";
 import FavoriteItemContainer from "./components/FavoriteItemContainer";
 import NoFavorites from "@/components/ServiceError";
+import { designVar } from "@/designVar/desighVar";
 
 type FavoritesProps = {};
 
@@ -75,7 +76,7 @@ export default async function Favorites({}: FavoritesProps) {
 
   return (
     <main className="w-[90%] lg:max-w-[80%] mx-auto my-5 min-h-screen flex flex-col">
-      <h1 className="text-lg font-bold mt-10 mb-7 text-gray-700">
+      <h1 className={`text-lg font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>
         My Favorite Items
       </h1>
 
@@ -94,9 +95,9 @@ export default async function Favorites({}: FavoritesProps) {
         
       ) : favorites?.length == 0 && (
         <div className="w-full min-h-full flex flex-col gap-3 items-center justify-center">
-        <p className="text-lg font-bold">No Favorite Items</p>
-        <Link href="/">
-          <Button className="w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg">
+        <p className={`text-lg font-bold ${designVar.fontFamily}`}>No Favorite Items</p>
+        <Link className={`${designVar.widthFullButton.width}  ${designVar.widthFullButton.maxWidth} ${designVar.fontFamily}`} href="/">
+          <Button className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.fontFamily}`}>
             View All Items
           </Button>
         </Link>

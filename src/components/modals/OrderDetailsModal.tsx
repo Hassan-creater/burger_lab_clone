@@ -16,6 +16,7 @@ import { formatPrice } from "@/lib/utils";
 import { parseOrderItems } from "@/lib/orderUtils";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "@radix-ui/react-select";
+import { designVar } from "@/designVar/desighVar";
 
 type OrderDetailsModalProps = {
   order: any;
@@ -108,21 +109,21 @@ const getStatusColor = (status: string) => {
                 <Package className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Order #{order?.order?.displayId}</h3> {/* Fixed */}
-                <p className="text-sm text-gray-600">{formatDate(order?.order?.createdAt)}</p> {/* Fixed */}
+                <h3 className={`text-lg font-semibold text-gray-900 ${designVar.fontFamily}`}>Order #{order?.order?.displayId}</h3> {/* Fixed */}
+                <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>{formatDate(order?.order?.createdAt)}</p> {/* Fixed */}
               </div>
             </div>
             <div className="text-right space-y-2">
-              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
-              <p className="text-lg font-bold text-orange-600">Rs: {order?.order?.total}</p> {/* Fixed */}
+              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
+              <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</p> {/* Fixed */}
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+            <div className={`mt-4 flex items-center justify-between text-sm text-gray-600 ${designVar.fontFamily}`}>
             <span className="flex items-center gap-1">
               <Package className="w-4 h-4" />
               {order?.order?.itemsCount} items {/* Fixed */}
             </span>
-            <span className="flex items-center gap-1">
+            <span className={`flex items-center gap-1 ${designVar.fontFamily}`}>
               <User className="w-4 h-4" />
               {order?.order?.user?.firstName} {order?.order?.user?.lastName} {/* Fixed */}
             </span>
@@ -133,7 +134,7 @@ const getStatusColor = (status: string) => {
 
     <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle className="flex items-center gap-2 text-xl">
+        <DialogTitle className={`flex items-center gap-2 text-xl ${designVar.fontFamily}`}>
           <Package className="w-6 h-6 text-orange-500" />
           Order Details #{order?.order?.displayId} {/* Fixed */}
         </DialogTitle>  
@@ -143,14 +144,14 @@ const getStatusColor = (status: string) => {
         {/* Order Status & Basic Info */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-600">Status</label>
+            <label className={`text-sm font-medium text-gray-600 ${designVar.fontFamily}`}>Status</label>
             <div className="text-center max-w-[15em] space-y-2">
-              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
+              <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-600">Total Amount</label>
-            <p className="text-2xl font-bold text-orange-600">Rs: {order?.order?.total}</p> {/* Fixed */}
+            <label className={`text-sm font-medium text-gray-600 ${designVar.fontFamily}`}>Total Amount</label>
+            <p className={`text-2xl font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</p> {/* Fixed */}
           </div>
         </div>
 
@@ -158,19 +159,19 @@ const getStatusColor = (status: string) => {
 
         {/* Customer Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
+          <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
             <User className="w-5 h-5 text-orange-500" />
             Customer Information
           </h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="font-medium text-gray-600">Name</label>
+              <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Name</label>
               <p>
                 {order?.order?.user?.firstName} {order?.order?.user?.lastName} {/* Fixed */}
               </p>
             </div>
             <div>
-              <label className="font-medium text-gray-600">Phone</label>
+              <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Phone</label>
               <p className="flex items-center gap-1">
                 <Phone className="w-4 h-4" />
                 {order?.order?.user?.phone} {/* Fixed */}
@@ -184,21 +185,21 @@ const getStatusColor = (status: string) => {
                 <>
                   <Separator />
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
                       <MapPin className="w-5 h-5 text-orange-500" />
                       Delivery Information
                     </h3>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <label className="font-medium text-gray-600">Delivery Name</label>
+                        <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Delivery Name</label>
                         <p>{order?.deliveryName}</p>
                       </div>
                       <div>
-                        <label className="font-medium text-gray-600">Delivery Phone</label>
+                        <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Delivery Phone</label>
                         <p>{order?.deliveryPhone}</p>
                       </div>
                       <div>
-                        <label className="font-medium text-gray-600">Address</label>
+                        <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Address</label>
                         <p>{order?.deliveryAddress}</p>
                       </div>
                     </div>
@@ -210,7 +211,7 @@ const getStatusColor = (status: string) => {
 
               {/* Order Items */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+                <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
                   <Package className="w-5 h-5 text-orange-500" />
                   Order Items ({order?.order?.itemsCount})
                 </h3>
@@ -219,19 +220,19 @@ const getStatusColor = (status: string) => {
                     <div key={item.id} className="border rounded-lg p-4 bg-gray-50">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <h4 className="font-medium">{item.variant.name}</h4>
-                          <p className="text-sm text-gray-600">Item #{itemIndex + 1}</p>
+                          <h4 className={`font-medium ${designVar.fontFamily}`}>{item.variant.name}</h4>
+                          <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>Item #{itemIndex + 1}</p>
                           {item.variant.addons.length > 0 && (
                             <div className="mt-2">
-                              <p className="text-xs font-medium text-gray-600">Add-ons:</p>
-                              <p className="text-xs text-gray-500">
+                              <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Add-ons:</p>
+                              <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
                                 {item.variant.addons.map((addon: any) => addon.name).join(", ")}
                               </p>
                             </div>
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-orange-600">${item.price}</p>
+                          <p className={`font-semibold text-orange-600 ${designVar.fontFamily}`}>${item.price}</p>
                         </div>
                       </div>
                     </div>
@@ -243,18 +244,18 @@ const getStatusColor = (status: string) => {
 
               {/* Order Timeline */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+                <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
                   <Calendar className="w-5 h-5 text-orange-500" />
                   Order Timeline
                 </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Order Created:</span>
+                    <span className={`text-gray-600 ${designVar.fontFamily}`}>Order Created:</span>
                     <span>{formatDate(order?.order?.createdAt)}</span>
                   </div>
                   {order?.order?.completedOn && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Completed:</span>
+                      <span className={`text-gray-600 ${designVar.fontFamily}`}>Completed:</span>
                       <span>{formatDate(order?.order?.completedOn)}</span>
                     </div>
                   )}
@@ -266,7 +267,7 @@ const getStatusColor = (status: string) => {
                 <>
                   <Separator />
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
                       <Star className="w-5 h-5 text-orange-500" />
                       Customer Review
                     </h3>
@@ -295,25 +296,25 @@ const getStatusColor = (status: string) => {
               {/* Pricing Breakdown */}
               <Separator />
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+                <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
                   <DollarSign className="w-5 h-5 text-orange-500" />
                   Pricing Details
                 </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Subtotal:</span>
-                    <span>${(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
+                    <span className={`${designVar.fontFamily} text-gray-600`}>Subtotal:</span>
+                    <span className={`${designVar.fontFamily} text-gray-600`}>${(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
                   </div>
                   {order?.order?.discount && (
                     <div className="flex justify-between text-green-600">
-                      <span>Discount:</span>
-                      <span>-${order?.order?.discount}</span>
+                      <span className={`${designVar.fontFamily} text-gray-600`}>Discount:</span>
+                      <span className={`${designVar.fontFamily} text-gray-600`}>-${order?.order?.discount}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
-                    <span>Total:</span>
-                    <span className="text-orange-600">${order?.order?.total}</span>
+                    <span className={`${designVar.fontFamily} text-gray-600`}>Total:</span>
+                    <span className={`text-orange-600 ${designVar.fontFamily}`}>${order?.order?.total}</span>
                   </div>
                 </div>
               </div>

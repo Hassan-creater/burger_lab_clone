@@ -11,6 +11,7 @@ import ServiceError from "@/components/ServiceError";
 import { getAllFavorites, getUser } from "@/functions";
 import { getServerCookie } from "@/app/(site)/page";
 import { redirect } from "next/navigation";
+import { designVar } from "@/designVar/desighVar";
 
 
 export async function generateMetadata(
@@ -84,19 +85,19 @@ export default async function ProductPage(props: ProductPageProps) {
         <section className="w-[90%] mx-auto p-4 pt-2 bg-white rounded-lg shadow-md">
           <div className="flex item-center gap-1 w-full h-auto">
             <Link
-              className="text-xs font-normal text-gray-500 hover:underline"
+              className={`text-xs font-normal text-gray-500 hover:underline ${designVar.fontFamily}`}
               href="/"
             >
               Home
             </Link>
             <ChevronRight className="text-gray-500" size={15} />
-            <p className="text-xs font-normal text-[#fabf2c]">{product.name}</p>
+            <p className={`text-xs font-normal text-[#fabf2c] ${designVar.fontFamily}`}>{product.name}</p>
           </div>
-          <ProductDescription product={product} favorites={favorites} />
+          <ProductDescription product={product} />
         </section>
         <div className="w-[90%] mx-auto relative min-h-12">
           <hr className="bg-categorySeparatorGradient absolute inset-0 w-[30%] min-[400px]:w-[34%] md:w-[37%] my-auto h-px block" />
-          <h3 className="text-sm sm:text-lg lg:text-xl font-bold absolute inset-0 w-1/2 mx-auto flex items-center justify-center">{`More in ${product.categoryName}`}</h3>
+          <h3 className={`text-sm sm:text-lg lg:text-xl font-bold absolute inset-0 w-1/2 mx-auto flex items-center justify-center ${designVar.fontFamily}`}>{`More in ${product.categoryName}`}</h3>
           <hr className="bg-categorySeparatorGradient absolute inset-0 w-[30%] min-[400px]:w-[34%] md:w-[37%] my-auto ml-auto h-px block" />
         </div>
         <section className="w-[90%] mx-auto p-4 pt-2 bg-white rounded-lg shadow-md">

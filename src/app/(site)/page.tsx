@@ -8,13 +8,13 @@ import {
 } from "@tanstack/react-query";
 import ServiceError from "@/components/ServiceError";
 
-import { dummyCategories, dummyFavorites } from "@/lib/dummyData";
+import { dummyCategories } from "@/lib/dummyData";
 import { Category } from "@/models/Category";
 
 
 import { cookies } from "next/headers";
 import SearchBox from "./components/SearchBox";
-import { toast } from "sonner";
+
 
 
 
@@ -38,7 +38,6 @@ export async function getCategories(): Promise<Category[]> {
         method: "GET",
         headers: {
           "Accept": "application/json",
-          
         },
       }
     );
@@ -53,7 +52,7 @@ export async function getCategories(): Promise<Category[]> {
   } catch (err) {
     console.error("Categories fetch error:", err);
     // Fallback to dummy data
-    return dummyCategories;
+    return [];
   }
 }
 
@@ -137,25 +136,38 @@ export default async function Home(
 
   return (
     <main className="w-full mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <HeroBanner />
 
-        <CategoryLinkMenu categories={categories} />
-
-        <SearchBox/>
-
-        {categories?.map((category : any, index : number) => (
-          <CategorySection
-            key={index}
-            name={category.title}
-            href={`#${category.title}`}
-            id={category.id}
-            query={searchParams.query === "" ? undefined : searchParams.query}
-            favorites={favorites || []}
-            allItems={allItems}
-          />
-        ))}
-      </HydrationBoundary>
+      {
+        categories.length == 0 ? (
+           <>  <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
+           <h1 className="text-2xl font-semibold text-red-600">You're Offline</h1>
+           <p className="text-gray-600 mt-2 max-w-md">
+             Please check your internet connection. This page requires an active connection to load product data.
+           </p>
+         </main> </>
+        ) : (
+          <HydrationBoundary state={dehydrate(queryClient)}>
+          <HeroBanner />
+  
+          <CategoryLinkMenu categories={categories} />
+  
+          <SearchBox/>
+  
+          {categories?.map((category : any, index : number) => (
+            <CategorySection
+              key={index}
+              name={category.title}
+              href={`#${category.title}`}
+              id={category.id}
+              query={searchParams.query === "" ? undefined : searchParams.query}
+              favorites={favorites || []}
+              allItems={allItems}
+            />
+          ))}
+        </HydrationBoundary>
+        )
+      }
+     
     </main>
   );
 }

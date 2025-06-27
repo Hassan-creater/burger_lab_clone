@@ -6,7 +6,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-
+import { designVar } from "@/designVar/desighVar";    
 type RelatedProductsProps = {
   categoryId: string;
   productId: string;
@@ -47,7 +47,7 @@ export default async function RelatedProducts({
             </CarouselItem>
           ))
         ) : (
-          <div>No related products found</div>
+          <div className={`text-gray-500 ${designVar.fontFamily}`}>No related products found</div>
         )}
       </CarouselContent>
     </Carousel>

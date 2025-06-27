@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { designVar } from "@/designVar/desighVar";
 
 
 interface UserProfile {
@@ -23,17 +24,17 @@ export function ProfileDisplay({ profile }: { profile: UserProfile }) {
           style={{ backgroundImage: `url(${profile.image})` }}
         />
         <div>
-          <p className="text-2xl font-semibold text-gray-800">
+          <p className={`text-2xl font-semibold text-gray-800 ${designVar.fontFamily}`}>
             {profile.firstName} {profile.lastName}
           </p>
-          <p className="text-sm text-gray-500">ID: {profile.id}</p>
+          <p className={`text-sm text-gray-500 ${designVar.fontFamily}`}>ID: {profile.id}</p>
         </div>
       </div>
 
       {/* Details grid */}
       <div className="grid grid-cols-1 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className={`${designVar.fontFamily}`}>Email</Label>
           <Input
             id="email"
             readOnly
@@ -42,7 +43,7 @@ export function ProfileDisplay({ profile }: { profile: UserProfile }) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="firstName">First Name</Label>
+          <Label htmlFor="firstName" className={`${designVar.fontFamily}`}>First Name</Label>
           <Input
             id="firstName"
             readOnly
@@ -51,7 +52,7 @@ export function ProfileDisplay({ profile }: { profile: UserProfile }) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name</Label>
+          <Label htmlFor="lastName" className={`${designVar.fontFamily}`}>Last Name</Label>
           <Input
             id="lastName"
             readOnly

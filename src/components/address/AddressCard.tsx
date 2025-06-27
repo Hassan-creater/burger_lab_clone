@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { useCartContext } from "@/context/context";
 import { apiClient } from "@/lib/api";
-
+import { designVar } from "@/designVar/desighVar";
 import { Address } from "@/models/Address";
 import {
   QueryObserverResult,
@@ -46,7 +46,7 @@ export default function AddressCard({
   const queryClient = useQueryClient();
 
 
-  console.log(defaultAddress);
+ 
 
   const deleteAddress = async (id: string) => {
     if (defaultAddress === id) {
@@ -77,30 +77,50 @@ export default function AddressCard({
    
 
   return (
-    <article className="p-4 flex min-w-52 w-full h-max border-[1px] shadow-sm shadow-black/20 border-gray-800/50 flex-col gap-1 rounded-xl bg-white">
-      <h4 className="text-sm text-gray-800 font-medium">{address?.line1}</h4>
-      <p className="line-clamp-1 text-xs text-gray-500">{`${address?.line2}, ${address?.city}, ${address?.country}`}</p>
-      <div className="flex items-center justify-between w-full mt-4">
-        
-        <Button
-          variant="ghost"
-          className="px-2"
-        
+    <article className="w-full h-[10em] flex flex-col justify-between p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 max-w-xs">
+    {/* Address Line */}
+    <div>
+      <h4 className={`text-base font-semibold text-gray-800 mb-1 truncate ${designVar.fontFamily}`}>
+        {address?.line1}
+      </h4>
+      <p className={`text-sm text-gray-500 leading-snug line-clamp-2 ${designVar.fontFamily}`}>
+        {`${address?.line2}, ${address?.city}, ${address?.country}`}
+      </p>
+    </div>
+  
+    {/* Footer */}
+    <div className="flex items-center justify-between mt-2">
+      {/* Delete Icon */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => deleteAddress(address?.id ?? "")}
+        className="hover:bg-red-100 rounded-full"
+      >
+        <LucideTrash2 className="w-4 h-4 text-red-500" />
+        <span className="sr-only">Delete</span>
+      </Button>
+  
+      {/* Default Badge/Button */}
+      {defaultAddress === address?.id ? (
+        <span
+          onClick={() => setDefaultAddress("")}
+          className={`cursor-pointer px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200 hover:bg-green-200 transition ${designVar.fontFamily}`}
         >
-          <LucideTrash2 onClick={()=>{deleteAddress(address?.id ?? "")}} className="w-6 h-6 text-black" />
-          <span className="sr-only">Delete</span>
-        </Button>
+        Default
+        </span>
+      ) : (
+        <span
+          onClick={() => setDefaultAddress(address?.id ?? "")}
+          className={`cursor-pointer px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full border border-gray-200 hover:bg-orange-100 hover:text-orange-600 transition ${designVar.fontFamily}`}
+        >
+          Set as Default
+        </span>
+      )}
+    </div>
+  </article>
+  
+  
 
-
-          {
-           defaultAddress == address?.id ? (
-            <span onClick={()=>{setDefaultAddress("")}}  className="text-sm text-green-500 bg-green-500/10 px-2 py-1 rounded-md">Default</span>
-           ) : (
-            <span onClick={()=>{setDefaultAddress(address?.id ?? "")}}  className="text-sm text-gray-500">Set as Default </span>
-           )
-          }
-          
-      </div>
-    </article>
   );
 }

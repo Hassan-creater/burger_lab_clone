@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	Carousel as CarouselContainer,
 	CarouselContent,
@@ -45,44 +45,59 @@ function HeroBanner() {
 	})	
 	
 	const carouselRef = useRef<HTMLDivElement>(null);
+	const [currentIndex, setCurrentIndex] = useState(0);
+  
+	// Optional: visibility-based rendering
 	const isVisible = useIntersectionObserver(carouselRef as React.RefObject<HTMLElement>, { threshold: 0.6 });
-
 	const { setIsBannerVisible } = useObserverStore();
-
+  
 	useEffect(() => {
-		if (isVisible) setIsBannerVisible(true);
-		else setIsBannerVisible(false);
-	}, [setIsBannerVisible, isVisible]);
+	  setIsBannerVisible(!!isVisible);
+	}, [isVisible, setIsBannerVisible]);
+  
+	// Auto-scroll effect
+	useEffect(() => {
+	  const interval = setInterval(() => {
+		setCurrentIndex((prev) => (prev + 1) % slides?.length);
+	  }, 4000); // Change image every 4s
+  
+	  return () => clearInterval(interval); // Cleanup on unmount
+	}, [slides?.length]);
 
 	return (
 		<CarouselContainer
-			className="w-full lg:max-w-[88%] h-[25em] lg:h-[30em] flex justify-center items-center"
-			opts={{ loop: true }}
-			autoplay={true}
-			ref={carouselRef}>
-			<CarouselContent>
-				{slides &&
-					slides?.map((slide:any) => (
-						<CarouselItem className=" w-full h-full flex justify-center items-center overflow-hidden" key={slide.id}>
-							<div className="p-1 flex items-center justify-center">
-								<div className="flex w-full ml-5 mr-5 lg:ml-10 lg:mr-10 h-auto aspect-video md:aspect-auto bg-white items-center justify-center rounded-2xl">
-									<Image
-										src={slide?.image || ""}
-										alt={`Slide no ${slide?.id}`}
-										width={1000}
-										height={1000}
-										priority
-										loading="eager"
-										className="object-fill rounded-2xl w-full h-full"
-									/>
-								</div>
-							</div>
-						</CarouselItem>
-					))}
-			</CarouselContent>
-			<CarouselPrevious className="hidden lg:inline-flex bg-[#fabf2c] !rounded-[36px] !w-14 !h-20 text-gray-700 hover:bg-[#fabf2a] disabled:opacity-20 opacity-70" />
-			<CarouselNext className="hidden lg:inline-flex bg-[#fabf2c] !rounded-[36px] !w-14 !h-20 text-gray-700 hover:bg-[#fabf2a] disabled:opacity-20 opacity-70" />
-		</CarouselContainer>
+		className="relative w-full lg:max-w-[95%] h-[10em] lg:h-[28em] flex justify-center items-center overflow-hidden"
+		opts={{ loop: true }}
+		autoplay={true}
+		ref={carouselRef}
+	  >
+		<CarouselContent data-carousel-content>
+		  {slides?.map((slide: any) => (
+			<CarouselItem
+			  key={slide.id}
+			  className="w-full h-full flex items-center justify-center flex-shrink-0"
+			>
+			  <div className="w-full h-full flex items-center justify-center">
+				<Image
+				  src={slide?.image || ""}
+				  alt={`Slide no ${slide?.id}`}
+				  width={1920}
+				  height={1080}
+				  priority
+				  loading="eager"
+				  className="w-full h-full object-cover rounded-2xl"
+				/>
+			  </div>
+			</CarouselItem>
+		  ))}
+		</CarouselContent>
+  
+		{/* Navigation Buttons */}
+		<CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] rounded-full w-10 h-10 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
+		<CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] rounded-full w-10 h-10 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
+	  </CarouselContainer>
+
+
 	);
 }
 

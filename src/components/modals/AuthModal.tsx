@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 
 import { apiClient } from "@/lib/api";
 import { useCartContext } from "@/context/context";
+import { designVar } from "@/designVar/desighVar";
 
 type Login = {
     email: string;
@@ -142,7 +143,7 @@ function AuthModal() {
             <Button
               type="submit"
               disabled={!isDirty || loading}
-              className="w-full p-2 flex items-center justify-center rounded-2xl mb-3 bg-primaryOrange hover:bg-primaryOrange/80 text-black font-semibold"
+              className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor} mb-3`}
             ><div className="w-full flex items-center justify-center p-2">
                 {loading ? <LoadingSpinner className="size-6 border-t-white" /> :
                   <span>Login</span>
@@ -150,8 +151,7 @@ function AuthModal() {
                 </div>
             </Button>
             <Button
-              className="rounded-2xl w-full p-2 flex items-center justify-center border-primaryOrange font-semibold"
-              variant="outline"
+                  className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButtonLink.backgroundColor} ${designVar.widthFullButton.registerButtonLink.borderRadius} ${designVar.widthFullButton.registerButtonLink.paddingX} ${designVar.widthFullButton.registerButtonLink.paddingY} ${designVar.widthFullButton.registerButtonLink.fontSize} ${designVar.widthFullButton.registerButtonLink.fontWeight} ${designVar.widthFullButton.registerButtonLink.color} ${designVar.widthFullButton.registerButtonLink.cursor} ${designVar.widthFullButton.registerButtonLink.transition} ${designVar.widthFullButton.registerButtonLink.hover.backgroundColor} ${designVar.widthFullButton.registerButtonLink.hover.borderRadius} ${designVar.widthFullButton.registerButtonLink.hover.color} ${designVar.widthFullButton.registerButtonLink.hover.color} ${designVar.widthFullButton.registerButtonLink.hover.backgroundColor} ${designVar.widthFullButton.registerButtonLink.border}`}
               disabled={loading}
               onClick={(e) => {
                 e.preventDefault();
@@ -215,13 +215,13 @@ function AuthModal() {
         <Button
           variant="outline"
           className={
-            "px-4 py-2 font-bold text-black bg-primaryOrange/60 rounded-xl text-xs !hover:border-[#fabf2c] hover:bg-primaryBg"
+            `${designVar.authButton.backgroundColor} ${designVar.authButton.borderRadius} ${designVar.authButton.paddingX} ${designVar.authButton.paddingY} ${designVar.authButton.fontSize} ${designVar.authButton.fontWeight} ${designVar.authButton.color} ${designVar.authButton.cursor} ${designVar.authButton.transition} ${designVar.authButton.hover.backgroundColor} ${designVar.authButton.hover.borderRadius} ${designVar.authButton.hover.color} ${designVar.authButton.hover.color} ${designVar.authButton.hover.backgroundColor}`
           }
         >
           Login / Register
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[80%] sm:w-[40%] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
+         <DialogContent className="w-[80%] sm:w-[30em] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
         <DialogHeader>
           <DialogTitle asChild>
             <VisuallyHidden>Authentication</VisuallyHidden>

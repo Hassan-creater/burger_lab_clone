@@ -1,7 +1,7 @@
 // context/CartContext.tsx
 "use client";
 
-import { loadCartFromStorage, mergeAndSaveCart, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
+import { loadCartFromStorage, mergeAndSaveCart, removeCartItem, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
 import { Josefin_Sans } from "next/font/google";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -194,8 +194,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   
   
 
-  const removeItemFromCart = (variantId: string) => {
-    removeVariantFromCart(variantId);
+  const removeItemFromCart = (variant : any) => {
+    removeCartItem(variant)
     const updatedCart = loadCartFromStorage();
     setAddedInCart(updatedCart);
   };

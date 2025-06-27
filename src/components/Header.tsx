@@ -33,33 +33,39 @@ const Header = () => {
 
   return (
     <header className="w-full sticky top-0 z-50 h-20 bg-white shadow-sm shadow-neutral-300">
-      <nav className="flex flex-row h-full w-full lg:w-[85%] items-center justify-between p-2 lg:pb-0 lg:pt-0 m-auto">
-        <NoSSRLocationModal />
-        <Link
-          href="/"
-          className="flex relative justify-center max-w-16 lg:w-full h-full lg:max-w-36 -order-1 "
-        >
-          <Image
-            src="/logo.webp"
-            alt="website-logo-showing-its-name"
-            width={80}
-            height={80}
-            fetchPriority="high"
-            className="object-contain m-auto"
-            title="Burger Lab"
-          />
-        </Link>
-        <div className="flex flex-row flex-1 gap-1 sm:gap-3 items-center w-full h-full justify-end pl-2 pr-2">
-          {pathname !== "/checkout" && pathname !== "/order-complete" && (
-            <Cart type="CART" className="block min-[400px]:block" />
-          )}
-          {token ? (
-            <ProfileDropdown user={`${user?.firstName} ${user?.lastName}`} />
-          ) : (
-          <AuthModal/>
-          )}
-        </div>
-      </nav>
+      <nav className="flex items-center justify-between h-full w-full lg:w-[85%] m-auto px-4">
+     {/* Left: Location Modal */}
+     <div className="flex-1 flex justify-start">
+    <NoSSRLocationModal />
+     </div>
+
+  {/* Center: Logo */}
+  <div className="flex-1 flex justify-center">
+    <Link href="/" className="w-[80px] lg:w-[120px] h-full flex items-center justify-center">
+      <Image
+        src="/logo.webp"
+        alt="website-logo-showing-its-name"
+        width={80}
+        height={80}
+        fetchPriority="high"
+        className="object-contain"
+        title="Burger Lab"
+      />
+    </Link>
+  </div>
+
+  {/* Right: Cart / Auth */}
+  <div className="flex-1 flex justify-end items-center gap-2 sm:gap-3">
+    {pathname !== "/checkout" && pathname !== "/order-complete" && (
+      <Cart type="CART" className="block min-[400px]:block" />
+    )}
+    {token ? (
+      <ProfileDropdown user={`${user?.firstName} ${user?.lastName}`} />
+    ) : (
+      <AuthModal />
+    )}
+  </div>
+</nav>
     </header>
   );
 };

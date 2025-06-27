@@ -1,13 +1,11 @@
 import { getOrder } from "@/functions";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import OrderSummary from "@/app/orders/Components/OrderSummary";
 import Link from "next/link";
 import LoadingFlash from "@/components/LoadingFlash";
-import {OrderItem} from "@/models/Order";
 import { getServerCookie } from "@/app/(site)/page";
 import { redirect } from "next/navigation";
-
+import { designVar } from "@/designVar/desighVar";
 async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
 
   const token = await getServerCookie("accessToken");
@@ -18,9 +16,9 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
   if (!params.orderId) {
     return (
       <main className="w-[90%] lg:max-w-[85%] mx-auto my-5 min-h-screen flex flex-col gap-5 items-center justify-center">
-        <p className="text-lg font-bold">Order Not Found</p>
+        <p className={`text-lg font-bold ${designVar.fontFamily}`}>Order Not Found</p>
         <Link href="/">
-          <Button className="w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg">
+          <Button className={`w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg ${designVar.fontFamily}`}>
             View All Items
           </Button>
         </Link>

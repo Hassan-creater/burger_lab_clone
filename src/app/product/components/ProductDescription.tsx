@@ -9,7 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { Item } from "@/models/Item";
 interface ProductDescriptionProps {
   product: Item;
-  setOpen: (open: boolean) => void;
+  setOpen?: (open: boolean) => void;
 }
 
 const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
@@ -424,7 +424,7 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
           <button
             onClick={() => {
                 handleAddToCartClick();
-                setOpen(false);
+                setOpen && setOpen(false);
             }}
             className={`w-full py-3 text-white font-bold rounded-xl transition-all
               bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl`}

@@ -15,6 +15,7 @@ import { useCartContext } from "@/context/context";
 import AddressForm from "@/app/addresses/compoenent/AddressForm";
 import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
+import { designVar } from "@/designVar/desighVar";
 
 type AddressDetailsProps = {
   className?: string;
@@ -74,24 +75,24 @@ export default function AddressDetails({
       )}
      
       <div className="flex items-center justify-between ">
-        <h2 className="text-sm min-[500px]:text-lg font-semibold text-gray-800">
+        <h2 className={`text-sm min-[500px]:text-lg font-semibold text-gray-800 ${designVar.fontFamily}`}>
           My Addresses
         </h2>
     
           <Button
-            className="text-primaryOrange space-x-1 hover:text-primaryOrange"
+            className={`  ${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.textSize} ${designVar.widthFullButton.maxAddressWidth} flex items-center gap-2`}
             variant="ghost"
             onClick={()=>{setNewAddress(true)}}
            >
-            <LucidePlus className="size-4 min-[500px]:size-6" />
-            <p className="text-sm min-[500px]:text-lg font-medium">
+            <LucidePlus className="size-4 min-[500px]:size-5" />
+            <p className={`${designVar.fontFamily}`}>
               Add new address
             </p>
           </Button>
       
       </div>
       {!Addresses || Addresses.length === 0 ? (
-        <div className="min-h-72 flex items-center justify-center w-full font-normal text-lg text-gray-800 text-center">
+        <div className={`min-h-72 flex items-center justify-center w-full font-normal text-lg text-gray-800 text-center ${designVar.fontFamily}`}>
           You don&apos;t have a stored address.
         </div>
       ) : (

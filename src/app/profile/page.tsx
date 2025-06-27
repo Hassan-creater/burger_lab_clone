@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { dummyUser } from "@/lib/dummyData";
 import { cookies } from "next/headers";
 import { ProfileDisplay } from "./form/ProfileForm";
+import { designVar } from "@/designVar/desighVar";
 
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export default async function Profile() {
 
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col">
-      <h1 className="text-lg font-bold mt-10 mb-7 text-gray-700">Profile</h1>
+      <h1 className={`text-lg font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>Profile</h1>
       <section className=" rounded-lg   shadow-sm ">
         <ProfileDisplay profile={user} />
       </section>

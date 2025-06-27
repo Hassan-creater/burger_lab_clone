@@ -17,6 +17,7 @@ import { useUserStore } from "@/store/slices/userSlice";
 import { apiClient } from "@/lib/api";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { designVar } from "@/designVar/desighVar";
 
 function OrderDetails() {
   const { user } = useUserStore();
@@ -105,13 +106,13 @@ function OrderDetails() {
 
   if (data?.pages.length === 0) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
+      <div className={`w-full h-screen flex justify-center items-center ${designVar.fontFamily}`}>
         <p>No Orders Found</p>
       </div>
     );
   }
 
- console.log(order);
+
   
 
   return (
@@ -132,7 +133,7 @@ function OrderDetails() {
     ))}
   </div>
 ) : (
-  <div className="w-full h-screen flex justify-center items-center">
+  <div className={`w-full h-screen flex justify-center items-center ${designVar.fontFamily}`}>
     <p>No Orders Found</p>
   </div>
 )

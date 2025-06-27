@@ -12,6 +12,7 @@ import { apiClient } from "@/lib/api"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
+import { designVar } from "@/designVar/desighVar"
 
 
 type AddressFormProps = {
@@ -64,10 +65,10 @@ export default function AddressForm() {
             <MapPin className="w-8 h-8 text-white" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+            <h1 className={`text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent ${designVar.fontFamily}`}>
               Address Information
             </h1>
-            <p className="text-gray-600">Please enter your address details below</p>
+            <p className={`text-gray-600 ${designVar.fontFamily}`}>Please enter your address details below</p>
           </div>
         </CardHeader>
 
@@ -75,7 +76,7 @@ export default function AddressForm() {
           <form className="space-y-7" onSubmit={handleSubmit(addAddress as any)}>
 
           <div className="space-y-2">
-            <Label htmlFor="line1" className="text-gray-700 font-medium flex items-center gap-2">
+            <Label htmlFor="line1" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
               <Home className="w-4 h-4 text-orange-500" />
               Address Line 1 *
             </Label>
@@ -89,7 +90,7 @@ export default function AddressForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="line2" className="text-gray-700 font-medium flex items-center gap-2">
+            <Label htmlFor="line2" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
               <Building2 className="w-4 h-4 text-orange-500" />
               Address Line 2
             </Label>
@@ -102,7 +103,7 @@ export default function AddressForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="city" className="text-gray-700 font-medium flex items-center gap-2">
+            <Label htmlFor="city" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
               <MapPin className="w-4 h-4 text-orange-500" />
               City *
             </Label>
@@ -115,7 +116,7 @@ export default function AddressForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="country" className="text-gray-700 font-medium flex items-center gap-2">
+            <Label htmlFor="country" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
               <Globe className="w-4 h-4 text-orange-500" />
               Country *
             </Label>
@@ -147,7 +148,7 @@ export default function AddressForm() {
           <Button
             disabled={loading}
             type="submit"
-            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+            className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor}`}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Address"}
           </Button>
@@ -155,7 +156,7 @@ export default function AddressForm() {
          
 
           <div className="text-center">
-            <p className="text-sm text-gray-500">Your information is secure and encrypted</p>
+            <p className={`text-sm text-gray-500 ${designVar.fontFamily}`}>Your information is secure and encrypted</p> 
           </div>
         </CardContent>
       </Card>

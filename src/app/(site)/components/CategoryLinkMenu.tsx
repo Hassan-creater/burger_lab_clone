@@ -10,13 +10,15 @@ import { Category } from "@/models/Category";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { designVar } from "@/designVar/desighVar";
 
 
 function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
-  const { activeSectionId, isBannerVisible } = useObserverStore();
+  const { isBannerVisible } = useObserverStore();
 
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
   const activeLinkRef = React.useRef<HTMLLIElement | null>(null);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   const scrollHandler = (options: "Left" | "Right") => {
     if (scrollContainerRef.current)
@@ -63,7 +65,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
         <>
           <div
             className={cn(
-              "relative overflow-hidden flex items-center overflow-x-auto mx-8 lg:mx-10 no-scrollbar scroll-smooth transition-all"
+              "relative overflow-hidden  flex items-center overflow-x-auto mx-8 lg:mx-10 no-scrollbar scroll-smooth transition-all"
             )}
             ref={scrollContainerRef}
           >
@@ -75,25 +77,46 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
               {categories &&
                 categories.map((category : any, index : number) => (
                   <li
-                    key={category.title}
-                    ref={
-                      activeSectionId === category.title ||
-                      (!activeSectionId && index === 0)
-                        ? activeLinkRef
-                        : undefined
-                    }
-                    className={cn(
-                      "flex bg-gray-300 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full w-max rounded-2xl focus:ring-2 focus:ring-black focus-visible:rounded-lg",
-                      activeSectionId === category.title && "bg-[#fabf2c]",
-                      !activeSectionId && index === 0 && "bg-[#fabf2c]"
-                    )}
-                  >
-                    <Link href={`#${category.title}`}>
-                      <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
-                        {category.title}
-                      </p>
-                    </Link>
-                  </li>
+               key={category.title}
+               ref={
+                 activeSectionId === category.title ||
+                 (!activeSectionId && index === 0)
+                   ? activeLinkRef
+                   : undefined
+               }
+               className={`
+                 ${designVar.categoryButton.borderRadius}
+                 ${designVar.categoryButton.paddingX}
+                 ${designVar.categoryButton.paddingY}
+                 ${designVar.categoryButton.fontSize}
+                 ${designVar.categoryButton.fontWeight}
+                 ${designVar.categoryButton.color}
+                 ${designVar.categoryButton.cursor}
+                 ${designVar.categoryButton.transition}
+                 ${designVar.categoryButton.hover.backgroundColor}
+                 ${designVar.categoryButton.hover.borderRadius}
+                 ${designVar.categoryButton.hover.color}
+                 ${designVar.fontFamily}
+                 ${
+                   activeSectionId
+                     ? activeSectionId === category.title
+                       ? designVar.categoryButton.activeBackgroundColor
+                       : designVar.categoryButton.inactiveBackgroundColor
+                     : index === 0
+                     ? designVar.categoryButton.activeBackgroundColor
+                     : designVar.categoryButton.inactiveBackgroundColor
+                 }
+               `}
+                 >             
+               <Link
+                 href={`#${category.title}`}
+                 onClick={() => setActiveSectionId(category.title)} // update the active section manually
+               >
+                 <p className="font-bold text-center">
+                   {category.title}
+                 </p>
+               </Link>
+               </li>
                 ))}{" "}
             </ul>
           </div>
@@ -119,25 +142,46 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
           {categories &&
             categories.map((category : any, index : number) => (
               <li
-                key={category.title}
-                ref={
-                  activeSectionId === category.title ||
-                  (!activeSectionId && index === 0)
-                    ? activeLinkRef
-                    : undefined
-                }
-                className={cn(
-                  "flex bg-slate-200 hover:bg-[#fabf2c] transition-colors items-center justify-center h-full w-max rounded-3xl",
-                  activeSectionId === category.title && "bg-[#fabf2c]",
-                  !activeSectionId && index === 0 && "bg-[#fabf2c]"
-                )}
-              >
-                <Link href={`#${category.title}`}>
-                  <p className="text-gray-700 hover:text-gray-900 font-bold px-6 py-2 text-center">
-                    {category.title}
-                  </p>
-                </Link>
-              </li>
+             key={category.title}
+             ref={
+               activeSectionId === category.title ||
+               (!activeSectionId && index === 0)
+                 ? activeLinkRef
+                 : undefined
+             }
+             className={`
+               ${designVar.categoryButton.borderRadius}
+               ${designVar.categoryButton.paddingX}
+               ${designVar.categoryButton.paddingY}
+               ${designVar.categoryButton.fontSize}
+               ${designVar.categoryButton.fontWeight}
+               ${designVar.categoryButton.color}
+               ${designVar.categoryButton.cursor}
+               ${designVar.categoryButton.transition}
+               ${designVar.categoryButton.hover.backgroundColor}
+               ${designVar.categoryButton.hover.borderRadius}
+               ${designVar.categoryButton.hover.color}
+               ${designVar.fontFamily}
+               ${
+                 activeSectionId
+                   ? activeSectionId === category.title
+                     ? designVar.categoryButton.activeBackgroundColor
+                     : designVar.categoryButton.inactiveBackgroundColor
+                   : index === 0
+                   ? designVar.categoryButton.activeBackgroundColor
+                   : designVar.categoryButton.inactiveBackgroundColor
+               }
+             `}
+               >           
+             <Link
+               href={`#${category.title}`}
+               onClick={() => setActiveSectionId(category.title)} // update the active section manually
+             >
+               <p className="font-bold text-center">
+                 {category.title}
+               </p>
+             </Link>
+            </li>
             ))}{" "}
         </ul>
       )}

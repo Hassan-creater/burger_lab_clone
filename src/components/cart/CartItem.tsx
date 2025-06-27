@@ -58,7 +58,7 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => removeItemFromCart(cartItem.variantId)}
+        onClick={() => removeItemFromCart(cartItem)}
         className="absolute top-6 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
       >
         <Trash2 className="h-4 w-4" />

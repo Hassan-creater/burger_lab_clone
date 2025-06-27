@@ -289,6 +289,7 @@ import { LucideEye, LucideEyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api";
 import LoadingSpinner from "./LoadingSpinner";
+import { designVar } from "@/designVar/desighVar";
 
 export type UserData = {
   firstName: string;
@@ -399,8 +400,8 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
         <form onSubmit={handleSubmit(submitHandler)}>
         <CardContent className="space-y-4">
             {/* Avatar */}
-            <div className="flex justify-center">
-              <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden border-2 border-orange-500">
+            <div onClick={()=>document.getElementById("image")?.click()} className="flex justify-center">
+              <div className="w-20 h-20 rounded-full bg-gray-100 cursor-pointer overflow-hidden border-2 border-orange-500">
                 {preview ? (
                   <img src={preview} className="w-full h-full object-cover" alt="avatar" />
                 ) : (
@@ -411,6 +412,8 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
             <input
               type="file"
              accept="image/*"
+             id="image"
+             hidden
              className="mt-1 text-sm text-gray-600"
             {...register("image", {
               required: "Avatar is required",
@@ -502,7 +505,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
           <CardFooter className="pt-0 flex flex-col gap-2">
             <Button
               type="submit"
-              className="w-full py-3 font-semibold rounded-2xl bg-primaryOrange hover:bg-primaryOrange/80 text-black"
+              className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor}`}
               disabled={!allRequiredFilled || isSubmitting}
             >
               {isSubmitting ? <LoadingSpinner className="size-6 border-t-white" /> : "Register"}
@@ -510,7 +513,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
             <Button
               variant="outline"
               disabled={isSubmitting}
-              className="w-full py-3 font-semibold rounded-2xl border-primaryOrange"
+              className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButtonLink.backgroundColor} ${designVar.widthFullButton.registerButtonLink.borderRadius} ${designVar.widthFullButton.registerButtonLink.paddingX} ${designVar.widthFullButton.registerButtonLink.paddingY} ${designVar.widthFullButton.registerButtonLink.fontSize} ${designVar.widthFullButton.registerButtonLink.fontWeight} ${designVar.widthFullButton.registerButtonLink.color} ${designVar.widthFullButton.registerButtonLink.cursor} ${designVar.widthFullButton.registerButtonLink.transition} ${designVar.widthFullButton.registerButtonLink.hover.backgroundColor} ${designVar.widthFullButton.registerButtonLink.hover.borderRadius} ${designVar.widthFullButton.registerButtonLink.hover.color} ${designVar.widthFullButton.registerButtonLink.hover.color} ${designVar.widthFullButton.registerButtonLink.hover.backgroundColor} ${designVar.widthFullButton.registerButtonLink.border}`}
               onClick={() => setModalType("LOGIN")}
              
             > 
