@@ -66,7 +66,7 @@ function HeroBanner() {
 
 	return (
 		<CarouselContainer
-		className="relative w-full bg-red-400 lg:max-w-full h-[10em] lg:h-[28em] flex justify-center    items-center overflow-hidden"
+		className="relative w-full lg:max-w-full h-[10em] lg:h-[28em] flex justify-center    items-center overflow-hidden"
 		opts={{ loop: true }}
 		autoplay={true}
 		ref={carouselRef}
