@@ -19,6 +19,15 @@ const config = {
 			},
 		},
 		extend: {
+			screens: {
+				"custom-md": { max: '1240px' },
+				"custom-11": { max: '1174px' },
+				"custom-lg": { max: '1103px' },
+				"custom-sm": { max: '954px' },
+				"custom-923": { max: '923px' },
+				"custom-752": { max: '850px' },
+				"custom-mobile": { max: '561px' },
+			},
 			colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",

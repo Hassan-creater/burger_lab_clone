@@ -6,8 +6,6 @@ import Link from "next/link";
 import Cart from "./cart/Cart";
 import ProfileDropdown from "./ProfileDropdown";
 import { usePathname } from "next/navigation";
-import { getClientCookie } from "@/lib/getCookie";
-import Cookies from "js-cookie";
 import AuthModal from "./modals/AuthModal";
 import { useCartContext } from "@/context/context";
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
@@ -16,18 +14,7 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 
 const Header = () => {
 
-
-
   const {token , user } = useCartContext();
-  // const storedUser =  Cookies.get("userData");
-
-  
-  //  if(storedUser)
-  //   var parsedUser = JSON.parse(storedUser);
-
-  
-
-
 
   const pathname = usePathname();
 

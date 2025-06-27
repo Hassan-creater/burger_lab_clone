@@ -56,6 +56,8 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData} = useCartContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Using dummy tax data instead
   const  getTax = async () => {
@@ -77,6 +79,12 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   };
 
   const router = useRouter();
+
+  useEffect(() => {
+    if(taxData){
+      setTaxData(taxData);
+    }
+  }, [taxData]);
 
 
   const deliveryCharges = useMemo(
@@ -155,8 +163,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
   const windowWidth = useWindowSize();
 
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData} = useCartContext();
-  const [isLoading, setIsLoading] = useState(false);
+
 
  
 

@@ -3,6 +3,7 @@
 import { SearchIcon } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { useTypingEffect } from "@/hooks/useTypeEffect";
 import { useEffect, useRef } from "react";
 
 type SearchBoxProps = {};
@@ -28,10 +29,18 @@ export default function SearchBox({}: SearchBoxProps) {
       };
     }
   }, []);
+  
+  const placeholder = useTypingEffect("", [
+    "spicy pizza",
+    "cheesy pizza",
+    "hot chicken",
+    "loaded fries",
+    "fresh salad",
+  ]);
 
   return (
     <div
-      className="flex gap-1 items-center w-[95%] lg:max-w-[85%] my-4 border-b-[1px] border-b-gray-700 transition-all"
+      className="flex px-[1em]  rounded-full py-[0.1em] gap-1 items-center w-full lg:max-w-[88%] my-4 border-[1px]  border-orange-300 transition-all border-b-[1px] border-b-orange-300"
       ref={parentRef}
     >
       <div className="flex items-center justify-center w-4 h-4">
@@ -46,7 +55,7 @@ export default function SearchBox({}: SearchBoxProps) {
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search products here..."
+        placeholder={`Search for ${placeholder}`}
         id="search"
         type="search"
         autoComplete="off"

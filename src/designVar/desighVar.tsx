@@ -2,33 +2,48 @@
 export const designVar = {
  
     // universal font family
-    fontFamily : "sans-serif",
+    fontFamily : "poppins",
 
     // all card design
     Button: {
       backgroundColor: "bg-[#FABF2C]",
-      borderRadius: "rounded-lg",             // <-- use a Tailwind class instead of "10px"
-      border: "border",                       // <-- Tailwind class
-      borderColor: "border-[#FCD980]",        // <-- Tailwind class
+      
+      borderRadius: "rounded-lg",             
+      border: "border",                     
+      borderColor: "border-[#FCD980]",      
       paddingX: "px-[0.7em]",
-      paddingY: "py-[0.5em]",
-      fontSize: "text-base",                  // <-- Tailwind size utilities
+      width : "w-[96px]",
+      height : "h-[36px]",
+      paddingY: "py-[0em]",
+      fontSize: "text-[14px]",                 
       fontWeight: "font-bold",
       color: "text-black",
       cursor: "cursor-pointer",
       transition: "transition-all duration-300 ease",
       hover: {
-        backgroundColor: "hover:bg-[#FCD980]",  // <-- hover: prefix
+        backgroundColor: "hover:bg-[#FCD980]", 
         borderColor:      "hover:border-[#FCD980]",
         color:            "hover:text-black",
-        translateX:       "group-hover:translate-x-1",
+        translateX:       "",
       }
     },
 
+    cardImage : {
+        width : "w-[140px] custom-11:w-[180px] custom-lg:w-[150px] custom-923:w-[140px] custom-752:w-[230px] custom-mobile:w-[140px]",
+        height : "h-[140px] ",
+        borderRadius : "rounded-lg",
+        border : "",
+        borderColor : "",
+        overflow : "overflow-hidden",
+        flex : "flex justify-center items-center",
+    },
+
     fontStyle :{
-        fontSize : "text-[0.8em]",
+        fontSize : "text-[12px]",
         fontWeight : "font-medium",
         colorWhite : "text-white",
+        color : "text-[rgb(0,0,0)]",
+
         colorBlack : "text-black",
         colorGray : "text-gray-600",
         cursor : "cursor-pointer",
@@ -40,39 +55,43 @@ export const designVar = {
     },
 
     carHeading : {
-        fontSize : "text-[1.4em]",
+        fontSize : "text-[16px]",
         fontWeight : "font-bold",
-        colorOrange : "text-orange-500",
+        colorOrange : "text-[#FABF2C]",
         colorBlack : "text-black",
+        
        
     },
 
     productPrice : {
         backgroundColor : "bg-black",
         borderRadius : "rounded-lg",
-        paddingX : "px-[0.9em]",
-        paddingY : "py-[0.3em]",
-        fontSize : "text-[1.2em]",
+        width : "min-w-[78px]",
+        height : "h-[22px]",
+        paddingX : "px-[]",
+        paddingY : "py-[]",
+        fontSize : "text-[12px]",
         fontWeight : "font-bold",
         color : "text-white",
-        textSize : "text-[0.9em]"
+        textSize : "text-[12px]"
     },
 
     cardDesign : {
-        width : "w-[29em]",
-        height : "h-[13em]",
-        minHeight : "min-h-[13em]",
+        width : "w-[369.32px]  custom-md:w-[350px]  custom-11:w-[500px] custom-lg:w-[450px] custom-sm:w-[430px] custom-923:w-[350px] custom-752:w-[350px] ",
+        height : "h-[164px]",
+        minHeight : "min-h-[164px]",
         duration : "duration-300",
         backgroundColor : "bg-white",
         borderRadius : "rounded-lg",
-        paddingX : "px-[0.5em]",
-        paddingY : "py-[0.5em]",
+        paddingX : "px-[0em]",
+        paddingY : "py-[0em]",
         border : "border-[1px]",
-        borderColor : "border-orange-500",    
+        shadow : "shadow-md",
+        borderColor : "",    
         hover : {
-            backgroundColor : "hover:bg-gray-100",
+            backgroundColor : "hover:bg-white",
             borderRadius : "hover:rounded-2xl",
-            borderColor : "hover:border-orange-500",
+            borderColor : "",
             shadow : "hover:shadow-xl",
             overflow : "hover:overflow-hidden",
 
@@ -82,7 +101,7 @@ export const designVar = {
     // all category headig and button design
 
     categoryHeading : {
-        fontSize : "text-[1.5em]",
+        fontSize : "text-[24px]",
         fontWeight : "font-bold",
         color : "text-black",
        
@@ -94,7 +113,7 @@ export const designVar = {
         borderRadius : "rounded-lg",
         paddingX : "px-[1.3em]",
         paddingY : "py-[0.6em]",
-        fontSize : "text-[1em]",
+        fontSize : " text-[0.8em] sm:text-[1em]",
         fontWeight : "font-bold",
         color : "text-black",
         cursor : "cursor-pointer",

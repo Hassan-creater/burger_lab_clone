@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MapPin, X, XIcon } from "lucide-react"
+import { ChevronDown, MapPin, X, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose,  DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -209,6 +209,7 @@ export default function LocationModal() {
   // const isOpen = isAreaOpen(openTime, closeTime);
   const isDeliveryOpen = areaInfo.isSpecialClosed;
 
+
   useEffect(() => {
    
   
@@ -245,7 +246,6 @@ export default function LocationModal() {
     (branch: any) => branch.name === selectedPickupBranch
   );
   const isPickupClose = selectedPickupBranchData?.isSpecialClosed;
-
 
   // dine in branches data 
   const dineInBranches = data?.dineInBranches || [];
@@ -316,13 +316,9 @@ useEffect(() => {
   } else {
     setOpen(false)
   }
-
-
   setDeliveryClose("")
   setDineInClose("")
   setPickupClose("")
-  
-
 }, [])
 
 
@@ -334,6 +330,7 @@ const isButtonDisabled =
   Boolean(deliveryClose) ||
   Boolean(dineInClose) ||
   Boolean(pickupClose);
+ 
 
 
 
@@ -531,9 +528,26 @@ const isButtonDisabled =
 //   </Dialog> 
 
 <Dialog open={open} onOpenChange={setOpen}>
-  <DialogTrigger asChild>
-    <MapPin className="w-5 h-5 text-orange-500" />
-  </DialogTrigger>
+<DialogTrigger asChild>
+  <button className="flex items-center gap-2 text-sm text-gray-700 hover:text-orange-500">
+    <MapPin className="w-6 h-6 text-orange-500" />
+    <div className="text-sm text-black flex flex-col justify-start items-start hover:text-orange-500 hover:underline duration-300 text-[14px]">
+    <p className="font-bold text-[0.7em] sm:text-[1em]">{
+        AddressData?.orderType ? `${(AddressData?.orderType).charAt(0).toUpperCase() + (AddressData?.orderType).slice(1)} location` : "Select your desired"
+        
+      }</p>
+    <p className="flex items-center gap-2 hover:underline duration-300 text-[0.6em] sm:text-[12px] ">
+  {!AddressData?.orderType
+    ? "Location"
+    : AddressData?.area
+    ? AddressData.area
+    : AddressData?.branch}
+  <ChevronDown className="w-4 h-4" />
+</p>
+    </div>
+    
+  </button>
+</DialogTrigger>
   <DialogContent className="w-[80%] sm:w-[30em] justify-center items-center flex flex-col px-5 py-6 gap-[1em] rounded-xl border-0 descriptionModal">
     <DialogHeader>
       <DialogTitle asChild>

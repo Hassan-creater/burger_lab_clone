@@ -45,7 +45,11 @@ function filterItems(allItems: any[], query: string) {
   const filteredItems =filterItems(allItems.filter((item :any) => item.categoryId == id), query || "") || [];
   
   const renderProducts = (item: Item, index: number) => {
-    return <ProductCard key={index} product={item} favorites={favorites} />;
+    return (
+      <div key={item.id} id={item.id} className="scroll-mt-28"> {/* Enables anchor scrolling */}
+        <ProductCard product={item} favorites={favorites} />
+      </div>
+    );
   };
 
 
@@ -54,16 +58,16 @@ function filterItems(allItems: any[], query: string) {
       {filteredItems?.length > 0 && (
         <section
           id={href.slice(1)}
-          className="flex flex-col  gap-4 h-full w-[95%] lg:max-w-[85%]"
+          className="flex flex-col  gap-2 h-full w-[95%] lg:max-w-[92%]"
         >
-          <h3 className={`${designVar.categoryHeading.fontSize} ${designVar.categoryHeading.fontWeight} ${designVar.categoryHeading.color} ${designVar.fontFamily}`}>{name}</h3>
-          <div className="flex flex-wrap items-center justify-start gap-5">
+          <h3 className={`${designVar.categoryHeading.fontSize} ${designVar.categoryHeading.fontWeight} ${designVar.categoryHeading.color} ${designVar.fontFamily}  py-[0.2em] border-b-[1px] border-b-slate-500`}>{name}</h3>
+          <div className="w-[100%] flex flex-wrap items-center justify-start gap-4">
             {filteredItems?.map((item : any, index : number) => renderProducts(item, index))}
           </div>
-          <hr className="self-center bg-categorySeparatorGradient w-full h-px mt-5 mb-3 block" />
+           <br/>
         </section>
       ) }
-    </>
+    </>   
   );
 }
 

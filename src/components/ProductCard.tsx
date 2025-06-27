@@ -57,11 +57,9 @@ function ProductCard({
   const [open, setOpen] = useState(false);
   const {user} = useCartContext();
 
-  
-
   return (
     <Card
-    className={`flex justify-center items-center ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.fontFamily}`}
+    className={`flex justify-center items-center ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.cardDesign.shadow} ${designVar.fontFamily}`}
   >
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -72,15 +70,15 @@ function ProductCard({
             status == "INACTIVE" && "opacity-50 cursor-not-allowed pointer-events-none"
           )}>
           {/* Image Section */}
-          <CardHeader className="relative w-[50%] p-[0.5em] overflow-hidden ">
-            <div className=" h-full w-full overflow-hidden flex justify-center items-center border-[1px] rounded-lg border-orange-500">
+          <CardHeader className="relative w-[50%] py-[0.5em] overflow-hidden flex justify-center items-center ">
+            <div className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} `}>
               <Image
                 src={product.image}
                 width={300}
                 height={300}
                 priority
                 alt="product-image"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
               />
               {product.discountPercent > 0 && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -92,20 +90,20 @@ function ProductCard({
           </CardHeader>
   
           {/* Content Section */}
-          <CardContent className="flex flex-col justify-between group p-4 w-2/3">
-            <div>
-              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.carHeading.colorOrange} ${designVar.fontFamily} mb-1`}>{textShortener(product.name, 16)}</h4>
+          <CardContent className="flex flex-col text-left justify-between h-[164px] group py-[0.6em] pb-[0.8em] w-2/3">
+            <div className="w-full">
+              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange}`}>{textShortener(product.name, 16)}</h4>
               {product.description && (
-                <p className={`${designVar.fontStyle.colorGray} ${designVar.fontStyle.fontSize}  line-clamp-2 mb-2 ${designVar.fontFamily}`}>
+                <p className={`${designVar.fontStyle.colorGray} ${designVar.fontStyle.fontSize}  line-clamp-2 ${designVar.fontFamily} ${designVar.fontStyle.color}`}>
                   {textShortener(product.description, 100)}
                 </p>
               )}
             </div>
   
-            <div className="mt-3 relative flex flex-col items-start gap-2 justify-between">
+            <div className=" w-full relative flex flex-col items-start gap-2 justify-between">
               {
                 user && (
-                  <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[3em] right-0">
+                  <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[2.8em] -right-[0.5em]">
                   <LikeButton
                     itemId={product.id}
                     isFav={isFav}
@@ -131,14 +129,14 @@ function ProductCard({
                   </p>
                 </div>
               ) : (
-                <p className={`${designVar.productPrice.backgroundColor} ${designVar.productPrice.borderRadius} ${designVar.productPrice.paddingX} ${designVar.productPrice.paddingY} ${designVar.productPrice.fontSize} ${designVar.productPrice.fontWeight} ${designVar.productPrice.color} ${designVar.fontFamily} ${designVar.productPrice.textSize} ${designVar.fontFamily}`}>
+                <p className={`${designVar.productPrice.backgroundColor} ${designVar.productPrice.borderRadius} ${designVar.productPrice.paddingX} ${designVar.productPrice.paddingY} ${designVar.productPrice.fontSize} ${designVar.productPrice.fontWeight} ${designVar.productPrice.color} ${designVar.fontFamily} ${designVar.productPrice.textSize} ${designVar.fontFamily} ${designVar.productPrice.width} ${designVar.productPrice.height} whitespace-nowrap  flex justify-center items-center `}>
                   {formatPrice(product.variants[0]?.price)}
                 </p>
               )}
               <div className="flex gap-2">
-                <div className={` ${designVar.fontStyle.colorWhite} flex items-center gap-2 ${designVar.Button.backgroundColor} ${designVar.Button.paddingX} ${designVar.Button.paddingY} ${designVar.Button.borderRadius} ${designVar.Button.fontSize} ${designVar.Button.fontWeight} ${designVar.Button.color} ${designVar.Button.cursor} ${designVar.Button.transition} ${designVar.Button.hover.backgroundColor} ${designVar.Button.hover.borderColor} ${designVar.Button.hover.color} ${designVar.Button.hover.translateX} ${designVar.fontFamily}`}>
+                <div className={` ${designVar.fontStyle.colorWhite} flex items-center gap-2 ${designVar.Button.backgroundColor} ${designVar.Button.paddingX} ${designVar.Button.paddingY} ${designVar.Button.borderRadius} ${designVar.Button.fontSize} ${designVar.Button.fontWeight} ${designVar.Button.color} ${designVar.Button.cursor} ${designVar.Button.transition} ${designVar.Button.hover.backgroundColor} ${designVar.Button.hover.borderColor} ${designVar.Button.hover.color} ${designVar.Button.hover.translateX} ${designVar.fontFamily} ${designVar.Button.width} ${designVar.Button.height} whitespace-nowrap  flex justify-center items-center `}>
                   See Details
-                  <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  {/* <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" /> */}
                 </div>
                 {/* <Button> Add to Cart </Button> */}
               </div>

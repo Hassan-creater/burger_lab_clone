@@ -65,6 +65,8 @@ interface CartContextType {
   setFavorite: React.Dispatch<React.SetStateAction<any>>;
   couponData: any;
   setCouponData: React.Dispatch<React.SetStateAction<any>>;
+  TaxData : any;
+  setTaxData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 // Create the context
@@ -86,6 +88,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [authOpen, setAuthOpen] = useState<boolean>(false);
   const [favorite, _setFavorite] = useState<any[]>([]);
   const [couponData, setCouponData] = useState<any>({});
+  const [TaxData, setTaxData] = useState<any>({});
 
 
 
@@ -231,7 +234,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData}}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData}}>
       {children}
     </CartContext.Provider>
   );

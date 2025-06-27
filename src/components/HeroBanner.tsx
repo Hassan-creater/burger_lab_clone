@@ -59,14 +59,14 @@ function HeroBanner() {
 	useEffect(() => {
 	  const interval = setInterval(() => {
 		setCurrentIndex((prev) => (prev + 1) % slides?.length);
-	  }, 4000); // Change image every 4s
+	  }, 2000); // Change image every 3s
   
-	  return () => clearInterval(interval); // Cleanup on unmount
+	  return () => clearInterval(interval); 
 	}, [slides?.length]);
 
 	return (
 		<CarouselContainer
-		className="relative w-full lg:max-w-[95%] h-[10em] lg:h-[28em] flex justify-center items-center overflow-hidden"
+		className="relative w-full bg-red-400 lg:max-w-full h-[10em] lg:h-[28em] flex justify-center    items-center overflow-hidden"
 		opts={{ loop: true }}
 		autoplay={true}
 		ref={carouselRef}
@@ -75,17 +75,17 @@ function HeroBanner() {
 		  {slides?.map((slide: any) => (
 			<CarouselItem
 			  key={slide.id}
-			  className="w-full h-full flex items-center justify-center flex-shrink-0"
+			  className="w-full h-full flex items-center justify-center flex-shrink-0 "
 			>
 			  <div className="w-full h-full flex items-center justify-center">
 				<Image
 				  src={slide?.image || ""}
 				  alt={`Slide no ${slide?.id}`}
-				  width={1920}
-				  height={1080}
+				  width={2400}
+				  height={1000}
 				  priority
 				  loading="eager"
-				  className="w-full h-full object-cover rounded-2xl"
+				  className="w-full h-full object-cover"
 				/>
 			  </div>
 			</CarouselItem>
@@ -93,8 +93,9 @@ function HeroBanner() {
 		</CarouselContent>
   
 		{/* Navigation Buttons */}
-		<CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] rounded-full w-10 h-10 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
-		<CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] rounded-full w-10 h-10 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
+		<CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] w-10 h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80 " />
+
+       <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] w-10 h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
 	  </CarouselContainer>
 
 
