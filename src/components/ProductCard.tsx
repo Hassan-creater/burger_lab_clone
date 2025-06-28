@@ -101,8 +101,8 @@ function ProductCard({
             </div>
   
             <div className=" w-full relative flex flex-col items-start gap-2 justify-between">
-              {
-                user && (
+              
+              
                   <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[2.8em] -right-[0.5em]">
                   <LikeButton
                     itemId={product.id}
@@ -113,8 +113,8 @@ function ProductCard({
                     className="bg-white/80 backdrop-blur-sm"
                   />
                 </div>
-                )
-              }
+              
+              
             
               {product.discountPercent > 0 ? (
                 <div>
@@ -146,7 +146,7 @@ function ProductCard({
       </DialogTrigger>
   
       <DialogContent
-        className="w-full max-w-5xl h-full max-h-[90vh] overflow-hidden 
+        className="w-full  descriptionModal overflow-x-hidden h-full max-h-[90vh] overflow-hidden 
                    flex flex-col sm:flex-row gap-0 rounded-3xl border-0 p-0 shadow-2xl"
       >
         <DialogHeader>

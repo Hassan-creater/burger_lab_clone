@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCartContext } from "@/context/context";
 import { apiClientCustomer } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { designVar } from "@/designVar/desighVar";
 
 // const FooterNav = dynamic(() => import("./FooterNav"), { ssr: false });
 
@@ -60,11 +61,11 @@ const Footer = () => {
     //     </p>
     //   </div>
     // </footer>
-    <footer className="bg-white mt-[5em] border-t border-gray-200 py-8 px-4 md:px-6 lg:px-[4em]">
-    <div className="max-w-7xl mx-auto">
-      <div className="flex flex-col gap-6 justify-start items-start md:flex-row md:justify-evenly md:items-center">
+    <footer className={`bg-white ${designVar.fontFamily} mt-[5em] border-t border-gray-200 py-8 px-4 md:px-6 lg:px-[4em]`}>
+    <div className="max-w-7xl mx-auto ">
+      <div className="flex  flex-col gap-6 justify-start items-start md:flex-row md:justify-evenly md:items-start">
         {/* Logo and App Downloads Section */}
-        <div className="space-y-6">
+        <div className="space-y-8 ">
           {/* Logo Placeholder */}
           <div className="flex items-center space-x-3">
             <div className="w-24 h-24 rounded-lg flex items-center justify-center">
@@ -101,8 +102,8 @@ const Footer = () => {
         </div>
 
         {/* Contact Information Section */}
-        <div className="space-y-4">
-          <h3 className="text-[14px] font-bold text-gray-900">Burger Lab</h3>
+        <div className="space-y-4  h-[10.5em]">
+          <h3 className="text-[16px] font-bold text-gray-900">Burger Lab</h3>
 
           <div className="space-y-3">
             {
@@ -166,7 +167,7 @@ const Footer = () => {
           {
             TaxData?.timing ? (
               <div>
-            <h3 className="text-[14px] font-bold text-gray-900 mb-4">Our Timings</h3>
+            <h3 className="text-[16px] font-bold text-gray-900 mb-4">Our Timings</h3>
             <div className="flex justify-between items-center text-[14px]">
               <p>{TaxData?.timing}</p>
             </div>
@@ -185,7 +186,7 @@ const Footer = () => {
           {
             socialMediaData?.length > 0 ? (
                 <>
-                 <h4 className="text-[14px] font-semibold text-gray-900 mb-3">Follow Us:</h4>
+                 <h4 className="text-[16px] font-semibold text-gray-900 mb-3">Follow Us:</h4>
                  <div className="w-full flex gap-2">
                  {
                   socialMediaData?.map((item : any , index : number)=>{
@@ -216,7 +217,7 @@ const Footer = () => {
           
         </div>
       </div>
-      <div className="pt-4 text-[14px] text-center mt-4 border-t-[1.3px] border-gray-200">
+      <div className="pt-4 text-[12px] text-center mt-4 border-t-[1.3px] border-gray-200">
         <p>Copyright © {new Date().getFullYear()} Burger Lab. All rights reserved.</p>
       </div>
     </div>

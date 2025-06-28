@@ -66,7 +66,7 @@ function HeroBanner() {
 
 	return (
 		<CarouselContainer
-		className="relative w-full lg:max-w-full h-[10em] lg:h-[28em] flex justify-center    items-center overflow-hidden"
+		className="relative w-full lg:w-full  md:h-[23em] lg:h-[28em] flex justify-center    items-center overflow-hidden"
 		opts={{ loop: true }}
 		autoplay={true}
 		ref={carouselRef}
@@ -75,13 +75,13 @@ function HeroBanner() {
 		  {slides?.map((slide: any) => (
 			<CarouselItem
 			  key={slide.id}
-			  className="w-full h-full flex items-center justify-center flex-shrink-0 "
+			  className="w-full h-full flex items-center justify-center "
 			>
-			  <div className="w-full h-full flex items-center justify-center">
+			  <div className="w-full h-full flex items-center justify-center aspect-[2400/1000]">
 				<Image
 				  src={slide?.image || ""}
 				  alt={`Slide no ${slide?.id}`}
-				  width={2400}
+				  width={3000}
 				  height={1000}
 				  priority
 				  loading="eager"

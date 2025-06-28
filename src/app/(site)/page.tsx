@@ -126,9 +126,35 @@ export default async function Home(
 
   
 
-  // Get the real-time search query
- 
+  // Filter items based on search query
+  const currentQuery = searchParams.query || "";
+  let filteredCategories = categories;
+  let hasSearchResults = true;
 
+  if (currentQuery.trim()) {
+    const query = currentQuery.toLowerCase().trim();
+    
+    // Filter items based on tags and name
+    const filteredItems = allItems.filter((item: any) => {
+      const nameMatch = item.name?.toLowerCase().includes(query);
+      const tagsMatch = item.tags?.toLowerCase().includes(query);
+      const individualTagsMatch = item.tags?.split(',').some((tag: string) => 
+        tag.trim().toLowerCase().includes(query)
+      );
+      
+      return nameMatch || tagsMatch || individualTagsMatch;
+    });
+
+    // Group filtered items by category
+    filteredCategories = categories.map(category => ({
+      ...category,
+      items: category.items.filter((item: any) => 
+        filteredItems.some((filteredItem: any) => filteredItem.id === item.id)
+      )
+    })).filter(category => category.items.length > 0);
+
+    hasSearchResults = filteredCategories.length > 0;
+  }
 
   if (!categories) {
     return <ServiceError />;
@@ -153,17 +179,30 @@ export default async function Home(
   
           <SearchBox/>
   
-          {categories?.map((category : any, index : number) => (
-            <CategorySection
-              key={index}
-              name={category.title}
-              href={`#${category.title}`}
-              id={category.id}
-              query={searchParams.query === "" ? undefined : searchParams.query}
-              favorites={favorites || []}
-              allItems={allItems}
-            />
-          ))}
+          {currentQuery.trim() && !hasSearchResults ? (
+            // Show "no results" message when there's a search query but no results
+            <div className="text-center py-12 w-full">
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                No items found for "{currentQuery}"
+              </h3>
+              <p className="text-gray-500">
+                Try searching with different keywords or check the spelling
+              </p>
+            </div>
+          ) : (
+            // Show filtered categories or all categories
+            filteredCategories?.map((category : any, index : number) => (
+              <CategorySection
+                key={index}
+                name={category.title}
+                href={`#${category.title}`}
+                id={category.id}
+                query={currentQuery || undefined}
+                favorites={favorites || []}
+                allItems={allItems}
+              />
+            ))
+          )}
         </HydrationBoundary>
         )
       }

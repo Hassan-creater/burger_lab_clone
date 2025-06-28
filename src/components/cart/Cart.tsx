@@ -381,7 +381,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
         <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-max min-h-[calc(100dvh-290px)]">
           {  AddedInCart?.map((cartItem : any) => (
             <CartItem
-              key={cartItem.variantId}
+              key={cartItem.totalPrice + cartItem.variantId + cartItem.variantName + cartItem.quantity}
               cartItem={cartItem}
               
             />

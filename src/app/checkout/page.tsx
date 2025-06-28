@@ -134,14 +134,33 @@ function Checkout() {
       <div className="w-full h-auto flex flex-col lg:flex-row gap-5">
         <section className="w-full lg:w-[55%] flex flex-col gap-5 h-max">
 
-  
+            {
+              AddressData?.orderType == "pickup" &&(
+                 <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
+                  <p>This is a {AddressData?.orderType} order</p>
+                  <p> <span className="font-semibold underline">Collect From Branch: </span> {AddressData?.address}</p>
+                 </div>
+              )
+            }
+
+            {
+              AddressData?.orderType == "dine_in" &&(
+                 <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
+                  <p>This is a dinein order</p>
+                  <p> <span className="font-semibold underline">Collect From Branch: </span> {AddressData?.address}</p>
+
+                 </div>
+              )
+            }
+
+
 
 
             {
               AddressData?.orderType == "delivery" && (
                 <>
                  <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address</label>
                 <Select  value={deliveryAddressValue} onValueChange={(value) => {setDeliveryAddressValue(value); setDeliveryAddress(value)}}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Address">
@@ -160,20 +179,15 @@ function Checkout() {
 
 
               <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Name <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Name </label>
                 <input type="text" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter delivery name" onChange={(e) => setDeliveryName(e.target.value)}/>
               </div>
 
 
               <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Phone <span className="text-red-500">*</span></label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Phone</label>
                 <input type="number" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter your phone number" onChange={(e) => setDeliveryPhone(e.target.value)}/>
               </div>
-
-
-              
-
-              
                 </>
                
 

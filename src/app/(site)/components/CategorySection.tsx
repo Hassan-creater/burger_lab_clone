@@ -1,12 +1,9 @@
 "use client";
 
-
 import ProductCard from "../../../components/ProductCard";
 import { Item } from "@/models/Item";
 import { Favorite } from "@/models/Favorites";
 import { designVar } from "@/designVar/desighVar";
-
-
 
 interface CategorySectionProps {
   name: string;
@@ -14,59 +11,43 @@ interface CategorySectionProps {
   id: number;
   query?: string;
   favorites: Favorite[] | null;
-  allItems : any[];
+  allItems: any[];
 }
 
 function CategorySection({
   name,
   href,
   id,
-  query,
   favorites,
   allItems
 }: CategorySectionProps) {
-
-/// filter items by tags and name
-
-
-function filterItems(allItems: any[], query: string) {
-  const q = query.trim().toLowerCase();
-  if (!q) return allItems;
-
-  return allItems.filter((item: any) => {
-    if (!item.tags) return false;
-    return item.tags
-      .split(',')
-      .map((t: string) => t.trim().toLowerCase())
-      .some((t: string) => t.includes(q));
-  });
-}
-
-  const filteredItems =filterItems(allItems.filter((item :any) => item.categoryId == id), query || "") || [];
+  // Get items for this category (filtering is now handled centrally)
+  const categoryItems = allItems.filter((item: any) => item.categoryId === id);
   
   const renderProducts = (item: Item, index: number) => {
     return (
-      <div key={item.id} id={item.id} className="scroll-mt-28"> {/* Enables anchor scrolling */}
+      <div key={item.id} id={item.id} className="scroll-mt-28">
         <ProductCard product={item} favorites={favorites} />
       </div>
     );
   };
 
-
   return (
     <>
-      {filteredItems?.length > 0 && (
+      {categoryItems?.length > 0 && (
         <section
           id={href.slice(1)}
-          className="flex flex-col  gap-2 h-full w-[95%] lg:max-w-[92%]"
+          className="flex flex-col gap-2 h-full w-[95%] lg:max-w-[92%]"
         >
-          <h3 className={`${designVar.categoryHeading.fontSize} ${designVar.categoryHeading.fontWeight} ${designVar.categoryHeading.color} ${designVar.fontFamily}  py-[0.2em] border-b-[1px] border-b-slate-500`}>{name}</h3>
+          <h3 className={`${designVar.categoryHeading.fontSize} ${designVar.categoryHeading.fontWeight} ${designVar.categoryHeading.color} ${designVar.fontFamily} py-[0.2em] border-b-[1px] border-b-slate-500`}>
+            {name}
+          </h3>
           <div className="w-[100%] flex flex-wrap items-center justify-start gap-4">
-            {filteredItems?.map((item : any, index : number) => renderProducts(item, index))}
+            {categoryItems?.map((item: any, index: number) => renderProducts(item, index))}
           </div>
-           <br/>
+          <br/>
         </section>
-      ) }
+      )}
     </>   
   );
 }

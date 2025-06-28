@@ -1,14 +1,13 @@
-import type { AddOnOption, CartItem } from "@/types";
-import React from "react";
-import QuantityCounter from "./QuantityCounter";
+import type { CartItem } from "@/types";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge, Trash2, Trash2Icon } from "lucide-react";
+import {  ChevronDown, Trash2} from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
-import { BASE_URL_IMAGES } from "@/lib/constants";
-import { log } from "console";
+
 
 import { useCartContext } from "@/context/context";
+import { designVar } from "@/designVar/desighVar";
 
 type CartItems = {
   itemImage: string;
@@ -32,18 +31,29 @@ interface CartItemProps {
 
 function CartItem({ cartItem, removeItem }: CartItemProps) {
 
- 
+  
+  const [showAddons, setShowAddons] = useState(false)
+  const [showExtras, setShowExtras] = useState(false)
+
+  // const totalAddons =
+  //   cartItem.addons?.reduce((sum: number, ao: any) => sum + ao.price * ao.quantity, 0) || 0
+
+  // const totalExtras =
+  //   cartItem.extras?.reduce((sum: number, ex: any) => sum + ex.price * ex.quantity, 0) || 0
+
+  // const itemTotal = cartItem.variantPrice * cartItem.quantity + totalAddons + totalExtras
+
 
   const {removeItemFromCart} = useCartContext();
 
-  const renderAddOns = (addOnOption: any, index: number) => (
-    <div key={index} className="flex justify-between text-sm text-gray-600">
-      <span>{addOnOption.name}</span>
-      <span>
-        {formatPrice(addOnOption.price)} × {addOnOption.quantity}
-      </span>
-    </div>
-  );
+  // const renderAddOns = (addOnOption: any, index: number) => (
+  //   <div key={index} className="flex justify-between text-sm text-gray-600">
+  //     <span>{addOnOption.name}</span>
+  //     <span>
+  //       {formatPrice(addOnOption.price)} × {addOnOption.quantity}
+  //     </span>
+  //   </div>
+  // );
 
 
   // const updateQuantity = (variantId: string, quantity: number) => {
@@ -52,8 +62,8 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
   
 
   return (
-    <div className="group w-full relative py-4">
-    <article className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 shadow-sm">
+    <div className={`group w-full relative py-4 ${designVar.fontFamily}`}>
+    <article className="flex flex-col p-4 bg-white rounded-xl border border-gray-300 hover:border-gray-300 hover:shadow-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.1)]">
       {/* Absolute delete button - visible on hover */}
       <Button
         variant="ghost"
@@ -63,10 +73,9 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
       >
         <Trash2 className="h-4 w-4" />
       </Button>
-  
+
       {/* Top row - Image and basic info */}
       <div className="flex gap-4 pb-3">
-        {/* Product Image */}
         <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
           <Image
             src={cartItem?.itemImage || "/placeholder.svg?height=96&width=96"}
@@ -76,79 +85,113 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
           />
         </div>
-  
-        {/* Content */}
+
         <div className="flex-1 min-w-0">
-          {/* Header */}
           <div className="mb-2">
-            <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2">
+            <h3 className="font-semibold text-gray-900 text-base leading-tight line-clamp-2 text-[15px]">
               {cartItem.variantName}
             </h3>
           </div>
-  
-          {/* Price and Quantity */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-lg font-bold text-gray-900">
+              <span className="font-semibold text-[13px] text-gray-900">
                 {formatPrice(cartItem.variantPrice)}
               </span>
-              <span className="text-sm font-medium text-gray-600">
+              <span className="font-medium text-gray-600 text-[13px]">
                 Qty: {cartItem.quantity}
               </span>
             </div>
           </div>
         </div>
       </div>
-  
-      {/* Add-ons & Extras - Full width below image */}
+
+      {/* Add-ons & Extras */}
       {(cartItem.addons?.length > 0 || cartItem.extras?.length > 0) && (
         <div className="pt-3 border-t border-gray-100">
-          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-            Add-ons & Extras
-          </h4>
-          
-          <div className="grid grid-cols-2 gap-2">
-            {/* Add-ons */}
-            {cartItem.addons?.map((addon: any) => (
-              <div key={addon.id} className="flex items-center text-sm bg-blue-50 rounded-lg px-3 py-2">
-                <div className="flex-1 min-w-0">
-                  <div className="text-blue-700 font-medium truncate">{addon.name}</div>
-                  <div className="flex items-center text-blue-600">
-                    <span>+{formatPrice(addon.price)}</span>
-                    {addon.quantity > 1 && (
-                      <span className="text-gray-500 ml-2">
-                        ×{addon.quantity}
-                      </span>
-                    )}
+          {/* Add-ons Toggle */}
+          {cartItem.addons?.length > 0 && (
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowAddons(!showAddons)}
+                className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center justify-between w-full"
+              >
+                Add-ons
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAddons ? 'rotate-180' : ''}`} />
+              </button>
+              <div
+                className="flex flex-col gap-2 mt-2 overflow-hidden transition-[max-height] bg-gray-200 duration-300 ease-in-out rounded-lg"
+                style={{
+                  maxHeight: showAddons ? '500px' : '0px',
+                  paddingTop: showAddons ? '0.5rem' : '0',
+                  paddingBottom: showAddons ? '0.5rem' : '0',
+                }}
+              >
+                {cartItem.addons.map((addon : any) => (
+                  <div
+                    key={addon.id}
+                    className="flex items-center text-sm rounded-lg bg-white px-3 py-2 my-[0.1em] mx-[0.5em]"
+                  >
+                    <div className="flex justify-between w-full">
+                      <div>{addon.name.slice(0, 25)}...</div>
+                      <div className="flex items-center">
+                        <span className="text-[12px]">+{formatPrice(addon.price)}</span>
+                        {addon.quantity > 1 && (
+                          <span className="text-gray-500 text-[13px]">×{addon.quantity}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-  
-            {/* Extras */}
-            {cartItem.extras?.map((extra: any) => (
-              <div key={extra.id} className="flex items-center text-sm bg-green-50 rounded-lg px-3 py-2">
-                <div className="flex-1 min-w-0">
-                  <div className="text-green-700 font-medium truncate">{extra.name}</div>
-                  <div className="flex items-center text-green-600">
-                    <span>+{formatPrice(extra.price)}</span>
-                    {extra.quantity > 1 && (
-                      <span className="text-gray-500 ml-2">
-                        ×{extra.quantity}
-                      </span>
-                    )}
+            </div>
+          )}
+
+          {/* Extras Toggle */}
+          {cartItem.extras?.length > 0 && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => setShowExtras(!showExtras)}
+                className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center justify-between w-full"
+              >
+                Extras
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showExtras ? 'rotate-180' : ''}`} />
+              </button>
+              <div
+                className="flex flex-col gap-2 mt-2 overflow-hidden transition-[max-height] duration-300 bg-gray-200 rounded-lg ease-in-out"
+                style={{
+                  maxHeight: showExtras ? '500px' : '0px',
+                  paddingTop: showExtras ? '0.5rem' : '0',
+                  paddingBottom: showExtras ? '0.5rem' : '0',
+                }}
+              >
+                {cartItem.extras.map((extra : any) => (
+                  <div
+                    key={extra.id}
+                    className="flex items-center text-sm bg-white rounded-lg px-3 py-2 my-[0.1em] mx-[0.5em]"
+                  >
+                    <div className="flex w-full justify-between">
+                      <div className="text-[13px]">{extra.name.slice(0, 25)}...</div>
+                      <div className="flex items-center">
+                        <span className="text-[12px]">+{formatPrice(extra.price)}</span>
+                        {extra.quantity > 1 && (
+                          <span className="text-gray-500 text-[12px]">×{extra.quantity}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       )}
-  
+
       {/* Total */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-2">
-        <span className="text-sm font-medium text-gray-600">Item Total</span>
-        <span className="text-lg font-bold text-orange-600">
+        <span className="text-[14px] font-medium text-gray-600">Item total</span>
+        <span className="text-[14px] font-semibold">
           {formatPrice(
             cartItem.variantPrice * cartItem.quantity +
               (cartItem.addons?.reduce((sum: number, ao: any) => sum + ao.price * ao.quantity, 0) || 0) +

@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useCartContext } from "@/context/context";
 import { formatPrice } from "@/lib/utils";
 import { Item } from "@/models/Item";
+import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton";
+import { designVar } from "@/designVar/desighVar";
 interface ProductDescriptionProps {
   product: Item;
   setOpen?: (open: boolean) => void;
@@ -17,6 +19,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   const { updateCart } = useCartContext();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [showMessage, setShowMessage] = useState('');
+
+
   
   // State management
   const [variantQtys, setVariantQtys] = useState<Record<string, number>>({});
@@ -30,8 +34,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     return res.data;
   };
 
-  const { data } = useQuery({
-    queryKey: ['ItemId'],
+  const { data , isLoading } = useQuery({
+    queryKey: ['ItemId', product.id],
     queryFn: getItemById,
   });
 
@@ -84,19 +88,19 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
   // Calculate variant total price
   const computeVariantTotal = (variant: any) => {
-    const qty = variantQtys[variant.id] || 1;
+    const qty = variantQtys[variant?.id] || 1;
     
-    let total = variant.price * qty;
+    let total = variant?.price * qty;
     
-    const addons = selectedAddons[variant.id] || new Set();
+    const addons = selectedAddons[variant?.id] || new Set();
     addons.forEach(addonId => {
-      const addon = variant.addons?.find((ao: any) => ao.id === addonId);
+      const addon = variant?.addons?.find((ao: any) => ao.id === addonId);
       if (addon) total += addon.price * qty;
     });
     
-    const extras = selectedExtras[variant.id] || new Set();
+    const extras = selectedExtras[variant?.id] || new Set();
     extras.forEach(extraId => {
-      const extra = variant.extras?.find((ex: any) => ex.id === extraId);
+      const extra = variant?.extras?.find((ex: any) => ex.id === extraId);
       if (extra) total += extra.price * qty;
     });
     
@@ -105,14 +109,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
   // Add to cart as new item
   const addToCart = (variant: any) => {
-    const qty = variantQtys[variant.id] || 1;
+    const qty = variantQtys[variant?.id] || 1;
     
-    const addons = Array.from(selectedAddons[variant.id] || []).map(addonId => ({
+    const addons = Array.from(selectedAddons[variant?.id] || []).map(addonId => ({
       id: addonId,
       quantity: qty
     }));
     
-    const extras = Array.from(selectedExtras[variant.id] || []).map(extraId => ({
+    const extras = Array.from(selectedExtras[variant?.id] || []).map(extraId => ({
       id: extraId,
       quantity: qty
     }));
@@ -126,11 +130,11 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   
     // ✅ Always adds a NEW entry to the cart array
     setCartItems(prev => [...prev, newItem]);
-    setVariantQtys(prev => ({ ...prev, [variant.id]: 1 })); // Reset quantity to 1
- setSelectedAddons(prev => ({ ...prev, [variant.id]: new Set() }));
-setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
+    setVariantQtys(prev => ({ ...prev, [variant?.id]: 1 })); // Reset quantity to 1
+ setSelectedAddons(prev => ({ ...prev, [variant?.id]: new Set() }));
+setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
     
-    setShowMessage(`${variant.name} added to cart!`);
+    setShowMessage(`${variant?.name} added to cart!`);
     setTimeout(() => setShowMessage(''), 3000);
   };
 
@@ -143,10 +147,10 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
   // Prepare cart payload for context
   const cartPayload = useMemo(() => {
     return cartItems.map(item => {
-      const basePrice = item.variant.price * item.quantity;
+      const basePrice = item?.variant?.price * item?.quantity;
     
-      const addons = (item.addons || []).map((ao: any) => {
-        const addonData = item.variant.addons.find((a: any) => a.id === ao.id);
+      const addons = (item?.addons || []).map((ao: any) => {
+        const addonData = item?.variant?.addons?.find((a: any) => a.id === ao.id);
         return {
           id: ao.id,
           name: addonData?.name || "Unknown Addon",
@@ -155,8 +159,8 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
         };
       });
     
-      const extras = (item.extras || []).map((exItem: any) => {
-        const extraDef = item.variant.extras?.find((e: any) => e.id === exItem.id);
+      const extras = (item?.extras || []).map((exItem: any) => {
+        const extraDef = item?.variant?.extras?.find((e: any) => e.id === exItem.id);
         const unitPrice = extraDef?.priceDifference ?? extraDef?.price ?? 0;
         return {
           id: exItem.id,
@@ -172,10 +176,10 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
     
       return {
         itemImage: product.image,
-        variantId: item.variant.id,
-        variantName: item.variant.name,
-        variantPrice: item.variant.price,
-        quantity: item.quantity,
+        variantId: item?.variant?.id,
+        variantName: item?.variant?.name,
+        variantPrice: item?.variant?.price,
+        quantity: item?.quantity,
         totalPrice,
         addons,
         extras,
@@ -197,29 +201,45 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
     }
   }, [cartPayload, updateCart]);
 
-
-
   return (
-    <article className="flex w-full flex-col lg:flex-row bg-white shadow-lg rounded-2xl overflow-scroll">
+    <>
+    {
+      isLoading ? // skelton loader 
+        <ProductDescriptionSkelton/> : 
+
+    // product description
+    <article className={`flex w-full  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
       {/* Left - Product Image & Variants */}
-      <div className="w-full lg:w-2/5 flex flex-col p-4 bg-gray-50">
+      <div className="w-full  lg:w-full flex flex-col  ">
         {/* Product Image */}
-        <div className="relative aspect-auto w-full overflow-hidden rounded-xl">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
-          />
+        <div className="relative w-full h-[25em] overflow-hidden rounded-xl flex justify-center items-center">
+       <img 
+         src={product.image} 
+         alt={product.name} 
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+       />
+      </div>
+        
+        <div className="w-full p-4 mt-[1em]">
+        <div className="flex justify-between items-start bg-white p-2 rounded-md shadow-xl">
+          <div>
+            <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
+            {product.description && (
+              <p className="mt-2 text-gray-600 max-w-2xl text-[14px]">{product.description}</p>
+            )}
+          </div>
+        </div>
         </div>
         
+        
         {/* Variant Selector */}
-        <div className="mt-6">
+        <div className="mt-6 px-4 ">
           <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-3">
             <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
             <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Variant</span>
           </div>
           
-          <div className="flex space-x-3 overflow-x-auto pb-2 pt-1">
+          <div className="flex space-x-3  overflow-x-auto pb-2 pt-1 no-scrollbar">
             {variants?.map((v: any) => {
               const isActive = v.id === selectedVariantId;
               return (
@@ -228,7 +248,7 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                     onClick={() => setSelectedVariantId(v.id)}
                     className={`
                       flex flex-col items-center p-2 rounded-xl transition-all duration-300
-                      min-w-[5.5rem] border-2
+                       border-2 w-[8em] h-[10em]
                       ${isActive 
                         ? 'border-orange-500 bg-orange-50 shadow-md' 
                         : 'border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300'}
@@ -239,7 +259,7 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                       <img 
                         src={v.image} 
                         alt={v.name} 
-                        className="w-16 h-16 object-cover" 
+                        className="w-full h-20 object-cover" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg" />
                       
@@ -252,13 +272,11 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                       )}
                     </div>
                     
-                    <span className="text-xs lg:text-sm font-medium text-gray-700">
-                      {v.name}
+                    <span className="text-[12px] font-medium text-gray-700 b h-1/2 flex justify-center items-center">
+                      {(v.name).slice(0, 25)}...
                     </span>
-                  </button>
-                  
-                  <div className={`
-                    absolute -top-1 -left-1 rounded-full px-2 py-0.5 text-xs font-bold
+                    <div className={`
+                     rounded-full px-2 py-0.5 text-xs font-bold
                     ${isActive 
                       ? 'bg-orange-500 text-white' 
                       : 'bg-white text-gray-700 border border-gray-300'}
@@ -266,6 +284,9 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                   `}>
                     {formatPrice(v.price)}
                   </div>
+                  </button>
+                  
+                  
                 </div>
               );
             })}
@@ -274,65 +295,22 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
       </div>
     
       {/* Right - Product Details */}
-      <div className="w-full lg:w-3/5 p-6 flex flex-col">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">{product.name}</h1>
-            {product.description && (
-              <p className="mt-2 text-gray-600 max-w-2xl">{product.description}</p>
-            )}
-          </div>
-        </div>
-        
+      <div className="w-ful flex flex-col ">
         {selectedVariant && (
           <div className="mt-6 space-y-8 overflow-y-auto flex-1">
-            <div className="border rounded-2xl p-5 hover:shadow-lg transition-all bg-white">
-              {/* Variant Header & Qty */}
-              <div className="flex flex-col lg:flex-row items-center justify-between pb-4 border-b border-gray-200">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <img 
-                      src={selectedVariant.image} 
-                      alt={selectedVariant.name} 
-                      className="w-20 h-20 object-cover rounded-xl border border-gray-200" 
-                    />
-                  </div>
-                  <div>
-                    <h3 className="whitespace-nowrap md:text-xl font-bold text-gray-800">{(selectedVariant.name).slice(0, 15)}...</h3>
-                    <p className="text-orange-500 font-semibold">{formatPrice(selectedVariant.price)}</p>
-                  </div>
-                </div>
-                <div className="flex ml-[4em] lg:ml-0 items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
-                  <button 
-                    onClick={() => changeVariantQty(selectedVariant.id, -1)} 
-                    className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
-                  >
-                    −
-                  </button>
-                  <span className="w-8 text-center text-gray-800 font-medium">
-                    {variantQtys[selectedVariant.id] || 1}
-                  </span>
-                  <button 
-                    onClick={() => changeVariantQty(selectedVariant.id, 1)} 
-                    className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-    
-              {/* Addons */}
+            <div className="border  p-5 hover:shadow-lg transition-all bg-white">
+               {/* Addons */}
               {selectedVariant.addons?.length > 0 && (
                 <div className="mt-5">
                   <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
                     <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Addons</span>
                   </div>
-                  <div className="flex flex-col  gap-3 mt-3">
+                  <div className="flex flex-col  gap-3 mt-3 bg-gray-100 p-2 rounded-md">
                     {selectedVariant.addons.map((ao: any) => (
                       <div 
                         key={ao.id} 
-                        className={`p-3 rounded-xl border transition-all cursor-pointer
+                        className={`p-3 rounded-xl border transition-all cursor-pointer bg-white
                           ${selectedAddons[selectedVariant.id]?.has(ao.id) 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
@@ -351,10 +329,10 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ao.name).slice(0, 15)}...</span>
+                            <span className="font-medium">{(ao.name).slice(0, 35)}...</span>
                           </div>
-                          <span className="text-green-600 font-semibold">
-                            +{formatPrice(ao.price)}
+                          <span className="text-[15px]">
+                            +{`(${formatPrice(ao.price)})`}
                           </span>
                         </div>
                       </div>
@@ -370,11 +348,11 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                     <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Extras</span>
                   </div>
-                  <div className="flex flex-col gap-3 mt-3">
+                  <div className="flex flex-col gap-3 mt-3 bg-gray-100 p-2 rounded-md">
                     {selectedVariant.extras.map((ex: any) => (
                       <div 
                         key={ex.id} 
-                        className={`p-3 rounded-xl border transition-all cursor-pointer
+                        className={`p-3 rounded-xl border transition-all cursor-pointer bg-white
                           ${selectedExtras[selectedVariant.id]?.has(ex.id) 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
@@ -393,10 +371,10 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ex.name).slice(0, 15)}...</span>
+                            <span className="font-medium">{(ex.name).slice(0, 35)}...</span>
                           </div>
-                          <span className="text-green-600 font-semibold">
-                            +{formatPrice(ex.priceDifference || ex.price)}
+                          <span className="text-[15px]">
+                          +{`(${formatPrice(ex.price)})`}
                           </span>
                         </div>
                       </div>
@@ -406,40 +384,54 @@ setSelectedExtras(prev => ({ ...prev, [variant.id]: new Set() }));
               )}
             </div>
           </div>
+          
         )}
     
         {/* Total Price & Add to Cart */}
-        <div className="mt-6 pt-5 border-t border-gray-200">
-          {/* Total Price */}
-          {selectedVariant && (
-            <div className="flex justify-between items-center mb-4 px-4  rounded-xl">
-              <span className="text-sm lg:text-lg font-bold text-gray-800">Total Price:</span>
-              <span className=" lg:text-lg font-bold text-orange-600">
-                {formatPrice(computeVariantTotal(selectedVariant))}
-              </span>
-            </div>
-          )}
-    
-          {/* Add to Cart Button */}
+        <div className="w-full  absolute bottom-[0.3em] rounded-xl left-0 p-4 bg-white shadow-xl shadow-gray-300 flex flex-row-reverse justify-between items-center">
           <button
             onClick={() => {
                 handleAddToCartClick();
                 setOpen && setOpen(false);
             }}
-            className={`w-full py-3 text-white font-bold rounded-xl transition-all
-              bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl`}
+            className={`w-[17em] py-2 text-white font-bold rounded-xl transition-all flex justify-between items-center
+              bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl px-[1em]`}
           >
-            Add to Cart
+            <span className=" text-[16px] font-semibold  rounded-md">Add to Cart</span>  <span className="  rounded-md">
+                {formatPrice(computeVariantTotal(selectedVariant))}
+              </span>
           </button>
-    
-          {showMessage && (
-            <div className="mt-3 text-center text-green-600 font-medium animate-pulse">
-              {showMessage}
-            </div>
-          )}
-        </div>
+
+
+          <div className="flex items-center gap-2">
+  <button 
+    onClick={() => changeVariantQty(selectedVariant?.id, -1)} 
+    className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+  >
+    −
+  </button>
+  
+  <span className="w-8 text-center text-gray-800 font-semibold">
+    {variantQtys[selectedVariant?.id] || 1}
+  </span>
+  
+  <button 
+    onClick={() => changeVariantQty(selectedVariant?.id, 1)} 
+    className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+  >
+    +
+  </button>
+</div>
+
+            
+          </div>
       </div>
     </article>
+
+    }
+    
+    
+    </>
   );
 };
 
