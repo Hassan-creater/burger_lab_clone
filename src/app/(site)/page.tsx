@@ -183,7 +183,7 @@ export default async function Home(
             // Show "no results" message when there's a search query but no results
             <div className="text-center py-12 w-full">
               <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                No items found for "{currentQuery}"
+                No items found for {currentQuery}
               </h3>
               <p className="text-gray-500">
                 Try searching with different keywords or check the spelling
