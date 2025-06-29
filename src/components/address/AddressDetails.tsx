@@ -66,29 +66,30 @@ export default function AddressDetails({
 
   return (
     <div className="w-full h-full ">
-      { 
+      {/* { 
         newAddress && (
-      <div className="absolute w-full h-screen bg-black/50 z-10">
-        <AddressForm />
-      </div>
+      // <div className="absolute w-full h-screen bg-black/50 z-10">
+      //   <AddressForm />
+      // </div>
 
       )}
-     
+      */}
       <div className="flex items-center justify-between ">
         <h2 className={`text-sm min-[500px]:text-lg font-semibold text-gray-800 ${designVar.fontFamily}`}>
           My Addresses
         </h2>
     
-          <Button
+          {/* <Button
             className={`  ${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.textSize} ${designVar.widthFullButton.maxAddressWidth} flex items-center gap-2`}
             variant="ghost"
             onClick={()=>{setNewAddress(true)}}
            >
             <LucidePlus className="size-4 min-[500px]:size-5" />
             <p className={`${designVar.fontFamily}`}>
-              Add new address
+              A
             </p>
-          </Button>
+          </Button> */}
+          <AddressForm />
       
       </div>
       {!Addresses || Addresses.length === 0 ? (

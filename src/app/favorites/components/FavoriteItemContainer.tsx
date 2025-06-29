@@ -23,9 +23,11 @@ const data = favorites.find((favorite : any) => favorite?.itemId === itemId)
 
   return (
     
-    <div className="w-[30em]  h-auto  flex flex-wrap ">
+    <div className="w-full h-auto p-2">
       {data && (
-        <ProductCard product={data.item} favorites={favorites} status={data.favoriteStatus} />
+        <div className="w-full">
+          <ProductCard product={data.item} favorites={favorites} status={data.favoriteStatus} />
+        </div>
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import Providers from "./providers";
 import Script from "next/script";
 import React from "react";
 import LayoutShell from "./layoutShell";
+import { designVar } from "@/designVar/desighVar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +32,8 @@ export default function RootLayout({
       <body
         className={cn(
           "flex min-h-screen flex-col bg-primaryBg",
-          inter.className
+          inter.className,
+          `${designVar.fontFamily}`
         )}
         suppressHydrationWarning={true}
       >

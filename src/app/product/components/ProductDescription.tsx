@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { Item } from "@/models/Item";
 import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton";
 import { designVar } from "@/designVar/desighVar";
+import { toast } from "sonner";
 interface ProductDescriptionProps {
   product: Item;
   setOpen?: (open: boolean) => void;
@@ -16,7 +17,7 @@ interface ProductDescriptionProps {
 
 const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
-  const { updateCart } = useCartContext();
+  const { updateCart , dineInClose , pickupClose , deliveryClose } = useCartContext();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [showMessage, setShowMessage] = useState('');
 
@@ -391,6 +392,10 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
         <div className="w-full  absolute bottom-[0.3em] rounded-xl left-0 p-4 bg-white shadow-xl shadow-gray-300 flex flex-row-reverse justify-between items-center">
           <button
             onClick={() => {
+              if(dineInClose || pickupClose || deliveryClose){
+                toast.error(dineInClose || pickupClose || deliveryClose);
+                return;
+              }
                 handleAddToCartClick();
                 setOpen && setOpen(false);
             }}

@@ -14,13 +14,29 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 
 const Header = () => {
 
-  const {token , user } = useCartContext();
+  const {token , user , deliveryClose , dineInClose , pickupClose } = useCartContext();
 
   const pathname = usePathname();
 
   return (
-    <header className="w-full sticky top-0 z-50 h-20 bg-white shadow-sm shadow-neutral-300">
-      <nav className="flex items-center justify-between h-full w-full lg:w-[85%] m-auto px-4">
+    <header className={`w-full sticky top-0 z-50 ${deliveryClose || dineInClose || pickupClose ? "h-24" : "h-20"} bg-white shadow-sm shadow-neutral-300`}>
+ {
+  deliveryClose && (
+    <p className="text-[12px] text-center  bg-red-500 text-white">{deliveryClose}</p>
+  )
+ }
+ {
+  dineInClose && (
+    <p className="text-[12px] text-center  bg-red-500 text-white">{dineInClose}</p>
+  )
+ }
+ {
+  pickupClose && (
+    <p className="text-[12px] text-center  bg-red-500 text-white">{pickupClose}</p>
+  )
+ }
+ 
+      <nav className="flex items-center justify-between  w-full lg:w-[85%] m-auto px-4">
      {/* Left: Location Modal */}
      <div className="flex-1 flex justify-start">
     <NoSSRLocationModal />

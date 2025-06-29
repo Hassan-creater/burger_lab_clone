@@ -51,7 +51,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   return (
     <nav
       className={cn(
-        "sticky top-[5em]  bg-inherit z-20 mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-500",
+        "sticky top-[5.5em]  bg-inherit z-20 mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-500",
       )}
     >
        

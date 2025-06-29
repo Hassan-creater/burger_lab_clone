@@ -27,11 +27,7 @@ export default function LocationModal() {
   const [selectedArea, setSelectedArea] = useState("")
   const [selectedPickupBranch, setSelectedPickupBranch] = useState("")
   const [selectedDineInBranch, setSelectedDineInBranch] = useState("")
-  const [dineInClose , setDineInClose] = useState("");
-  const [pickupClose , setPickupClose] = useState("");
-  const {UpdateAddressData , AddressData} = useCartContext();
-  const [deliveryClose , setDeliveryClose] = useState("");
-
+  const {UpdateAddressData , AddressData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose} = useCartContext();
   const [open, setOpen] = useState(false)
 
   const handleSelect = () => {
@@ -58,6 +54,8 @@ export default function LocationModal() {
       })
       
     }
+
+   
     UpdateAddressData(AddressData);
     setOpen(false)
   }
@@ -308,6 +306,16 @@ useEffect(() => {
  
 /// open pop up
 
+// dine in close
+useEffect(() => {
+  if(selectedDineInBranchData){
+    if(!isBranchOpen(selectedDineInBranchData)){
+      const openTime12 = convertTo12HourFormat(selectedDineInBranchData.openTime);
+      const closeTime12 = convertTo12HourFormat(selectedDineInBranchData.endTime);
+      setDineInClose(`Branch is closed. It will open at ${openTime12} and close at ${closeTime12}.`);
+    }
+  }
+}, [selectedDineInBranchData]);
 
  
 useEffect(() => {
@@ -326,10 +334,7 @@ useEffect(() => {
 
 const isButtonDisabled =
   !Boolean(selectedCity) ||
-  !Boolean(selectedArea || selectedDineInBranch || selectedPickupBranch) ||
-  Boolean(deliveryClose) ||
-  Boolean(dineInClose) ||
-  Boolean(pickupClose);
+  !Boolean(selectedArea || selectedDineInBranch || selectedPickupBranch)
  
 
 
@@ -718,7 +723,7 @@ const isButtonDisabled =
       Select
     </Button>
 
-    <button
+    {/* <button
       onClick={() => {
         setOpen(false);
         setDeliveryClose("");
@@ -728,7 +733,7 @@ const isButtonDisabled =
       className="absolute top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors"
     >
       <X className="w-5 h-5" />
-    </button>
+    </button> */}
   </DialogContent>
 </Dialog>
   )

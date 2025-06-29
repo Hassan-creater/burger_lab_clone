@@ -75,20 +75,22 @@ export default async function Favorites({}: FavoritesProps) {
   }
 
   return (
-    <main className="w-[90%] lg:max-w-[80%] mx-auto my-5 min-h-screen flex flex-col">
-      <h1 className={`text-lg font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>
+    <main className="w-full  my-5 min-h-screen flex flex-col">
+      <h1 className={`text-lg w-[90%] lg:w-[85%] mx-auto font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>
         My Favorite Items
       </h1>
 
       {favorites && favorites?.length > 0 ? (
-        <section className="flex flex-wrap gap-4 w-full h-full ">
+        <section className=" w-[95%] flex flex-wrap gap-4   mx-auto">
         
         {favorites?.map((favorite) => (
         <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
-          <FavoriteItemContainer
+          <div className="flex justify-center">
+            <FavoriteItemContainer
                  itemId={favorite?.itemId}
                  favorites={favorites}
                /> 
+          </div>
              </Suspense>
            ))}
          </section>

@@ -14,6 +14,7 @@ import {
 import { LucideEdit, LucideTrash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import DeleteAddress from "../DeleteAddress";
 // import dynamic from "next/dynamic";
 // import { toast } from "sonner";
 
@@ -48,30 +49,30 @@ export default function AddressCard({
 
  
 
-  const deleteAddress = async (id: string) => {
-    if (defaultAddress === id) {
-      toast.error("You cannot delete your default address");
-      return;
-    }
+  // const deleteAddress = async (id: string) => {
+  //   if (defaultAddress === id) {
+  //     toast.error("You cannot delete your default address");
+  //     return;
+  //   }
   
-    const promise = apiClient.delete(`/address/delete/${id}`);
+  //   const promise = apiClient.delete(`/address/delete/${id}`);
   
-    toast.promise(promise, {
-      loading: "Deleting address...",
-      success: "Address deleted successfully",
-      error: "Failed to delete address",
-    });
+  //   toast.promise(promise, {
+  //     loading: "Deleting address...",
+  //     success: "Address deleted successfully",
+  //     error: "Failed to delete address",
+  //   });
   
-    try {
-      const res = await promise;
+  //   try {
+  //     const res = await promise;
   
-      if (res.status === 204) {
-        queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      }
-    } catch (error) {
-      console.error("Address deletion failed:", error);
-    }
-  };
+  //     if (res.status === 204) {
+  //       queryClient.invalidateQueries({ queryKey: ["addresses"] });
+  //     }
+  //   } catch (error) {
+  //     console.error("Address deletion failed:", error);
+  //   }
+  // };
 
 
    
@@ -91,7 +92,7 @@ export default function AddressCard({
     {/* Footer */}
     <div className="flex items-center justify-between mt-2">
       {/* Delete Icon */}
-      <Button
+      {/* <Button
         variant="ghost"
         size="icon"
         onClick={() => deleteAddress(address?.id ?? "")}
@@ -99,7 +100,8 @@ export default function AddressCard({
       >
         <LucideTrash2 className="w-4 h-4 text-red-500" />
         <span className="sr-only">Delete</span>
-      </Button>
+      </Button> */}
+      <DeleteAddress id={address?.id ?? ""}/>
   
       {/* Default Badge/Button */}
       {defaultAddress === address?.id ? (
