@@ -170,7 +170,7 @@ export default function ProfileForm() {
                 fileInput.click();
               }
             }} className="w-full  flex items-center justify-center">
-              <img  src={profileImage || data?.image} alt="profile" className="w-20 h-20 rounded-full bg-blue-400 " />
+              <img  src={profileImage || data?.image} alt="profile" className="w-20 h-20 rounded-full bg-gray-100 " />
               <input id="fileInput" type="file" className="hidden" onChange={handleProfileImage} />
             </div>
             {/* Full Name */}
