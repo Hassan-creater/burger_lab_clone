@@ -60,8 +60,8 @@ interface CartContextType {
   token: string | null;
   authOpen: boolean;
   setAuthOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setLoggedIn: (user: any, token: string) => void;
-  favorite: any;
+  setLoggedIn: (user: any, token: string , RefreshToken: string) => void;
+  favorite: any;      
   setFavorite: React.Dispatch<React.SetStateAction<any>>;
   couponData: any;
   setCouponData: React.Dispatch<React.SetStateAction<any>>;
@@ -73,6 +73,8 @@ interface CartContextType {
   setPickupClose: React.Dispatch<React.SetStateAction<string>>;
   deliveryClose: string;
   setDeliveryClose: React.Dispatch<React.SetStateAction<string>>;
+  refreshToken: string | null;
+  setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 // Create the context
@@ -98,7 +100,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [dineInClose, setDineInClose] = useState<string>("");
   const [pickupClose, setPickupClose] = useState<string>("");
   const [deliveryClose, setDeliveryClose] = useState<string>("");
-
+  const [refreshToken, setRefreshToken] = useState<string | null>("");
 
 
   const setFavorite = ({ itemId, favId }: Favorite) => {
@@ -129,7 +131,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const setLoggedIn = (user: any, token: string) => {
+  const setLoggedIn = (user: any, token: string , RefreshToken: string) => {
     const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     Cookies.set("userData", JSON.stringify(user), { expires: 1, path: "/", secure: !isLocalhost , sameSite : "lax" });
     Cookies.set("accessToken", token, {
@@ -138,8 +140,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       secure: !isLocalhost, // Secure in production only
       sameSite: "lax",
     });
+    Cookies.set("refreshToken", RefreshToken ?? "", {
+      expires: 1, // 1 day
+      path: "/",
+      secure: !isLocalhost, // Secure in production only
+      sameSite: "lax",
+    });
 
     setUser(user);
+    setRefreshToken(RefreshToken ?? "");
     setToken(token);
     
   }
@@ -147,9 +156,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const user = Cookies.get("userData");
      const token = getClientCookie("accessToken");
+     const RefreshToken = getClientCookie("refreshToken");
     if(user){
       setUser(JSON.parse(user));
       setToken(token ?? null);
+      setRefreshToken(RefreshToken ?? null);
     }
   }, []);
 
@@ -243,7 +254,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken }}>
       {children}
     </CartContext.Provider>
   );

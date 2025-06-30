@@ -161,7 +161,7 @@ export default async function Home(
   }
 
   return (
-    <main className="w-full mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
+    <main className="w-full max-w-none mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
 
       {
         categories.length == 0 ? (

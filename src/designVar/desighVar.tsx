@@ -101,8 +101,8 @@ export const designVar = {
     // all category headig and button design
 
     categoryHeading : {
-        fontSize : "text-[24px]",
-        fontWeight : "font-bold",
+        fontSize : "text-[22px]",
+        fontWeight : "font-[600]",
         color : "text-black",
        
     },

@@ -40,14 +40,18 @@ function AuthModal() {
 
   const {register, handleSubmit, formState: { isDirty}} = useForm<Login>();
 
-
-
+ 
+  
   
 
   const [isPassVisible, setIsPassVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {setLoggedIn , authOpen , setAuthOpen} = useCartContext()
+  
+  const {setLoggedIn , authOpen , setAuthOpen } = useCartContext()
+  
+
+ 
 
 
   const handleLogin = async (data: {email: string, password: string}) => {
@@ -61,7 +65,7 @@ function AuthModal() {
         });
     
         // Extract tokens
-        const { accessToken } = res.data.data;
+        const { accessToken , refreshToken } = res.data.data;
         const user = {
         firstName: res.data.data.user.firstName,
         lastName: res.data.data.user.lastName,
@@ -69,12 +73,13 @@ function AuthModal() {
         email: res.data.data.user.email,
         image: res.data.data.user.image,
     };
-        setLoggedIn(user, accessToken);
+        setLoggedIn(user, accessToken , refreshToken ?? "");
       
         // Redirect on success
         if (res.status === 200 || res.status === 201) {
           toast.success("Login Successfull");
           setAuthOpen(false);
+          window.location.reload();
           setLoading(false);
         } else {
           toast.error("Something went wrong!");

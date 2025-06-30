@@ -26,7 +26,9 @@ const config = {
 				"custom-sm": { max: '954px' },
 				"custom-923": { max: '923px' },
 				"custom-752": { max: '850px' },
-				"custom-mobile": { max: '561px' }
+				"custom-mobile": { max: '561px' },
+				"xl_screens" : { min: '1550px' },
+				"2xl_screens" : { min: '2000px' }
 			},
 			colors: {
 				border: "hsl(var(--border))",

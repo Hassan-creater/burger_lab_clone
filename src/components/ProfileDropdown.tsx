@@ -32,6 +32,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
      
      if(res.status == 204){
         Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
         Cookies.remove("userData" , {path : "/"});
         window.location.reload();
      }

@@ -202,6 +202,8 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
     }
   }, [cartPayload, updateCart]);
 
+  
+
   return (
     <>
     {

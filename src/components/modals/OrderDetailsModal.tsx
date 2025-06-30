@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Badge, Calendar, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
+import { Badge, Calendar, CrossIcon, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
 
 import { formatPrice } from "@/lib/utils";
@@ -17,6 +17,7 @@ import { parseOrderItems } from "@/lib/orderUtils";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "@radix-ui/react-select";
 import { designVar } from "@/designVar/desighVar";
+import { Button } from "../ui/button";
 
 type OrderDetailsModalProps = {
   order: any;
@@ -68,7 +69,7 @@ interface Order {
 
 
 function OrderDetailsModal({ order, index }: OrderDetailsModalProps) {
- console.log(order);
+
 
  const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -98,12 +99,12 @@ const getStatusColor = (status: string) => {
   
   return (
 
-<div className="space-y-4">
+<div className={`space-y-4 ${designVar.fontFamily} `}>
   <Dialog key={order?.order?.id}> {/* Changed to order.order.id */}
     <DialogTrigger asChild>
-      <Card className="w-full cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500 hover:border-l-orange-600">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+      <Card  className="w-full cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500 hover:border-l-orange-600">
+        <CardContent className="p-6 shadow-lg rounded-lg  ">
+          <div className="flex  items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
                 <Package className="w-6 h-6 text-white" />
@@ -132,7 +133,7 @@ const getStatusColor = (status: string) => {
       </Card>
     </DialogTrigger>
 
-    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+    <DialogContent className="w-[40em] productdetail  descriptionModal lg:w-[70%] mx-auto max-h-[80vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className={`flex items-center gap-2 text-xl ${designVar.fontFamily}`}>
           <Package className="w-6 h-6 text-orange-500" />
@@ -319,6 +320,10 @@ const getStatusColor = (status: string) => {
                 </div>
               </div>
       </div>
+
+      <DialogClose className="absolute right-[1em] top-[1em]">
+        <CrossIcon className="w-4 h-4 rotate-45" />
+      </DialogClose>
     </DialogContent>
   </Dialog>
 </div>

@@ -59,7 +59,7 @@ function ProductCard({
 
   return (
     <Card
-    className={`flex justify-center items-center ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.cardDesign.shadow} ${designVar.fontFamily}`}
+    className={`flex justify-center items-center ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.cardDesign.shadow} ${designVar.fontFamily} overflow-hidden`}
   >
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -92,7 +92,7 @@ function ProductCard({
           {/* Content Section */}
           <CardContent className="flex flex-col text-left justify-between h-[164px] group py-[0.6em] pb-[0.8em] w-2/3">
             <div className="w-full">
-              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange}`}>{textShortener(product.name, 16)}</h4>
+              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange} leading-[1.2em]`}>{textShortener(product.name, 45)}</h4>
               {product.description && (
                 <p className={`${designVar.fontStyle.colorGray} ${designVar.fontStyle.fontSize}  line-clamp-2 ${designVar.fontFamily} ${designVar.fontStyle.color}`}>
                   {textShortener(product.description, 100)}

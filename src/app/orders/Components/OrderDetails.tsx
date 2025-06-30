@@ -37,6 +37,7 @@ function OrderDetails() {
 
   const [order, setOrder] = useState<any[]>([]); 
   const [isLoading, setIsLoading] = useState(true);// ✅ initialize as array
+  
 
   const storedOrderIds = JSON.parse(localStorage.getItem("orders") || "[]");
 
@@ -89,7 +90,7 @@ function OrderDetails() {
   }, []);
   
   
-
+ console.log(order)
 
 
   if (status === "pending") {

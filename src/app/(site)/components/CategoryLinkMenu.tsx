@@ -16,10 +16,13 @@ import { useCartContext } from "@/context/context";
 
 function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const { isBannerVisible, activeSectionId, setActiveSectionId } = useObserverStore();
-  const {deliveryClose, dineInClose, pickupClose} = useCartContext()
-
+  const {deliveryClose, dineInClose, pickupClose } = useCartContext()
+ 
+  
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
   const activeLinkRef = React.useRef<HTMLLIElement | null>(null);
+
+
 
   const scrollHandler = (options: "Left" | "Right") => {
     if (scrollContainerRef.current)

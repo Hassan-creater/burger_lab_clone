@@ -120,13 +120,12 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAddons ? 'rotate-180' : ''}`} />
               </button>
               <div
-                className="flex flex-col gap-2 mt-2 overflow-hidden transition-[max-height] bg-gray-200 duration-300 ease-in-out rounded-lg"
-                style={{
-                  maxHeight: showAddons ? '500px' : '0px',
-                  paddingTop: showAddons ? '0.5rem' : '0',
-                  paddingBottom: showAddons ? '0.5rem' : '0',
-                }}
-              >
+              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-gray-200 rounded-lg transition-all duration-300 ease-in-out ${showAddons ? 'py-2' : 'py-0'}`}
+          style={{
+           maxHeight: showAddons ? '500px' : '0px',
+          opacity: showAddons ? 1 : 0,
+            }}
+>
                 {cartItem.addons.map((addon : any) => (
                   <div
                     key={addon.id}
@@ -159,12 +158,11 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showExtras ? 'rotate-180' : ''}`} />
               </button>
               <div
-                className="flex flex-col gap-2 mt-2 overflow-hidden transition-[max-height] duration-300 bg-gray-200 rounded-lg ease-in-out"
-                style={{
-                  maxHeight: showExtras ? '500px' : '0px',
-                  paddingTop: showExtras ? '0.5rem' : '0',
-                  paddingBottom: showExtras ? '0.5rem' : '0',
-                }}
+              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-gray-200 rounded-lg transition-all duration-300 ease-in-out ${showExtras ? 'py-2' : 'py-0'}`}
+          style={{
+           maxHeight: showExtras ? '500px' : '0px',
+          opacity: showExtras ? 1 : 0,
+            }}
               >
                 {cartItem.extras.map((extra : any) => (
                   <div
