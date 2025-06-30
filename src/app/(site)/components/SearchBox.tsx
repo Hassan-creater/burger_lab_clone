@@ -7,31 +7,35 @@ import { useTypingEffect } from "@/hooks/useTypeEffect";
 import { useEffect, useRef, useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
-type SearchBoxProps = {};
+type SearchBoxProps = {
+  onSearchStart?: () => void;
+  onSearchEnd?: () => void;
+};
 
-export default function SearchBox({}: SearchBoxProps) {
+export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useSearchParam("query");
   const [inputValue, setInputValue] = useState(query);
-  const [isSearching, setIsSearching] = useState(false);
 
   // Debounced effect to update URL parameter
   useEffect(() => {
     if (inputValue !== query) {
-      setIsSearching(true);
-      
-      const timeoutId = setTimeout(() => {
+      const debounceTimeout = setTimeout(() => {
         setQuery(inputValue);
-        setIsSearching(false);
-      }, 1000); // 1 second delay
+        // Wait an additional 1.5s before ending the loader
+        const loaderTimeout = setTimeout(() => {
+          onSearchEnd?.();
+        }, 1000); // 1 second after debounce
 
-      return () => {
-        clearTimeout(timeoutId);
-        setIsSearching(false);
-      };
+        // Cleanup for loader timeout
+        return () => clearTimeout(loaderTimeout);
+      }, 1000); // 1 second debounce
+
+      // Cleanup for debounce timeout
+      return () => clearTimeout(debounceTimeout);
     }
-  }, [inputValue, setQuery, query]);
+  }, [inputValue, setQuery, query, onSearchEnd]);
 
   // Update input value when URL parameter changes (for external updates)
   useEffect(() => {
@@ -79,18 +83,16 @@ export default function SearchBox({}: SearchBoxProps) {
       <Input
         ref={inputRef}
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+          onSearchStart?.();
+        }}
         placeholder={`Search for ${placeholder}`}
         id="search"
         type="search"
         autoComplete="off"
         className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent w-full rounded-none placeholder:text-gray-400 placeholder:text-sm"
       />
-      {isSearching && (
-        <div className="flex items-center justify-center w-4 h-4">
-          <LoadingSpinner className="w-4 h-4 border-t-primaryOrange" />
-        </div>
-      )}
     </div>
   );
 }

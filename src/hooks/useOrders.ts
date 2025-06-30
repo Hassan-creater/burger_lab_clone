@@ -83,10 +83,6 @@ export const useOrders = (userId: string) => {
     const ellipsis = -1;
 
     if (totalPages <= maxVisiblePages) {
-      console.log(
-        Array.from({ length: totalPages }, (_, i) => i),
-        totalPages
-      );
       return Array.from({ length: totalPages }, (_, i) => i);
     }
 

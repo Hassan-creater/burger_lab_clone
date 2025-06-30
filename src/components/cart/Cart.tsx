@@ -56,7 +56,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData} = useCartContext();
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData , couponCode } = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
 
   // Using dummy tax data instead
@@ -168,14 +168,14 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
  
 
 
-
+ 
 
 
   const handlePlaceOrder = async () => {
     const payload = {
       status: "pending",
       orderType: AddressData?.orderType,
-      ...(couponData?.couponId && {couponId: couponData?.couponId}),
+      ...(couponCode && {couponCode: couponCode}),
       ...(defaultAddress && {addressId: defaultAddress}),  
       ...(deliveryAddress && {deliveryAddress: deliveryAddress}),
       ...(deliveryName && {deliveryName: deliveryName}),
@@ -428,7 +428,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               Grand Total (Incl. Tax)
             </p>
             <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
-              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
+              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges - AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(couponData?.discount ?? "0") / 100), 0))}
             </p>
           </div>
           <Button

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import SearchBox from "./SearchBox";
 import CategorySection from "./CategorySection";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 type SearchFilterProps = {
   categories: any[];
@@ -15,6 +16,8 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
   const searchParams = useSearchParams();
   const currentQuery = searchParams.get("query") || "";
   const [filteredItems, setFilteredItems] = useState(allItems);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     if (!currentQuery.trim()) {
@@ -42,7 +45,7 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
     });
 
     setFilteredItems(filtered);
-    console.log(`Filtered ${filtered.length} items for query: "${currentQuery}"`);
+  
   }, [currentQuery, allItems]);
 
   // Group filtered items by category
@@ -55,45 +58,42 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
 
   return (
     <>
-      <SearchBox />
+      <SearchBox
+        onSearchStart={() => {
+          setIsSearching(true);
+          setHasSearched(true);
+        }}
+        onSearchEnd={() => setIsSearching(false)}
+      />
       
-      {currentQuery.trim() ? (
-        // Show filtered results
-        <div className="w-full">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Search Results for {currentQuery}
-            </h2>
-            <p className="text-gray-600 mt-2">
-              Found {filteredItems.length} items in {filteredCategories.length} categories
+      {isSearching ? (
+        <div className="flex justify-center items-center py-12">
+          <LoadingSpinner className="w-8 h-8 border-t-primaryOrange" />
+        </div>
+      ) : currentQuery.trim() || hasSearched ? (
+        filteredCategories.length > 0 ? (
+          filteredCategories.map((category: any, index: number) => (
+            <CategorySection
+              key={`filtered-${category.id}-${index}`}
+              name={category.title}
+              href={`#${category.title}`}
+              id={category.id}
+              query={currentQuery}
+              favorites={favorites}
+              allItems={filteredItems}
+            />
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              No items found
+            </h3>
+            <p className="text-gray-500">
+              Try searching with different keywords or check the spelling
             </p>
           </div>
-          
-          {filteredCategories.length > 0 ? (
-            filteredCategories.map((category: any, index: number) => (
-              <CategorySection
-                key={`filtered-${category.id}-${index}`}
-                name={category.title}
-                href={`#${category.title}`}
-                id={category.id}
-                query={currentQuery}
-                favorites={favorites}
-                allItems={category.items} // Use filtered items for this category
-              />
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                No items found
-              </h3>
-              <p className="text-gray-500">
-                Try searching with different keywords or check the spelling
-              </p>
-            </div>
-          )}
-        </div>
+        )
       ) : (
-        // Show all categories (original behavior)
         categories.map((category: any, index: number) => (
           <CategorySection
             key={index}

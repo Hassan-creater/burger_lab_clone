@@ -75,6 +75,8 @@ interface CartContextType {
   setDeliveryClose: React.Dispatch<React.SetStateAction<string>>;
   refreshToken: string | null;
   setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
+  couponCode: string;
+  setCouponCode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // Create the context
@@ -101,6 +103,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [pickupClose, setPickupClose] = useState<string>("");
   const [deliveryClose, setDeliveryClose] = useState<string>("");
   const [refreshToken, setRefreshToken] = useState<string | null>("");
+  const [couponCode, setCouponCode] = useState<string>("");
 
 
   const setFavorite = ({ itemId, favId }: Favorite) => {
@@ -254,7 +257,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode }}>
       {children}
     </CartContext.Provider>
   );

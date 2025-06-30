@@ -27,8 +27,8 @@ const PromoBar = ({
   const [promoCode, setPromoCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { user , setAuthOpen , setCouponData , couponData } = useCartContext();
-
+  const { user , setAuthOpen , setCouponData , couponData , setCouponCode } = useCartContext();
+  
 
   //  coupon vali
   // dation
@@ -45,6 +45,8 @@ const PromoBar = ({
       // Success path
       const couponResult = res.data.data; // { valid, discount, couponId }
       setCouponData(couponResult);
+      setCouponCode(promoCode);
+      console.log(res.data);
       setDiscount(couponData.discount);
       toast.success(res.data.message || "Coupon applied!");
       setCouponValidation(false);

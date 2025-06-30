@@ -14,6 +14,8 @@ import { Category } from "@/models/Category";
 
 import { cookies } from "next/headers";
 import SearchBox from "./components/SearchBox";
+import SearchFilter from "./components/SearchFilter";
+import OnlineStatusWrapper from "./components/OnlineStatusWrapper";
 
 
 
@@ -156,57 +158,27 @@ export default async function Home(
     hasSearchResults = filteredCategories.length > 0;
   }
 
-  if (!categories) {
-    return <ServiceError />;
+  // Show server error if user is online but categories are missing or empty
+  if (!categories || categories.length === 0) {
+    return (
+      <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
+        <h1 className="text-2xl font-semibold text-red-600">Server Error</h1>
+        <p className="text-gray-600 mt-2 max-w-md">
+          We couldn't load product data. Please try again later.
+        </p>
+      </main>
+    );
   }
 
   return (
-    <main className="w-full max-w-none mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
-
-      {
-        categories.length == 0 ? (
-           <>  <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
-           <h1 className="text-2xl font-semibold text-red-600">You are Offline</h1>
-           <p className="text-gray-600 mt-2 max-w-md">
-             Please check your internet connection. This page requires an active connection to load product data.
-           </p>
-         </main> </>
-        ) : (
-          <HydrationBoundary state={dehydrate(queryClient)}>
+    <OnlineStatusWrapper>
+      <main className="w-full max-w-none mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center">
+        <HydrationBoundary state={dehydrate(queryClient)}>
           <HeroBanner />
-  
           <CategoryLinkMenu categories={categories} />
-  
-          <SearchBox/>
-  
-          {currentQuery.trim() && !hasSearchResults ? (
-            // Show "no results" message when there's a search query but no results
-            <div className="text-center py-12 w-full">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                No items found for {currentQuery}
-              </h3>
-              <p className="text-gray-500">
-                Try searching with different keywords or check the spelling
-              </p>
-            </div>
-          ) : (
-            // Show filtered categories or all categories
-            filteredCategories?.map((category : any, index : number) => (
-              <CategorySection
-                key={index}
-                name={category.title}
-                href={`#${category.title}`}
-                id={category.id}
-                query={currentQuery || undefined}
-                favorites={favorites || []}
-                allItems={allItems}
-              />
-            ))
-          )}
+          <SearchFilter categories={categories} favorites={favorites || []} allItems={allItems} />
         </HydrationBoundary>
-        )
-      }
-     
-    </main>
+      </main>
+    </OnlineStatusWrapper>
   );
 }
