@@ -332,7 +332,7 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ao.name).slice(0, 35)}...</span>
+                            <span className="font-medium">{(ao.name).slice(0, 30)}...</span>
                           </div>
                           <span className="text-[15px]">
                             +{`(${formatPrice(ao.price)})`}
@@ -374,7 +374,7 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ex.name).slice(0, 35)}...</span>
+                            <span className="font-medium">{(ex.name).slice(0, 30)}...</span>
                           </div>
                           <span className="text-[15px]">
                           +{`(${formatPrice(ex.price)})`}
