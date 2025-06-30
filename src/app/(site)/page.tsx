@@ -164,7 +164,7 @@ export default async function Home(
       <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
         <h1 className="text-2xl font-semibold text-red-600">Server Error</h1>
         <p className="text-gray-600 mt-2 max-w-md">
-          We couldn't load product data. Please try again later.
+          We couldn not load product data. Please try again later.
         </p>
       </main>
     );
