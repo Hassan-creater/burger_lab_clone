@@ -177,7 +177,7 @@ export default function AddressForm() {
         Add Address
       </Button>
     </DialogTrigger>
-       <DialogContent  className="w-[80%] sm:w-[30em] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
+       <DialogContent  className="w-[80%] sm:w-[30em] max-w-full h-max max-h-[39em] flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
       <DialogHeader>
         <DialogTitle asChild>
           <VisuallyHidden>Authentication</VisuallyHidden>
