@@ -211,7 +211,7 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
         <ProductDescriptionSkelton/> : 
 
     // product description
-    <article className={`flex w-full  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
+    <article className={`flex w-[37em]  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
       {/* Left - Product Image & Variants */}
       <div className="w-full  lg:w-full flex flex-col  ">
         {/* Product Image */}

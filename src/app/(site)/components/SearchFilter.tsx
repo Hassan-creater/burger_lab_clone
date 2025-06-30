@@ -65,13 +65,16 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
 
   return (
     <>
-      <SearchBox
+    <div className="w-full px-[0.5em] justify-center items-center flex">
+    <SearchBox
         onSearchStart={() => {
           setIsSearching(true);
           setHasSearched(true);
         }}
         onSearchEnd={() => setIsSearching(false)}
       />
+    </div>
+     
       
       {isSearching ? (
         <div className="flex justify-center items-center py-12">

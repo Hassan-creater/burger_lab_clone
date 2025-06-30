@@ -79,13 +79,11 @@ const Header = () => {
          <Cart type="CART" className="block min-[400px]:block" />
        )}
        {token ? (
-        TaxData?.timing && (
           <ProfileDropdown user={`${user?.firstName} ${user?.lastName}`} />
-        )
+        
        ) : (
-        TaxData?.timing && (
+          
           <AuthModal />
-        )
        )}
      </div>
    </nav>

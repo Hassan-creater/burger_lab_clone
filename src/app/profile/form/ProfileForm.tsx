@@ -15,6 +15,9 @@ import { Loader2 } from "lucide-react"
 import ProfileSkeleton from "./SkeltonLoader"
 import { designVar } from "@/designVar/desighVar"
 import { toast } from "sonner"
+import { useCartContext } from "@/context/context"
+import { useRouter } from "next/navigation";
+
 
 // Define the form data type
 interface ProfileFormData {
@@ -58,7 +61,8 @@ export default function ProfileForm() {
   const watchedCountryCode = watch("countryCode")
   const [profileImage, setProfileImage] = useState<string>("")
   const [isDataLoaded, setIsDataLoaded] = useState(false)
-
+  const {user} = useCartContext();
+  const router = useRouter();
   const handleProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -100,14 +104,14 @@ export default function ProfileForm() {
         // Reset the form's dirty state to prepare for next cycle
         setTimeout(() => {
           reset(data, { keepDirty: false, keepErrors: false })
-          console.log("Form reset after successful submission")
+       
         }, 100)
       }else{
         toast.error("Failed to update profile")
       }
     
     } catch (error) {
-      console.error("Error updating profile:", error)
+     
       toast.error("Failed to update profile")
     }
   }
@@ -115,22 +119,19 @@ export default function ProfileForm() {
   // Reset submitted state when form becomes dirty
   useEffect(() => {
     if (isDirty && isSubmitted) {
-      console.log("Form became dirty, re-enabling button")
+     
       setIsSubmitted(false)
     }
   }, [isDirty, isSubmitted])
 
   // Debug logging for button state
-  useEffect(() => {
-    console.log("Button state:", {
-      isSubmitting,
-      isDirty,
-      isSubmitted,
-      shouldBeDisabled: isSubmitting || !isDirty || isSubmitted
-    })
-  }, [isSubmitting, isDirty, isSubmitted])
+
 
   useEffect(() => {
+
+    if(!user){
+      router.push("/")
+    }
     if (data && !isDataLoaded) {
 
       
@@ -151,13 +152,15 @@ export default function ProfileForm() {
     }
   }, [data, setValue, isDataLoaded, watchedGender])
 
+
+
   return (
-    <div className={`  flex items-center justify-center p-4 ${designVar.fontFamily} `}>
+    <div className={`   flex items-center justify-center sm:p-4 ${designVar.fontFamily} `}>
       {
         isLoading ? <div className="flex items-center justify-center w-full">
           <ProfileSkeleton/>
         </div> :
-        <Card className="w-full max-w-[60%]">
+        <Card className="w-full max-w-[100%] sm:max-w-[60%] ">
           <CardHeader>
           <CardTitle className="text-xl font-semibold text-center sr-only">Profile</CardTitle>
         </CardHeader>

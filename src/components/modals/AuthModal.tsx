@@ -38,7 +38,7 @@ function AuthModal() {
 
 
 
-  const {register, handleSubmit, formState: { isDirty}} = useForm<Login>();
+  const {register, handleSubmit, formState: { isDirty, errors}} = useForm<Login>();
 
  
   
@@ -111,10 +111,11 @@ function AuthModal() {
                 
                 type="email"
                 placeholder="Enter your email"
-                {...register("email", {required: true})}
+                {...register("email", {required: true, pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address"}})}
                
                 className="w-full focus-visible:ring-primaryOrange     "
               />
+              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             </Label>
             <Label className="w-full rounded-2xl relative">
               <span className="sr-only">Password</span>
@@ -122,9 +123,10 @@ function AuthModal() {
                 
                 type={isPassVisible ? "text" : "password"}
                 placeholder="Enter your password"
-                {...register("password", {required: true})}
+                {...register("password", {required: true, minLength: {value: 8, message: "Password must be at least 8 characters long"}})}
                 className="w-full focus-visible:ring-primaryOrange  "
               />
+              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               <Button
                 variant="link"
                 onClick={(e) => {
@@ -224,7 +226,8 @@ function AuthModal() {
             `${designVar.authButton.backgroundColor} ${designVar.authButton.borderRadius} ${designVar.authButton.paddingX} ${designVar.authButton.paddingY} ${designVar.authButton.fontSize} ${designVar.authButton.fontWeight} ${designVar.authButton.color} ${designVar.authButton.cursor} ${designVar.authButton.transition} ${designVar.authButton.hover.backgroundColor} ${designVar.authButton.hover.borderRadius} ${designVar.authButton.hover.color} ${designVar.authButton.hover.color} ${designVar.authButton.hover.backgroundColor}`
           }
         >
-          Login / Register
+          <span className="hidden sm:block">Login / Register</span>
+          <span className="block sm:hidden">Login</span>
         </Button>
       </DialogTrigger>
          <DialogContent className="w-[80%] sm:w-[30em] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">

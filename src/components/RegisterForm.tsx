@@ -106,7 +106,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
   };
 
   return (
-    <div className=" flex items-center justify-center w-full h-[38em] overflow-y-scroll">
+    <div className=" flex items-center productdetail justify-center w-full h-[35em] overflow-y-scroll">
       <Card className="w-full">
         <CardHeader className="text-center space-y-2 pb-4">
           <CardTitle className="text-2xl font-extrabold text-gray-800">
@@ -118,7 +118,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
         </CardHeader>
 
         <form onSubmit={handleSubmit(submitHandler)}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 p-[0.5em]">
             {/* Avatar */}
             <div onClick={()=>document.getElementById("image")?.click()} className="flex justify-center">
               <div className="w-20 h-20 rounded-full bg-gray-100 cursor-pointer overflow-hidden border-2 border-orange-500">
@@ -191,7 +191,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
               <div className="relative">
                 <Input
                   id="password"
-                  {...register("password", { required: "Password is required", minLength: 6 })}
+                  {...register("password", { required: "Password is required", minLength: {value: 8, message: "Password must be at least 8 characters long"}})}
                   type={showPass ? "text" : "password"}
                   placeholder="••••••••"
                   className="mt-1 focus:ring-orange-500 pr-10"
@@ -204,7 +204,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
                   {showPass ? <LucideEyeOff /> : <LucideEye />}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-xs text-red-500">Min 6 characters</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-500">Min 8 characters</p>}
             </div>
 
             <div>
@@ -213,16 +213,16 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
               </Label>
               <Input
                 id="phone"
-                {...register("phone", { required: "Phone is required" })}
+                {...register("phone", { required: "Phone is required", pattern: {value: /^[0-9]{10}$/, message: "Invalid phone number"} })}
                 type="tel"
                 placeholder="123-456-7890"
                 className="mt-1 focus:ring-orange-500"
               />
-              {errors.phone && <p className="mt-1 text-xs text-red-500">Required</p>}
+              {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
             </div>
           </CardContent>
 
-          <CardFooter className="pt-0 flex flex-col gap-2">
+          <CardFooter className="pt-0 w-full flex flex-col gap-2 p-[0.5em]">
             <Button
               type="submit"
               className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor}`}

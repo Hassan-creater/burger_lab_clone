@@ -231,6 +231,15 @@ const getStatusColor = (status: string) => {
                               </p>
                             </div>
                           )}
+
+                          {item.variant.extras.length > 0 && (
+                            <div className="mt-2">
+                              <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Extras:</p>
+                              <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
+                                {item.variant.extras.map((extra: any) => extra.name).join(", ")}
+                              </p>
+                            </div>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className={`font-semibold text-orange-600 ${designVar.fontFamily}`}>${item.price}</p>

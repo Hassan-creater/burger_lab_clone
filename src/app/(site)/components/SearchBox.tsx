@@ -69,7 +69,7 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
 
   return (
     <div
-      className="flex px-[1em]  rounded-full py-[0.1em] gap-1 items-center w-full lg:max-w-[88%] my-4 border-[1px]  border-orange-300 transition-all border-b-[1px] border-b-orange-300"
+      className="flex  px-[1em]  rounded-full py-[0.1em] gap-1 items-center w-full lg:max-w-[88%] my-4 border-[1px]  border-orange-300 transition-all border-b-[1px] border-b-orange-300"
       ref={parentRef}
     >
       <div className="flex items-center justify-center w-4 h-4">

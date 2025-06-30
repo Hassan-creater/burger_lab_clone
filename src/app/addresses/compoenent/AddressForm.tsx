@@ -26,7 +26,7 @@ type AddressFormProps = {
 
 export default function AddressForm() {
   const {setNewAddress} = useCartContext();
-  const {register , handleSubmit} = useForm();
+  const {register , handleSubmit , formState: {errors}} = useForm();
   const [loading , setLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -61,111 +61,6 @@ export default function AddressForm() {
 
 
   return (
-    // <div className="min-h-screen absolute top-0 left-0 w-full h-[100dvh] bg-gradient-to-br  bg-[#F8F9FA] flex items-center justify-center p-4">
-    //   <Cross onClick={()=>setNewAddress(false)} className="w-4 rotate-45 h-4 text-orange-500 absolute top-4 right-4" />
-    //   <Card className="w-full max-w-lg shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-    //     <CardHeader className="text-center space-y-4 pb-8">
-    //       <div className="mx-auto w-16 h-16 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg">
-    //         <MapPin className="w-8 h-8 text-white" />
-    //       </div>
-    //       <div className="space-y-2">
-    //         <h1 className={`text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent ${designVar.fontFamily}`}>
-    //           Address Information
-    //         </h1>
-    //         <p className={`text-gray-600 ${designVar.fontFamily}`}>Please enter your address details below</p>
-    //       </div>
-    //     </CardHeader>
-
-    //     <CardContent className="space-y-6 pb-[1em]">
-    //       <form className="space-y-7 w-full px-[1em] bg-red-500" onSubmit={handleSubmit(addAddress as any)}>
-
-    //       <div className="space-y-2">
-    //         <Label htmlFor="line1" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
-    //           <Home className="w-4 h-4 text-orange-500" />
-    //           Address Line 1 *
-    //         </Label>
-    //         <Input
-    //           id="line1"
-    //           {...register("line1" , {required: true})}
-    //           placeholder="123 Main Street"
-             
-    //           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
-    //         />
-    //       </div>
-
-    //       <div className="space-y-2">
-    //         <Label htmlFor="line2" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
-    //           <Building2 className="w-4 h-4 text-orange-500" />
-    //           Address Line 2
-    //         </Label>
-    //         <Input
-    //           id="line2"
-    //           {...register("line2")}
-    //           placeholder="Apartment, suite, etc. (optional)"
-    //           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
-    //         />
-    //       </div>
-
-    //       <div className="space-y-2">
-    //         <Label htmlFor="city" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
-    //           <MapPin className="w-4 h-4 text-orange-500" />
-    //           City *
-    //         </Label>
-    //         <Input
-    //           id="city"
-    //           placeholder="New York"
-    //           {...register("city" , {required: true})}
-    //           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
-    //         />
-    //       </div>
-
-    //       <div className="space-y-2">
-    //         <Label htmlFor="country" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
-    //           <Globe className="w-4 h-4 text-orange-500" />
-    //           Country *
-    //         </Label>
-    //         {/* <Select required>
-    //           <SelectTrigger className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300">
-    //             <SelectValue placeholder="Select a country" />
-    //           </SelectTrigger>
-    //           <SelectContent>
-    //             <SelectItem value="us">🇺🇸 United States</SelectItem>
-    //             <SelectItem value="ca">🇨🇦 Canada</SelectItem>
-    //             <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
-    //             <SelectItem value="au">🇦🇺 Australia</SelectItem>
-    //             <SelectItem value="de">🇩🇪 Germany</SelectItem>
-    //             <SelectItem value="fr">🇫🇷 France</SelectItem>
-    //             <SelectItem value="jp">🇯🇵 Japan</SelectItem>
-    //             <SelectItem value="in">🇮🇳 India</SelectItem>
-    //             <SelectItem value="br">🇧🇷 Brazil</SelectItem>
-    //             <SelectItem value="mx">🇲🇽 Mexico</SelectItem>
-    //           </SelectContent>
-    //         </Select> */}
-    //         <Input
-    //           id="country"
-    //           placeholder="Country"
-    //           {...register("country" , {required: true})}
-    //           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
-    //         />
-    //       </div>
-
-    //       <Button
-    //         disabled={loading}
-    //         type="submit"
-    //         className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.registerButton.backgroundColor} ${designVar.widthFullButton.registerButton.borderRadius} ${designVar.widthFullButton.registerButton.paddingX} ${designVar.widthFullButton.registerButton.paddingY} ${designVar.widthFullButton.registerButton.fontSize} ${designVar.widthFullButton.registerButton.fontWeight} ${designVar.widthFullButton.registerButton.color} ${designVar.widthFullButton.registerButton.cursor} ${designVar.widthFullButton.registerButton.transition} ${designVar.widthFullButton.registerButton.hover.backgroundColor} ${designVar.widthFullButton.registerButton.hover.borderRadius} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.color} ${designVar.widthFullButton.registerButton.hover.backgroundColor}`}
-    //       >
-    //         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Address"}
-    //       </Button>
-    //       </form>
-         
-
-    //       <div className="text-center ">
-    //         <p className={`text-sm text-gray-500 ${designVar.fontFamily}`}>Your information is secure and encrypted</p> 
-    //       </div>
-    //     </CardContent>
-    //   </Card>
-    // </div>
-
     <Dialog open={open} onOpenChange={setOpen}>
     <DialogTrigger asChild>
       <Button
@@ -205,13 +100,14 @@ export default function AddressForm() {
          </Label>
          <Input
            id="line1"
-           {...register("line1" , {required: true})}
+           {...register("line1" , {required: true, minLength: {value: 3, message: "Address must be at least 3 characters long"}})}
            placeholder="123 Main Street"
          
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
         />
+        {errors?.line1 && typeof errors.line1.message === 'string' && <p className="text-red-500 mt-[0.2em]">{errors.line1.message}</p>}
       </div>
-
+ 
       <div className="space-y-2">
         <Label htmlFor="line2" className={`text-gray-700 font-medium flex items-center gap-2 ${designVar.fontFamily}`}>
           <Building2 className="w-4 h-4 text-orange-500" />
@@ -219,10 +115,11 @@ export default function AddressForm() {
         </Label>
         <Input
           id="line2"
-          {...register("line2")}
+          {...register("line2" , {minLength: {value: 3, message: "Address must be at least 3 characters long"}})}
           placeholder="Apartment, suite, etc. (optional)"
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
         />
+        {errors?.line2 && typeof errors.line2.message === 'string' && <p className="text-red-500 mt-[0.2em]">{errors.line2.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -233,9 +130,10 @@ export default function AddressForm() {
         <Input
           id="city"
           placeholder="New York"
-          {...register("city" , {required: true})}
+          {...register("city" , {required: true, minLength: {value: 3, message: "City must be at least 3 characters long"}})}
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
         />
+        {errors?.city && typeof errors.city.message === 'string' && <p className="text-red-500 mt-[0.2em]">{errors.city.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -243,29 +141,13 @@ export default function AddressForm() {
           <Globe className="w-4 h-4 text-orange-500" />
           Country *
         </Label>
-        {/* <Select required>
-          <SelectTrigger className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300">
-            <SelectValue placeholder="Select a country" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="us">🇺🇸 United States</SelectItem>
-            <SelectItem value="ca">🇨🇦 Canada</SelectItem>
-            <SelectItem value="uk">🇬🇧 United Kingdom</SelectItem>
-            <SelectItem value="au">🇦🇺 Australia</SelectItem>
-            <SelectItem value="de">🇩🇪 Germany</SelectItem>
-            <SelectItem value="fr">🇫🇷 France</SelectItem>
-            <SelectItem value="jp">🇯🇵 Japan</SelectItem>
-            <SelectItem value="in">🇮🇳 India</SelectItem>
-            <SelectItem value="br">🇧🇷 Brazil</SelectItem>
-            <SelectItem value="mx">🇲🇽 Mexico</SelectItem>
-          </SelectContent>
-        </Select> */}
         <Input
           id="country"
           placeholder="Country"
-          {...register("country" , {required: true})}
+          {...register("country" , {required: true, minLength: {value: 3, message: "Country must be at least 3 characters long"}})}
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
         />
+        {errors?.country && typeof errors.country.message === 'string' && <p className="text-red-500 mt-[0.2em]">{errors.country.message}</p>}
       </div>
 
       <Button

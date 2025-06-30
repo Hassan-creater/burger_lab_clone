@@ -53,11 +53,20 @@ export const mergeAndSaveCart = (newItems: any[]) => {
         };
       });
 
+      const combinedExtras = existingItem.extras.map((oldExtra: any) => {
+        const match = newItem.extras.find((na: any) => na.id === oldExtra.id);
+        return {
+          ...oldExtra,
+          quantity: oldExtra.quantity + (match?.quantity || 0),
+        };
+      });
+
       updatedCart[existingIndex] = {
         ...existingItem,
         quantity: combinedQuantity,
         addons: combinedAddons,
-        totalPrice: combinedQuantity * newItem.variantPrice + combinedAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0),
+        extras: combinedExtras,
+        totalPrice: combinedQuantity * newItem.variantPrice + combinedAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0) + combinedExtras.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0),
       };
     } else {
       updatedCart.push(newItem);

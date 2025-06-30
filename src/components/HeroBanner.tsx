@@ -93,9 +93,9 @@ function HeroBanner() {
 		</CarouselContent>
   
 		{/* Navigation Buttons */}
-		<CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] w-10 h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80 " />
+		<CarouselPrevious className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] h-10 w-6 md:w-10 md:h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80  " />
 
-       <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] w-10 h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
+       <CarouselNext className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 z-10 bg-[#fabf2c] h-10 w-6 md:w-10 md:h-16 text-gray-700 hover:bg-[#fabf2a] opacity-80" />
 	  </CarouselContainer>
 
 
