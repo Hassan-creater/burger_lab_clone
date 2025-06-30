@@ -18,6 +18,11 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
   const [filteredItems, setFilteredItems] = useState(allItems);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!currentQuery.trim()) {
@@ -55,6 +60,8 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
       filteredItems.some((filteredItem: any) => filteredItem.id === item.id)
     )
   })).filter(category => category.items.length > 0);
+
+  if (!mounted) return null;
 
   return (
     <>
