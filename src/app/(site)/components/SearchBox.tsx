@@ -26,11 +26,11 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
         // Wait an additional 1.5s before ending the loader
         const loaderTimeout = setTimeout(() => {
           onSearchEnd?.();
-        }, 1000); // 1 second after debounce
+        }, 1300); // 1.3 second after debounce
 
         // Cleanup for loader timeout
         return () => clearTimeout(loaderTimeout);
-      }, 1000); // 1 second debounce
+      }, 1300); // 1.3 second debounce
 
       // Cleanup for debounce timeout
       return () => clearTimeout(debounceTimeout);
