@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {  ChevronDown, Trash2} from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 
 import { useCartContext } from "@/context/context";
@@ -27,13 +28,15 @@ interface CartItemProps {
 }
 
 
-
+ 
 
 function CartItem({ cartItem, removeItem }: CartItemProps) {
 
   
   const [showAddons, setShowAddons] = useState(false)
   const [showExtras, setShowExtras] = useState(false)
+  const pathname = usePathname();
+  const isCheckoutPage = pathname?.includes('/checkout');
 
   // const totalAddons =
   //   cartItem.addons?.reduce((sum: number, ao: any) => sum + ao.price * ao.quantity, 0) || 0
@@ -44,7 +47,7 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
   // const itemTotal = cartItem.variantPrice * cartItem.quantity + totalAddons + totalExtras
 
 
-  const {removeItemFromCart} = useCartContext();
+  const {removeItemFromCart , updateCart , DecreaseQuantity , IncreaseQuantity} = useCartContext();
 
   // const renderAddOns = (addOnOption: any, index: number) => (
   //   <div key={index} className="flex justify-between text-sm text-gray-600">
@@ -93,17 +96,52 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
             </h3>
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between w-full">
               <span className="font-semibold text-[13px] text-gray-900">
                 {formatPrice(cartItem.variantPrice)}
               </span>
-              <span className="font-medium text-gray-600 text-[13px]">
+             
+
+              {
+                isCheckoutPage ? (
+                      <span className="font-medium text-gray-600 text-[13px]">
                 Qty: {cartItem.quantity}
-              </span>
+              </span> 
+                ) : (
+                  <div className="flex items-center gap-2">
+                  {!isCheckoutPage && (
+                    <>
+                      <button 
+                        onClick={() => DecreaseQuantity([cartItem])}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                      >
+                        −
+                      </button>
+                      
+                      <span className="text-gray-800 font-semibold">{cartItem.quantity}</span>
+                      <button 
+                        onClick={() => IncreaseQuantity([cartItem])}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                      >
+                        +
+                      </button>
+                    </>
+                  )}
+                  {isCheckoutPage && (
+                    <span className="text-gray-800 font-semibold">Qty: {cartItem.quantity}</span>
+                  )}
+                </div>
+                )
+              }
+
+             
             </div>
           </div>
+          
         </div>
       </div>
+
+      
 
       {/* Add-ons & Extras */}
       {(cartItem.addons?.length > 0 || cartItem.extras?.length > 0) && (

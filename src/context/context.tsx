@@ -1,7 +1,7 @@
 // context/CartContext.tsx
 "use client";
 
-import { loadCartFromStorage, mergeAndSaveCart, removeCartItem, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
+import { decreaseQuantity, increaseQuantity, loadCartFromStorage, mergeAndSaveCart, removeCartItem, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
 import { Josefin_Sans } from "next/font/google";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -77,6 +77,8 @@ interface CartContextType {
   setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
   couponCode: string;
   setCouponCode: React.Dispatch<React.SetStateAction<string>>;
+  DecreaseQuantity: (item: any) => void;
+  IncreaseQuantity: (item: any) => void;
 }
 
 // Create the context
@@ -217,8 +219,18 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const updatedCart = loadCartFromStorage();
     setAddedInCart(updatedCart);
   };
-  
-  
+
+  const DecreaseQuantity = (item: any) => {
+    decreaseQuantity(item);
+    const updatedCart = loadCartFromStorage();
+    setAddedInCart(updatedCart);
+  }
+
+  const IncreaseQuantity = (item: any) => {
+    increaseQuantity(item);
+    const updatedCart = loadCartFromStorage();
+    setAddedInCart(updatedCart);
+  }
 
   const removeItemFromCart = (variant : any) => {
     removeCartItem(variant)
@@ -257,7 +269,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity }}>
       {children}
     </CartContext.Provider>
   );

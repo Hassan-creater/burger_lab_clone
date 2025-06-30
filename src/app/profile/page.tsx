@@ -31,7 +31,7 @@ export default async function Profile() {
 
   return (
     <main className={`w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col ${designVar.fontFamily}`}>
-      <h1 className={`text-lg font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>Profile</h1>
+      <h1 className={`text-xl text-center font-bold mt-10  text-gray-700 ${designVar.fontFamily}`}>Profile</h1>
       <section className=" rounded-lg ">
         <ProfileDisplay  />
       </section>

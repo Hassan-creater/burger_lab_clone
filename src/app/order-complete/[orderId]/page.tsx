@@ -29,7 +29,7 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
   const orderDetails = await getOrder();
   // parseInt(params.orderId)
 
-  console.log(orderDetails);
+ 
 
   if (
     !orderDetails.order ||

@@ -204,11 +204,11 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       ClearCart();
       toast.success("Order placed successfully");
       const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-      existingOrders.push(res.data.data.orderId);
+      existingOrders.push(res.data.data.id);
       localStorage.setItem("orders", JSON.stringify(existingOrders));
       localStorage.removeItem("orderType")
       sessionStorage.clear();
-      router.push("/order-complete/" + res.data.data.orderId);
+      router.push("/order-complete/" + res.data.data.displayId);
       setIsLoading(false);
       
     }

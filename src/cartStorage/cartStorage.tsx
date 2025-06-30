@@ -8,6 +8,145 @@ export const removeItems = ()=>{
   localStorage.removeItem(CART_STORAGE_KEY);
 }
 
+
+export const decreaseQuantity = (newItems: any[]) => {
+  if (typeof window === "undefined") return;
+
+  const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+
+  const filteredNewItems = newItems.filter((item) => item.quantity > 0);
+
+  const isSameAddonOrExtra = (a: any[], b: any[]) => {
+    if (a.length !== b.length) return false;
+    const sortById = (arr: any[]) => arr.slice().sort((x, y) => x.id.localeCompare(y.id));
+    const strippedA = sortById(a).map(({ id, name, price }) => ({ id, name, price }));
+    const strippedB = sortById(b).map(({ id, name, price }) => ({ id, name, price }));
+    return JSON.stringify(strippedA) === JSON.stringify(strippedB);
+  };
+
+  const isSameCartItem = (a: any, b: any) => {
+    return (
+      a.variantId === b.variantId &&
+      a.variantName === b.variantName &&
+      a.variantPrice === b.variantPrice &&
+      a.itemImage === b.itemImage &&
+      isSameAddonOrExtra(a.addons, b.addons) &&
+      isSameAddonOrExtra(a.extras, b.extras)
+    );
+  };
+
+  let updatedCart = [...stored];
+
+  for (const newItem of filteredNewItems) {
+    const existingIndex = updatedCart.findIndex((item) => isSameCartItem(item, newItem));
+
+    if (existingIndex !== -1) {
+      const existingItem = updatedCart[existingIndex];
+
+      const newVariantQuantity = existingItem.quantity - 1;
+      const newAddons = existingItem.addons.map((addon: any) => ({
+        ...addon,
+        quantity: addon.quantity - 1,
+      }));
+      const newExtras = existingItem.extras.map((extra: any) => ({
+        ...extra,
+        quantity: extra.quantity - 1,
+      }));
+
+      const hasZero =
+        newVariantQuantity <= 0 ||
+        newAddons.some((a: any) => a.quantity <= 0) ||
+        newExtras.some((e: any) => e.quantity <= 0);
+
+      if (hasZero) {
+        // ❌ Remove entire item from cart
+        updatedCart.splice(existingIndex, 1);
+      } else {
+        // ✅ Keep and update with reduced quantities
+        const totalPrice =
+          newVariantQuantity * existingItem.variantPrice +
+          newAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0) +
+          newExtras.reduce((sum: number, e: any) => sum + e.price * e.quantity, 0);
+
+        updatedCart[existingIndex] = {
+          ...existingItem,
+          quantity: newVariantQuantity,
+          addons: newAddons,
+          extras: newExtras,
+          totalPrice,
+        };
+      }
+    }
+    // ⚠️ Don't add unmatched newItems — because this is decrease logic
+  }
+
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
+};
+
+export const increaseQuantity = (newItems: any[]) => {
+  if (typeof window === "undefined") return;
+
+  const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+
+  const filteredNewItems = newItems.filter((item) => item.quantity > 0);
+
+  const isSameAddonOrExtra = (a: any[], b: any[]) => {
+    if (a.length !== b.length) return false;
+    const sortById = (arr: any[]) => arr.slice().sort((x, y) => x.id.localeCompare(y.id));
+    const strippedA = sortById(a).map(({ id, name, price }) => ({ id, name, price }));
+    const strippedB = sortById(b).map(({ id, name, price }) => ({ id, name, price }));
+    return JSON.stringify(strippedA) === JSON.stringify(strippedB);
+  };
+
+  const isSameCartItem = (a: any, b: any) => {
+    return (
+      a.variantId === b.variantId &&
+      a.variantName === b.variantName &&
+      a.variantPrice === b.variantPrice &&
+      a.itemImage === b.itemImage &&
+      isSameAddonOrExtra(a.addons, b.addons) &&
+      isSameAddonOrExtra(a.extras, b.extras)
+    );
+  };
+
+  let updatedCart = [...stored];
+
+  for (const newItem of filteredNewItems) {
+    const existingIndex = updatedCart.findIndex((item) => isSameCartItem(item, newItem));
+
+    if (existingIndex !== -1) {
+      const existingItem = updatedCart[existingIndex];
+
+      const increasedAddons = existingItem.addons.map((addon: any) => ({
+        ...addon,
+        quantity: addon.quantity + 1,
+      }));
+
+      const increasedExtras = existingItem.extras.map((extra: any) => ({
+        ...extra,
+        quantity: extra.quantity + 1,
+      }));
+
+      const newQuantity = existingItem.quantity + 1;
+
+      updatedCart[existingIndex] = {
+        ...existingItem,
+        quantity: newQuantity,
+        addons: increasedAddons,
+        extras: increasedExtras,
+        totalPrice:
+          newQuantity * existingItem.variantPrice +
+          increasedAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0) +
+          increasedExtras.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0),
+      };
+    } else {
+      updatedCart.push(newItem);
+    }
+  }
+
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
+};
+
 // Merge-and-save version
 export const mergeAndSaveCart = (newItems: any[]) => {
   if (typeof window === "undefined") return;
