@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import { apiClient } from "@/lib/api";
 import { useCartContext } from "@/context/context";
 import { designVar } from "@/designVar/desighVar";
+import { formatErrorMessage } from "@/lib/utils";
 
 type Login = {
     email: string;
@@ -80,10 +81,10 @@ function AuthModal() {
         }
       } catch (error: any) {
         if (error.response && error.response.data && error.response.data.error) {
-            toast.error(error.response.data.error);
+            toast.error(formatErrorMessage(error));
             setLoading(false) // Show actual error message
         } else {
-            toast.error("Login failed! Please try again.");
+            toast.error(formatErrorMessage(error));
             setLoading(false)
         }
     }

@@ -11,10 +11,12 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
+import { useCartContext } from "@/context/context";
 
 
 function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const { isBannerVisible, activeSectionId, setActiveSectionId } = useObserverStore();
+  const {deliveryClose, dineInClose, pickupClose} = useCartContext()
 
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
   const activeLinkRef = React.useRef<HTMLLIElement | null>(null);
@@ -51,7 +53,8 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   return (
     <nav
       className={cn(
-        "sticky top-[5.5em]  bg-inherit z-20 mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-500",
+        "sticky top-[5em]   bg-inherit z-20 mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-500",
+        `${deliveryClose || dineInClose || pickupClose ? "pt-[1em] " : "pt-[0em]"}`
       )}
     >
        
@@ -109,7 +112,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
     setTimeout(() => {
       const target = document.getElementById(category.title);
       if (target) {
-        const yOffset = -135; // scroll 130px above the element
+        const yOffset = -143; // scroll 130px above the element
         const y =
           target.getBoundingClientRect().top + window.pageYOffset + yOffset;
 

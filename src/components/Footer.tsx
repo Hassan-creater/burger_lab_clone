@@ -7,6 +7,7 @@ import { useCartContext } from "@/context/context";
 import { apiClientCustomer } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
+import { toast } from "sonner";
 
 // const FooterNav = dynamic(() => import("./FooterNav"), { ssr: false });
 
@@ -25,7 +26,59 @@ const Footer = () => {
     queryFn : getSocialMedia
   })
 
+  // Phone functionality
+  const handlePhoneClick = () => {
+    if (TaxData?.contact) {
+      // Try to open phone dialer
+      const phoneNumber = TaxData.contact.replace(/\s+/g, ''); 
+      window.open(`tel:${phoneNumber}`, '_self');
+      
+      // Fallback: copy to clipboard
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(phoneNumber);
+        // You could add a toast notification here
+        toast.success('Phone number copied to clipboard');
+      }
+    }
+  };
 
+  // Email functionality
+  const handleEmailClick = () => {
+    if (TaxData?.supportEmail) {
+      const email = TaxData.supportEmail.trim();
+      const subject = 'Inquiry from Burger Lab Website';
+      const body = 'Hello,\n\nI would like to inquire about your services.\n\nBest regards,';
+      
+      // Show options to user
+      const choice = confirm(
+        'Choose how to contact us:\n\n' +
+        'OK - Open Gmail in browser\n' +
+        'Cancel - Copy email to clipboard'
+      );
+      
+      if (choice) {
+        // Open Gmail in browser
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(gmailUrl, '_blank');
+        toast.success('Opening Gmail...');
+      } else {
+        // Copy to clipboard
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(email);
+          toast.success('Email copied to clipboard');
+        } else {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = email;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          toast.success('Email copied to clipboard');
+        }
+      }
+    }
+  };
 
   return (
     // <footer className="w-[95%]  min-h-80 border-[2px] flex flex-col gap-4 border-neutral-200 shadow-neutral-300 shadow-sm lg:w-[85%] m-auto mt-6 mb-[1em] pt-[1.5em]  rounded-t-2xl rounded-b-none">
@@ -112,7 +165,12 @@ const Footer = () => {
                 <Phone className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="font-semibold text-gray-900">Phone: </span>
-                  <span className="text-gray-600">{TaxData?.contact}</span>
+                  <span 
+                    onClick={handlePhoneClick}
+                    className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer"
+                  >
+                    {TaxData?.contact}
+                  </span>
                 </div>
               </div>
               ) : <div className="flex items-start space-x-3 animate-pulse">
@@ -131,7 +189,12 @@ const Footer = () => {
               <Mail className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div>
                 <span className="font-semibold text-gray-900">Email: </span>
-                <span className="text-gray-600">{TaxData?.supportEmail}</span>
+                <span 
+                  onClick={handleEmailClick}
+                  className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer"
+                >
+                  {TaxData?.supportEmail}
+                </span>
               </div>
             </div>
               ) : <div className="flex items-start space-x-3 animate-pulse">

@@ -1,4 +1,3 @@
-
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -81,3 +80,58 @@ export function isArray(param: any) {
 export function capitalizeFirstLetter(string: string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Helper function to format error messages from API responses
+export const formatErrorMessage = (error: any): string => {
+	if (typeof error === 'string') {
+		return error;
+	}
+	
+	if (error.response?.data?.error) {
+		const errorData = error.response.data.error;
+		
+		// Handle JSON string format like "{\"password\":\"String must contain at least 8 character(s)\"}"
+		if (typeof errorData === 'string' && errorData.startsWith('{') && errorData.endsWith('}')) {
+			try {
+				const parsedError = JSON.parse(errorData);
+				const messages: string[] = [];
+				
+				Object.entries(parsedError).forEach(([field, message]) => {
+					if (Array.isArray(message)) {
+						messages.push(`${field}: ${message[0] || message}`);
+					} else if (typeof message === 'string') {
+						messages.push(`${field}: ${message}`);
+					}
+				});
+				
+				return messages.join(', ');
+			} catch (e) {
+				// If JSON parsing fails, return the original string
+				return errorData;
+			}
+		}
+		
+		// If it's an object with validation errors
+		if (typeof errorData === 'object' && errorData !== null) {
+			const messages: string[] = [];
+			
+			Object.entries(errorData).forEach(([field, message]) => {
+				if (Array.isArray(message)) {
+					// Handle array format like ['password']: "string etc"
+					messages.push(`${field}: ${message[0] || message}`);
+				} else if (typeof message === 'string') {
+					messages.push(`${field}: ${message}`);
+				}
+			});
+			
+			return messages.join(', ');
+		}
+		
+		// If it's a string
+		if (typeof errorData === 'string') {
+			return errorData;
+		}
+	}
+	
+	return "An error occurred. Please try again.";
+};
