@@ -34,6 +34,9 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
     if (activeLinkRef.current) {
       activeLinkRef.current.scrollIntoView();
     }
+    if(!categories){
+      
+    }
   }, [activeSectionId]);
 
   // const [activeSectionId, setActiveSectionId] = useState<string | null>(null);

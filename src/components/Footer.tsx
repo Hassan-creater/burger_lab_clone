@@ -26,6 +26,10 @@ const Footer = () => {
     queryFn : getSocialMedia
   })
 
+
+ 
+  
+
   // Phone functionality
   const handlePhoneClick = () => {
     if (TaxData?.contact) {
@@ -114,6 +118,7 @@ const Footer = () => {
     //     </p>
     //   </div>
     // </footer>
+     
     <footer className={`bg-white ${designVar.fontFamily} mt-[5em] border-t border-gray-200 py-8 px-4 md:px-6 lg:px-[4em]`}>
     <div className="max-w-7xl mx-auto ">
       <div className="flex  flex-col gap-6 justify-start items-start md:flex-row md:justify-evenly md:items-start">
@@ -155,7 +160,10 @@ const Footer = () => {
         </div>
 
         {/* Contact Information Section */}
-        <div className="space-y-4  h-[10.5em]">
+        {
+          TaxData?.timing ? (
+            <>
+             <div className="space-y-4  h-[10.5em]">
           <h3 className="text-[16px] font-bold text-gray-900">Burger Lab</h3>
 
           <div className="space-y-3">
@@ -279,6 +287,13 @@ const Footer = () => {
           }
           
         </div>
+            </>
+          ) : (
+            <></>
+          )
+        }
+        
+       
       </div>
       <div className="pt-4 text-[12px] text-center mt-4 border-t-[1.3px] border-gray-200">
         <p>Copyright © {new Date().getFullYear()} Burger Lab. All rights reserved.</p>
