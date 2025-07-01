@@ -89,6 +89,8 @@ function OrderDetails() {
     fetchOrders();
   }, []);
   
+
+  console.log(order);
   
 
   if (status === "pending") {

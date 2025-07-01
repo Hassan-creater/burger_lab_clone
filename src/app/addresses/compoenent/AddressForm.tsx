@@ -26,7 +26,7 @@ type AddressFormProps = {
 
 export default function AddressForm() {
   const {setNewAddress} = useCartContext();
-  const {register , handleSubmit , formState: {errors}} = useForm({
+  const {register , handleSubmit , reset , formState: {errors}} = useForm({
     defaultValues : {
       country : "Pakistan",
       city : "",
@@ -56,6 +56,7 @@ export default function AddressForm() {
         queryClient.invalidateQueries({ queryKey: ["addresses"] });
         setNewAddress(false);
         setOpen(false);
+        reset();
       }
     } catch (error) {
       console.error("Address adding failed:", error);
@@ -82,7 +83,7 @@ export default function AddressForm() {
        <DialogContent  className="w-[80%] sm:w-[30em] max-w-full h-max max-h-[39em] flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
       <DialogHeader>
         <DialogTitle asChild>
-          <VisuallyHidden>Authentication</VisuallyHidden>
+          <VisuallyHidden>Address Form</VisuallyHidden>
         </DialogTitle>
       </DialogHeader>
 

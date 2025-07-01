@@ -214,33 +214,8 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       toast.error("Please select City and Area for placing order");
       setIsLoading(false);
     }
-    
-
-    
-
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   
+  };
 
   if (type === "CART") {
     return (

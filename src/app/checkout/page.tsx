@@ -16,6 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SelectItem } from "@radix-ui/react-select";
 import { designVar } from "@/designVar/desighVar";
+import AddressCard from "@/components/address/AddressCard";
+import DeliveryAddressCard from "./components/DeliveryAddressCard";
+import { Button } from "@/components/ui/button";
+import { LucidePlus } from "lucide-react";
+import AddressForm from "../addresses/compoenent/AddressForm";
 
 export type OrderDetails = {
   comment: string;
@@ -99,7 +104,7 @@ function Checkout() {
  const [deliveryAddressValue , setDeliveryAddressValue] = useState("");
  const parsedUserData = userData ? JSON.parse(userData) : null;
  const userid = parsedUserData?.id;
-  const {setComment , AddressData , setDeliveryName , setDeliveryPhone , setDeliveryAddress ,deliveryAddress} = useCartContext();
+  const {setComment , AddressData , setDeliveryName , setDeliveryPhone , setDeliveryAddress ,deliveryAddress } = useCartContext();
 
 
 
@@ -124,10 +129,12 @@ function Checkout() {
       redirect("/");
     }
   },[])
+
+
  
 
   return (
-    <main className="w-[100%] bg-white p-[0.5em] lg:max-w-[85%] mx-auto my-5 min-h-screen">
+    <main className="w-[100%] bg-white p-[0.5em] lg:max-w-[90%] mx-auto my-5 min-h-screen">
       <h1 className={`text-lg font-bold mb-5 ${designVar.fontFamily}`}>Checkout</h1>
 
       
@@ -159,8 +166,8 @@ function Checkout() {
             {
               AddressData?.orderType == "delivery" && (
                 <>
-                 <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address</label>
+                 <div className=" w-full bg-primaryBg  px-3 py-[1em] rounded-lg">
+                {/* <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address</label>
                 <Select  value={deliveryAddressValue} onValueChange={(value) => {setDeliveryAddressValue(value); setDeliveryAddress(value)}}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Address">
@@ -174,7 +181,24 @@ function Checkout() {
                       ))
                     }
                   </SelectContent>
-                </Select>
+                </Select> */}
+                <div className="w-full flex items-center justify-between">
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address</label>
+                <AddressForm/>
+                </div>
+                
+
+                <div className="w-full max-h-[25em] overflow-y-scroll no-scrollbar bg-gray-100 p-[0.5em] rounded-md flex gap-2 flex-wrap justify-between">
+                  {isLoading ? (
+                    <div>Loading...</div>
+                  ) : Array.isArray(data) && data.length > 0 ? (
+                    data.map((item: any) => (
+                      <DeliveryAddressCard key={item.id} address={item} />
+                    ))
+                  ) : (
+                    <div>No addresses found.</div>
+                  )}
+                </div>  
               </div>
 
 

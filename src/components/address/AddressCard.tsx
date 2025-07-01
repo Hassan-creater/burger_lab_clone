@@ -36,11 +36,13 @@ type addressFetch = QueryObserverResult<
 
 type AddressCardProps = {
   address?: Address;
+ 
   // setOrderDetails?: React.Dispatch<React.SetStateAction<OrderDetails>>;
 };
 
 export default function AddressCard({
   address,
+
 }: AddressCardProps) {
 
   const {setDefaultAddress , defaultAddress} = useCartContext()
@@ -101,7 +103,10 @@ export default function AddressCard({
         <LucideTrash2 className="w-4 h-4 text-red-500" />
         <span className="sr-only">Delete</span>
       </Button> */}
-      <DeleteAddress id={address?.id ?? ""}/>
+    
+          <DeleteAddress id={address?.id ?? ""}/>
+        
+      
   
       {/* Default Badge/Button */}
       {defaultAddress === address?.id ? (
