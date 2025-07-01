@@ -79,6 +79,8 @@ interface CartContextType {
   setCouponCode: React.Dispatch<React.SetStateAction<string>>;
   DecreaseQuantity: (item: any) => void;
   IncreaseQuantity: (item: any) => void;
+  isTaxAppliedBeforeCoupon: boolean;
+  setIsTaxAppliedBeforeCoupon: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create the context
@@ -106,7 +108,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [deliveryClose, setDeliveryClose] = useState<string>("");
   const [refreshToken, setRefreshToken] = useState<string | null>("");
   const [couponCode, setCouponCode] = useState<string>("");
-
+  const [isTaxAppliedBeforeCoupon, setIsTaxAppliedBeforeCoupon] = useState<boolean>(false);
 
   const setFavorite = ({ itemId, favId }: Favorite) => {
     // 1. Load current favorites (or empty array)
@@ -269,7 +271,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon }}>
       {children}
     </CartContext.Provider>
   );

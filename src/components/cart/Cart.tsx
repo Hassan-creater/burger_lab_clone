@@ -56,7 +56,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData , couponCode } = useCartContext();
+  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData , couponCode , isTaxAppliedBeforeCoupon } = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
 
   // Using dummy tax data instead
@@ -238,6 +238,8 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
 
 
+
+
   
 
   if (type === "CART") {
@@ -406,7 +408,12 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               Tax ({parseInt(data?.tax ?? "0") + "%"})
             </p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
+              {
+                isTaxAppliedBeforeCoupon 
+                  ? formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))
+                  : formatPrice((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
+                                 (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100))
+              }
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -414,7 +421,19 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               Discount ({parseInt(couponData?.discount ?? "0") + "%"})
             </p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-              - {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(couponData?.discount ?? "0") / 100), 0))}
+              {
+                isTaxAppliedBeforeCoupon 
+                  ? formatPrice(
+                      // Apply discount on (subtotal + tax + delivery)
+                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
+                       AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
+                       deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100)
+                    )
+                  : formatPrice(
+                      // Apply discount on subtotal only
+                      AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100)
+                    )
+              }
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -428,7 +447,26 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               Grand Total (Incl. Tax)
             </p>
             <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
-              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges - AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(couponData?.discount ?? "0") / 100), 0))}
+              {
+                isTaxAppliedBeforeCoupon 
+                  ? formatPrice(
+                      // Subtotal + Tax + Delivery - Discount on (Subtotal + Tax + Delivery)
+                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
+                       AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
+                       deliveryCharges) - 
+                      ((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
+                        AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
+                        deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
+                    )
+                  : formatPrice(
+                      // (Subtotal - Discount on Subtotal) + Tax on (Subtotal - Discount) + Delivery
+                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
+                       (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) + 
+                      ((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
+                        (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + 
+                      deliveryCharges
+                    )
+              }
             </p>
           </div>
           <Button
