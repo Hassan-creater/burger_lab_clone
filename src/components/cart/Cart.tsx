@@ -196,45 +196,45 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           : {}),
       })),
     };
-    
-  if(AddressData?.orderType != "delivery"  && AddressData?.orderType ){
-    setIsLoading(true);
-    const res = await apiClient.post("/order/add",payload);
-    if(res.status === 201){
-      ClearCart();
-      toast.success("Order placed successfully");
-      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-      existingOrders.push(res.data.data.id);
-      localStorage.setItem("orders", JSON.stringify(existingOrders));
-      localStorage.removeItem("orderType")
-      sessionStorage.clear();
-      router.push("/order-complete/" + res.data.data.displayId);
-      setIsLoading(false);
-      
-    }
 
-  }else if(AddressData?.orderType == "delivery"  || deliveryAddress && deliveryName || deliveryPhone || AddressData?.orderType){
-    setIsLoading(true);
-    const res = await apiClient.post("/order/add",payload);
-    if(res.status === 201){
-      ClearCart();
-      toast.success("Order placed successfully");
-      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-      existingOrders.push(res.data.data.orderId);
-      localStorage.setItem("orders", JSON.stringify(existingOrders));
-      localStorage.removeItem("orderType")
-      sessionStorage.clear();
-      router.push("/order-complete/" + res.data.data.orderId);
+    if(AddressData?.orderType){
+      setIsLoading(true);
+        const res = await apiClient.post("/order/add",payload);
+        if(res.status === 201){
+          ClearCart();
+          toast.success("Order placed successfully");
+          const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+          existingOrders.push(res.data.data.id);
+          localStorage.setItem("orders", JSON.stringify(existingOrders));
+          localStorage.removeItem("orderType")
+          sessionStorage.clear();
+          router.push("/order-complete/" + res.data.data.displayId);
+          setIsLoading(false);
+    }}else{
+      toast.error("Please select City and Area for placing order");
       setIsLoading(false);
     }
-  } 
-  else{
-    toast.error("Please select City and Area for placing order");
-    setIsLoading(false);
-  }
+    
+
     
 
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
