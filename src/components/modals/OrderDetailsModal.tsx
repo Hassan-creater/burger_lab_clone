@@ -242,7 +242,7 @@ const getStatusColor = (status: string) => {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className={`font-semibold text-orange-600 ${designVar.fontFamily}`}>${item.price}</p>
+                          <p className={`font-semibold text-orange-600 ${designVar.fontFamily}`}>Rs: {item.price}</p>
                         </div>
                       </div>
                     </div>
@@ -313,18 +313,18 @@ const getStatusColor = (status: string) => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className={`${designVar.fontFamily} text-gray-600`}>Subtotal:</span>
-                    <span className={`${designVar.fontFamily} text-gray-600`}>${(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
+                    <span className={`${designVar.fontFamily} text-gray-600`}>Rs: {(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
                   </div>
                   {order?.order?.discount && (
                     <div className="flex justify-between text-green-600">
                       <span className={`${designVar.fontFamily} text-gray-600`}>Discount:</span>
-                      <span className={`${designVar.fontFamily} text-gray-600`}>-${order?.order?.discount}</span>
+                      <span className={`${designVar.fontFamily} text-gray-600`}>Rs: {order?.order?.discount}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span className={`${designVar.fontFamily} text-gray-600`}>Total:</span>
-                    <span className={`text-orange-600 ${designVar.fontFamily}`}>${order?.order?.total}</span>
+                    <span className={`text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</span>
                   </div>
                 </div>
               </div>

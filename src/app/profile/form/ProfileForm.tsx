@@ -17,6 +17,7 @@ import { designVar } from "@/designVar/desighVar"
 import { toast } from "sonner"
 import { useCartContext } from "@/context/context"
 import { useRouter } from "next/navigation";
+import { getClientCookie } from "@/lib/getCookie"
 
 
 // Define the form data type
@@ -56,6 +57,8 @@ export default function ProfileForm() {
       profileImage: ""
     },
   })
+
+  const token = getClientCookie("accessToken");
 
   const watchedGender = watch("gender")
   const watchedCountryCode = watch("countryCode")
@@ -129,9 +132,10 @@ export default function ProfileForm() {
 
   useEffect(() => {
 
-    if(!user){
+    if(!token){
       router.push("/")
     }
+
     if (data && !isDataLoaded) {
 
       
@@ -248,6 +252,7 @@ export default function ProfileForm() {
               <Input
                 id="email"
                 type="email"
+                disabled
                 {...register("email", {
                   required: "Email is required",
                   pattern: { value: /^\S+@\S+$/i, message: "Please enter a valid email address" },
@@ -263,9 +268,10 @@ export default function ProfileForm() {
               <Label className="text-sm font-medium text-gray-700">Mobile Number</Label>
               <div className="flex gap-2">
                 <Input
-                  {...register("mobileNumber", {
+                disabled
+                  {...register("mobileNumber" , {
                     required: "Mobile number is required",
-                    minLength: { value: 10, message: "Please enter a valid mobile number" },
+                    pattern: { value: /^[0-9]{11}$/, message: "Please enter a valid mobile number" },
                   })}
                   className="flex-1"
                   placeholder="300-9721927"

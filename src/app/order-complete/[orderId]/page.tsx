@@ -63,6 +63,12 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
           Order Number:{" "}
           <span className="text-black font-semibold">{params.orderId}</span>
         </h4>
+
+        <Link href="/orders">
+          <Button className={`w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg ${designVar.fontFamily}`}>
+            View Orders
+          </Button>
+        </Link>
       </div>
        {/*<OrderSummary type="CHECKOUT" /> */}
     </main>

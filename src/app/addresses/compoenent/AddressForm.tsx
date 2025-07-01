@@ -26,7 +26,14 @@ type AddressFormProps = {
 
 export default function AddressForm() {
   const {setNewAddress} = useCartContext();
-  const {register , handleSubmit , formState: {errors}} = useForm();
+  const {register , handleSubmit , formState: {errors}} = useForm({
+    defaultValues : {
+      country : "Pakistan",
+      city : "",
+      line1 : "",
+      line2 : ""
+    }
+  });
   const [loading , setLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -143,6 +150,7 @@ export default function AddressForm() {
         </Label>
         <Input
           id="country"
+          disabled
           placeholder="Country"
           {...register("country" , {required: true, minLength: {value: 3, message: "Country must be at least 3 characters long"}})}
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"

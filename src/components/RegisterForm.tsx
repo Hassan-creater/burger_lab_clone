@@ -106,10 +106,10 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
   };
 
   return (
-    <div className=" flex items-center productdetail justify-center w-full h-[35em] overflow-y-scroll">
+    <div className={`${designVar.fontFamily} flex items-center productdetail justify-center w-full h-[35em] overflow-y-scroll`}>
       <Card className="w-full">
-        <CardHeader className="text-center space-y-2 pb-4">
-          <CardTitle className="text-2xl font-extrabold text-gray-800">
+        <CardHeader className="text-center space-y-2 pb-4 mt-[1.5em]">
+          <CardTitle className="text-[20px] font-extrabold text-gray-800">
            Create Account
           </CardTitle>
           {/* <CardDescription className="text-gray-500">
@@ -136,7 +136,6 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
              hidden
              className="mt-1 text-sm text-gray-600"
             {...register("image", {
-              required: "Avatar is required",
                onChange: handleAvatarChange  // RHF will merge this under the hood
                 })}
             />
@@ -213,7 +212,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
               </Label>
               <Input
                 id="phone"
-                {...register("phone", { required: "Phone is required", pattern: {value: /^[0-9]{10}$/, message: "Invalid phone number"} })}
+                {...register("phone", { required: "Phone is required", pattern: {value: /^[0-9]{11}$/, message: "Invalid phone number"} })}
                 type="tel"
                 placeholder="123-456-7890"
                 className="mt-1 focus:ring-orange-500"
