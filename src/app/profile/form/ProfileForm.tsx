@@ -252,7 +252,7 @@ export default function ProfileForm() {
               <Input
                 id="email"
                 type="email"
-                disabled
+                readOnly
                 {...register("email", {
                   required: "Email is required",
                   pattern: { value: /^\S+@\S+$/i, message: "Please enter a valid email address" },
@@ -268,7 +268,7 @@ export default function ProfileForm() {
               <Label className="text-sm font-medium text-gray-700">Mobile Number</Label>
               <div className="flex gap-2">
                 <Input
-                disabled
+                readOnly
                   {...register("mobileNumber" , {
                     required: "Mobile number is required",
                     pattern: { value: /^[0-9]{11}$/, message: "Please enter a valid mobile number" },

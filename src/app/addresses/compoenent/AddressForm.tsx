@@ -151,7 +151,7 @@ export default function AddressForm() {
         </Label>
         <Input
           id="country"
-          disabled
+          readOnly
           placeholder="Country"
           {...register("country" , {required: true, minLength: {value: 3, message: "Country must be at least 3 characters long"}})}
           className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all duration-200 hover:border-orange-300"
