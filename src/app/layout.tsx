@@ -31,7 +31,7 @@ export default function RootLayout({
       <Script src={process.env.FONT_AWESOME_SCRIPT} crossOrigin="anonymous" />
       <body
         className={cn(
-          "flex min-h-screen flex-col bg-primaryBg ",
+          "min-h-screen flex flex-col  max-w-[2500px] w-full mx-auto   bg-primaryBg ",
           inter.className,
           `${designVar.fontFamily}`
         )}

@@ -65,7 +65,7 @@ export default function AddressDetails({
 
 
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-full max-w-[1400px] mx-auto ">
       {/* { 
         newAddress && (
       // <div className="absolute w-full h-screen bg-black/50 z-10">
@@ -99,7 +99,7 @@ export default function AddressDetails({
       ) : (
         <div
           className={cn(
-            "w-full mt-5 grid grid-cols-1 min-[550px]:grid-cols-2 gap-4 md:grid-cols-3 min-h-72",
+            "w-full mt-5  max-w-[1200px] mx-auto grid grid-cols-1 min-[550px]:grid-cols-2 gap-4 md:grid-cols-3 min-h-72",
             className
           )}
         >

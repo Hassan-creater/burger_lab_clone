@@ -20,6 +20,14 @@ const nextConfig = {
 				port: "",
 				pathname: "/**",
 			},
+
+			{
+				protocol: "https", // Adding the missing hostname
+				hostname: "placehold.co",
+				port: "",
+				pathname: "/**",
+			},
+			
 		],
 	},
 	typescript: {

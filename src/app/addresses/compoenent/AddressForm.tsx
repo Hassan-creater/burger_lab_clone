@@ -25,7 +25,7 @@ type AddressFormProps = {
 }
 
 export default function AddressForm() {
-  const {setNewAddress} = useCartContext();
+  const {setNewAddress , user , setAuthOpen} = useCartContext();
   const {register , handleSubmit , reset , formState: {errors}} = useForm({
     defaultValues : {
       country : "Pakistan",
@@ -68,10 +68,19 @@ export default function AddressForm() {
 
 
 
+
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-    <DialogTrigger asChild>
+
       <Button
+         onClick={() => {
+          if (!user) {
+            setAuthOpen(true);
+            return;
+          }
+          setOpen(true);
+        }}
         variant="outline"
         className={
           `${designVar.authButton.backgroundColor} ${designVar.authButton.borderRadius} ${designVar.authButton.paddingX} ${designVar.authButton.paddingY} ${designVar.authButton.fontSize} ${designVar.authButton.fontWeight} ${designVar.authButton.color} ${designVar.authButton.cursor} ${designVar.authButton.transition} ${designVar.authButton.hover.backgroundColor} ${designVar.authButton.hover.borderRadius} ${designVar.authButton.hover.color} ${designVar.authButton.hover.color} ${designVar.authButton.hover.backgroundColor}`
@@ -79,7 +88,7 @@ export default function AddressForm() {
       >
         Add Address
       </Button>
-    </DialogTrigger>
+
        <DialogContent  className="w-[80%] sm:w-[30em] max-w-full h-max max-h-[39em] flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
       <DialogHeader>
         <DialogTitle asChild>

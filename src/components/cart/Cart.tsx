@@ -60,31 +60,31 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Using dummy tax data instead
-  const  getTax = async () => {
-    const res = await apiClientCustomer.get("/company")
-     return res.data.data;
-  }
+  // const  getTax = async () => {
+  //   const res = await apiClientCustomer.get("/company")
+  //    return res.data.data;
+  // }
 
-  const {data : taxData , isLoading : taxLoading} = useQuery({
-    queryKey : ["tax"],
-    queryFn : getTax,
-  })
+  // const {data : taxData , isLoading : taxLoading} = useQuery({
+  //   queryKey : ["tax"],
+  //   queryFn : getTax,
+  // })
  
 
  
 
   const data = {
     status: 200,
-    tax: taxData?.tax // 10% tax rate
+    tax: AddressData?.tax // 10% tax rate
   };
 
   const router = useRouter();
 
-  useEffect(() => {
-    if(taxData){
-      setTaxData(taxData);
-    }
-  }, [taxData]);
+  // useEffect(() => {
+  //   if(taxData){
+  //     setTaxData(taxData);
+  //   }
+  // }, [taxData]);
 
 
   const deliveryCharges = useMemo(
@@ -172,9 +172,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
 
   const handlePlaceOrder = async () => {
+    if(!AddressData?.branchId){
+      toast.error("Please select location.");
+    }
     const payload = {
       status: "pending",
       orderType: AddressData?.orderType,
+      branchId : AddressData?.branchId,
       ...(couponCode && {couponCode: couponCode}),
       ...(defaultAddress && {addressId: defaultAddress}),  
       ...(deliveryAddress && {deliveryAddress: deliveryAddress}),
@@ -199,6 +203,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
     if(AddressData?.orderType){
       setIsLoading(true);
+      try {
         const res = await apiClient.post("/order/add",payload);
         if(res.status === 201){
           ClearCart();
@@ -209,8 +214,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           localStorage.removeItem("orderType")
           sessionStorage.clear();
           router.push("/order-complete/" + res.data.data.displayId);
-          setIsLoading(false);
-    }}else{
+        }
+      } catch (error) {
+        toast.error("Failed to place order. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    }else{
       toast.error("Please select City and Area for placing order");
       setIsLoading(false);
     }
@@ -447,7 +457,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           <Button
             variant="outline"
             title="checkout"
-            disabled={AddedInCart.length === 0 || addOrder?.isPending || taxLoading || couponValidation}
+            disabled={AddedInCart.length === 0 || addOrder?.isPending  || couponValidation}
             onClick={()=>{
               if(user){
                 handlePlaceOrder();

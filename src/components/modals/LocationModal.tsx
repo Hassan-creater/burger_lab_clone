@@ -32,10 +32,11 @@ export default function LocationModal() {
 
   const handleSelect = () => {
     const AddressData =  {
-
       orderType: selectedOrderType,
       city: selectedCity,
       ...(selectedOrderType === "delivery" && { area: selectedArea , 
+        tax : areaInfo?.tax,
+        branchId : areaInfo?.branchId,
         openTime :   convertTo12HourFormat(areaInfo?.openTime) || "",
         endTime : convertTo12HourFormat(areaInfo?.endTime) || "",
        }),
@@ -43,6 +44,11 @@ export default function LocationModal() {
         openTime :   convertTo12HourFormat(selectedPickupBranchData?.openTime) || "",
         endTime : convertTo12HourFormat(selectedPickupBranchData?.endTime) || "",
         address : selectedPickupBranchData?.address || "",
+        tax : selectedPickupBranchData?.tax,
+        supportEmail : selectedPickupBranchData?.supportEmail,
+        branchId : selectedPickupBranchData?.id,
+        contactPhone : selectedPickupBranchData?.contactPhone
+
         
        }),
       ...(selectedOrderType === "dine_in" && {
@@ -50,6 +56,10 @@ export default function LocationModal() {
         openTime :   convertTo12HourFormat(selectedDineInBranchData?.openTime) || "",
         endTime : convertTo12HourFormat(selectedDineInBranchData?.endTime) || "",
         address : selectedDineInBranchData?.address || "",
+        tax : selectedDineInBranchData?.tax,
+        supportEmail : selectedDineInBranchData?.supportEmail,
+        branchId : selectedDineInBranchData?.id,
+        contactPhone : selectedDineInBranchData?.contactPhone
        
       })
       
@@ -195,6 +205,8 @@ export default function LocationModal() {
 
 
  
+
+ 
 // delivery areas
   const cities = data?.cities || [];
   const areas = data?.deliveryAreas || [];
@@ -206,6 +218,8 @@ export default function LocationModal() {
   // const closeTime = utcTimeToLocalTimeString(areaInfo.endTime);
   // const isOpen = isAreaOpen(openTime, closeTime);
   const isDeliveryOpen = areaInfo.isSpecialClosed;
+
+ 
 
 
   useEffect(() => {
@@ -244,6 +258,8 @@ export default function LocationModal() {
     (branch: any) => branch.name === selectedPickupBranch
   );
   const isPickupClose = selectedPickupBranchData?.isSpecialClosed;
+
+
 
   // dine in branches data 
   const dineInBranches = data?.dineInBranches || [];

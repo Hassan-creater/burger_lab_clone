@@ -48,14 +48,11 @@ const Header = () => {
     
          <nav className="flex items-center justify-between  w-full lg:w-[85%] m-auto px-4">
         {/* Left: Location Modal */}
-        {
-          TaxData?.timing && (
+      
         <div className="flex-1 flex justify-start">
        <NoSSRLocationModal />
         </div>
 
-          )
-        }
    
      {/* Center: Logo */}
      <div className="flex-1 flex justify-center">

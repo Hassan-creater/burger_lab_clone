@@ -80,7 +80,7 @@ export default function AddressCard({
    
 
   return (
-    <article className="w-full h-[10em] flex flex-col justify-between p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 max-w-xs">
+    <article className="w-full h-[10em] flex flex-col justify-between p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 ">
     {/* Address Line */}
     <div>
       <h4 className={`text-base font-semibold text-gray-800 mb-1 truncate ${designVar.fontFamily}`}>

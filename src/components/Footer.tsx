@@ -32,7 +32,7 @@ const Footer = () => {
 
   // Phone functionality
   const handlePhoneClick = () => {
-    if (TaxData?.contact) {
+    if (AddressData?.tax) {
       // Try to open phone dialer
       const phoneNumber = TaxData.contact.replace(/\s+/g, ''); 
       window.open(`tel:${phoneNumber}`, '_self');
@@ -48,7 +48,7 @@ const Footer = () => {
 
   // Email functionality
   const handleEmailClick = () => {
-    if (TaxData?.supportEmail) {
+    if (AddressData?.tax) {
       const email = TaxData.supportEmail.trim();
       const subject = 'Inquiry from Burger Lab Website';
       const body = 'Hello,\n\nI would like to inquire about your services.\n\nBest regards,';
@@ -119,7 +119,7 @@ const Footer = () => {
     //   </div>
     // </footer>
      
-    <footer className={`bg-white ${designVar.fontFamily} mt-[5em] border-t border-gray-200 py-8 px-4 md:px-6 lg:px-[4em]`}>
+    <footer className={`bg-white  ${designVar.fontFamily} mt-[5em] border-t border-gray-200 py-8 px-4 md:px-6 lg:px-[4em]`}>
     <div className="max-w-7xl mx-auto ">
       <div className="flex  flex-col gap-6 justify-start items-start md:flex-row md:justify-evenly md:items-start">
         {/* Logo and App Downloads Section */}
@@ -161,14 +161,14 @@ const Footer = () => {
 
         {/* Contact Information Section */}
         {
-          TaxData?.timing ? (
+          AddressData?.tax ? (
             <>
              <div className="space-y-4  h-[10.5em]">
           <h3 className="text-[16px] font-bold text-gray-900">Burger Lab</h3>
 
           <div className="space-y-3">
             {
-              TaxData?.contact ? (
+              AddressData?.contactPhone ? (
                 <div className="flex items-start space-x-3 text-[14px]">
                 <Phone className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -177,7 +177,7 @@ const Footer = () => {
                     onClick={handlePhoneClick}
                     className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer"
                   >
-                    {TaxData?.contact}
+                    {AddressData?.contactPhone}
                   </span>
                 </div>
               </div>
@@ -192,7 +192,7 @@ const Footer = () => {
              
 
              {
-              TaxData?.supportEmail ? (
+              AddressData?.tax ? (
                 <div className="flex items-start space-x-3 text-[14px]">
               <Mail className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div>
@@ -201,7 +201,7 @@ const Footer = () => {
                   onClick={handleEmailClick}
                   className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer"
                 >
-                  {TaxData?.supportEmail}
+                  {AddressData?.supportEmail}
                 </span>
               </div>
             </div>
@@ -236,11 +236,12 @@ const Footer = () => {
         <div className="space-y-6 pl-[3em]">
           {/* Operating Hours */}
           {
-            TaxData?.timing ? (
+            AddressData?.openTime ? (
               <div>
             <h3 className="text-[16px] font-bold text-gray-900 mb-4">Our Timings</h3>
-            <div className="flex justify-between items-center text-[14px]">
-              <p>{TaxData?.timing}</p>
+            <div className="flex justify-start gap-4 items-center text-[14px]">
+              <p>From : {AddressData?.openTime}</p>
+              <p>To : {AddressData?.endTime}</p>
             </div>
           </div>
             ) : <div className="flex items-start space-x-3 animate-pulse">
