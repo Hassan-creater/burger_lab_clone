@@ -161,7 +161,7 @@ const Footer = () => {
 
         {/* Contact Information Section */}
         {
-          AddressData?.tax ? (
+          AddressData?.address ? (
             <>
              <div className="space-y-4  h-[10.5em]">
           <h3 className="text-[16px] font-bold text-gray-900">Burger Lab</h3>

@@ -257,7 +257,7 @@ export default function LocationModal() {
   const selectedPickupBranchData = allPickupBranches?.find(
     (branch: any) => branch.name === selectedPickupBranch
   );
-  const isPickupClose = selectedPickupBranchData?.isSpecialClosed;
+
 
 
 
@@ -281,14 +281,22 @@ useEffect(() => {
 }, [isClose]);
 
 useEffect(() => {
-  if (isPickupClose) {
-    setPickupClose(selectedPickupBranchData?.specialClosedMessage);
-  }else{
-    setPickupClose("");
+  if (selectedPickupBranchData) {
+    if (selectedPickupBranchData.isSpecialClosed) {
+      setPickupClose(selectedPickupBranchData.specialClosedMessage);
+    } else if (!isBranchOpen(selectedPickupBranchData)) {
+      const openTime12 = convertTo12HourFormat(selectedPickupBranchData.openTime);
+      const closeTime12 = convertTo12HourFormat(selectedPickupBranchData.endTime);
+      setPickupClose(`Branch is closed. It will open at ${openTime12} and close at ${closeTime12}.`);
+    } else {
+      setPickupClose(""); // Clear the message if open
+    }
+  } else {
+    setPickupClose(""); // Clear if no branch selected
   }
+}, [selectedPickupBranchData]);
 
-  
-}, [isPickupClose ]);
+
 
 useEffect(() => {
   if(AddressData){
@@ -307,17 +315,6 @@ useEffect(() => {
 }, [AddressData]);
 
 
-useEffect(() => {
-  if (selectedPickupBranchData) {
-    if (!isBranchOpen(selectedPickupBranchData)) {
-      const openTime12 = convertTo12HourFormat(selectedPickupBranchData.openTime);
-      const closeTime12 = convertTo12HourFormat(selectedPickupBranchData.endTime);
-      setPickupClose(`Branch is closed. It will open at ${openTime12} and close at ${closeTime12}.`);
-    } else {
-      setPickupClose(""); // Clear the message if open
-    }
-  }
-}, [selectedPickupBranchData]);
 
  
 /// open pop up
