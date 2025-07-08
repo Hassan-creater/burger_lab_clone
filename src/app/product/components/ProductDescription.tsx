@@ -371,7 +371,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 <button
                                   className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, -1); }}
-                                  disabled={qty <= 1}
+                                  
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
@@ -428,7 +428,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 <button
                                   className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, -1); }}
-                                  disabled={qty <= 1}
+                                  
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button

@@ -331,7 +331,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                 +{`(${formatPrice(ao.price)})`}
                               </span>
                             {selected && (
-                              <div className="flex items-center gap-2 mt-2" onClick={e => e.stopPropagation()}>
+                              <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
                                 <button
                                   className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleAddonDecrease(ao.id)}
@@ -391,7 +391,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                 +{`(${formatPrice(ex.price)})`}
                               </span>
                             {selected && (
-                              <div className="flex items-center gap-2 mt-2" onClick={e => e.stopPropagation()}>
+                              <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
                                 <button
                                   className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleExtraDecrease(ex.id)}
