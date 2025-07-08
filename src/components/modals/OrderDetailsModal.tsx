@@ -223,20 +223,40 @@ const getStatusColor = (status: string) => {
                         <div className="flex-1">
                           <h4 className={`font-medium ${designVar.fontFamily}`}>{item.variant.name}</h4>
                           <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>Item #{itemIndex + 1}</p>
-                          {item.variant.addons.length > 0 && (
+                          {item?.variant?.addons?.length > 0 && (
                             <div className="mt-2">
                               <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Add-ons:</p>
                               <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
-                                {item.variant.addons.map((addon: any) => addon.name).join(", ")}
+                                {item?.variant?.addons?.map((addon: any) => `${addon.name} x${addon.quantity || 1}`).join(", ")}
+                                
                               </p>
                             </div>
                           )}
 
-                          {item.variant.extras.length > 0 && (
+                           {item?.variant?.dealAddons?.length > 0 && (
+                            <div className="mt-2">
+                              <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Add-ons:</p>
+                              <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
+                                {item?.variant?.dealAddons?.map((addon: any) => `${addon.name} x${addon.quantity || 1}`).join(", ")}
+                                
+                              </p>
+                            </div>
+                          )}
+
+                          {item?.variant?.extras?.length > 0 && (
                             <div className="mt-2">
                               <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Extras:</p>
                               <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
-                                {item.variant.extras.map((extra: any) => extra.name).join(", ")}
+                                {item.variant.extras.map((extra: any) => `${extra.name} x${extra.quantity || 1}`).join(", ")}
+                              </p>
+                            </div>
+                          )}
+
+                          {item?.variant?.dealExtras?.length > 0 && (
+                            <div className="mt-2">
+                              <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Extras:</p>
+                              <p className={`text-xs text-gray-500 ${designVar.fontFamily}`}>
+                                {item?.variant?.dealExtras.map((extra: any) => `${extra.name} x${extra.quantity || 1}`).join(", ")}
                               </p>
                             </div>
                           )}
@@ -307,7 +327,7 @@ const getStatusColor = (status: string) => {
               <Separator />
               <div className="space-y-4">
                 <h3 className={`text-lg font-semibold flex items-center gap-2 ${designVar.fontFamily}`}>
-                  <DollarSign className="w-5 h-5 text-orange-500" />
+             
                   Pricing Details
                 </h3>
                 <div className="space-y-2 text-sm">

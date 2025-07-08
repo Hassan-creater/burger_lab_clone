@@ -35,10 +35,13 @@ export default function LocationModal() {
       orderType: selectedOrderType,
       city: selectedCity,
       ...(selectedOrderType === "delivery" && { area: selectedArea , 
-        tax : areaInfo?.tax,
-        branchId : areaInfo?.branchId,
-        openTime :   convertTo12HourFormat(areaInfo?.openTime) || "",
-        endTime : convertTo12HourFormat(areaInfo?.endTime) || "",
+        tax : deliveryBranch?.tax,
+        branchId : deliveryBranch?.branchId,
+        openTime :   convertTo12HourFormat(deliveryBranch?.openTime) || "",
+        endTime : convertTo12HourFormat(deliveryBranch?.endTime) || "",
+        supportEmail : deliveryBranch?.supportEmail,
+        address : deliveryBranch?.address || "",
+        contactPhone : deliveryBranch?.contactPhone
        }),
       ...(selectedOrderType === "pickup" && { branch: selectedPickupBranch ,
         openTime :   convertTo12HourFormat(selectedPickupBranchData?.openTime) || "",
@@ -214,28 +217,25 @@ export default function LocationModal() {
   const area = city.areas || [];
   const deliveryAreas : any[] =  area.map((item: any) => item.areaName) || [];
   const areaInfo = area.find((a: any) => a.areaName === selectedArea)  || {};
-  // const openTime = utcTimeToLocalTimeString(areaInfo.openTime);
-  // const closeTime = utcTimeToLocalTimeString(areaInfo.endTime);
-  // const isOpen = isAreaOpen(openTime, closeTime);
-  const isDeliveryOpen = areaInfo.isSpecialClosed;
+  const deliveryBranch = areaInfo?.branch;
+  const isDeliveryOpen = deliveryBranch?.isSpecialClosed;
+
 
  
 
 
   useEffect(() => {
-   
-  
-    if(areaInfo.openTime && areaInfo.endTime){
-    if(!isBranchOpen(areaInfo)){
-      const openTime = convertTo12HourFormat(areaInfo.openTime);
-      const closeTime = convertTo12HourFormat(areaInfo.endTime);
+    if(deliveryBranch?.openTime && deliveryBranch?.endTime){
+    if(!isBranchOpen(deliveryBranch)){
+      const openTime = convertTo12HourFormat(deliveryBranch?.openTime);
+      const closeTime = convertTo12HourFormat(deliveryBranch?.endTime);
       setDeliveryClose(`Branch is closed. It will open at ${openTime} and close at ${closeTime}.`);
     }else{
         setDeliveryClose("");
       }
     }else{
       if(isDeliveryOpen){
-        setDeliveryClose(areaInfo.specialClosedMessage);
+        setDeliveryClose(deliveryBranch?.specialClosedMessage);
       }else{
         setDeliveryClose("");
       }
@@ -328,6 +328,7 @@ useEffect(() => {
       setDineInClose(`Branch is closed. It will open at ${openTime12} and close at ${closeTime12}.`);
     }
   }
+
 }, [selectedDineInBranchData]);
 
 

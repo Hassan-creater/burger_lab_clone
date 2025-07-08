@@ -16,6 +16,7 @@ import { cookies } from "next/headers";
 import SearchBox from "./components/SearchBox";
 import SearchFilter from "./components/SearchFilter";
 import OnlineStatusWrapper from "./components/OnlineStatusWrapper";
+import DealSection from "./components/DealSection";
 
 
 
@@ -57,6 +58,7 @@ export async function getCategories(): Promise<Category[]> {
     return [];
   }
 }
+
 
 
 const getFavorites = async ({id, token} : {id : string, token : string}) => {
@@ -125,7 +127,7 @@ export default async function Home(
 
   const categories = data;
   const favorites = await getFavorites({id: userId, token: token || ""});
-
+  
   
 
   // Filter items based on search query
@@ -177,6 +179,7 @@ export default async function Home(
           <HeroBanner />
           <CategoryLinkMenu categories={categories} />
           <SearchFilter categories={categories} favorites={favorites || []} allItems={allItems} />
+         
         </HydrationBoundary>
       </main>
     </OnlineStatusWrapper>

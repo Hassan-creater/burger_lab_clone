@@ -1,11 +1,13 @@
 // context/CartContext.tsx
 "use client";
 
-import { decreaseQuantity, increaseQuantity, loadCartFromStorage, mergeAndSaveCart, removeCartItem, removeItems, removeVariantFromCart } from "@/cartStorage/cartStorage";
+import { decreaseAddonQuantity, decreaseDealQuantity, decreaseExtraQuantity, decreaseItemAddon, decreaseItemExtra, decreaseQuantity, increaseAddonQuantity, increaseDealQuantity, increaseExtraQuantity, increaseItemAddon, increaseItemExtra, increaseQuantity, loadCartFromStorage, loadDealFromStorage, mergeAndSaveCart, removeCartItem, removeDealItem, removeItems, removeVariantFromCart, saveDealCartData } from "@/cartStorage/cartStorage";
 import { Josefin_Sans } from "next/font/google";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { getClientCookie } from "@/lib/getCookie";
+
+
 
 // Define the shape of your cart item
 type Favorite = {
@@ -81,7 +83,23 @@ interface CartContextType {
   IncreaseQuantity: (item: any) => void;
   isTaxAppliedBeforeCoupon: boolean;
   setIsTaxAppliedBeforeCoupon: React.Dispatch<React.SetStateAction<boolean>>;
+  deals : any[],
+  setDeals :  React.Dispatch<React.SetStateAction<any>>
+  dealData : any[],
+  updateDealCart: (newItems: {}) => void; 
+  DecreaseDealQuantity: (deal: any) => void;
+  IncreaseDealQuantity: (deal: any) => void;
+  removeDealFromCart : (deal : any )=>void;
+  IncreaseDealAddonQuantity: (cartItem: any , addonId : string) => void;
+  DecreaseDealAddonQuantity: (cartItem: any , addonId : string) => void;
+  IncreaseDealExtraQuantity: (cartItem: any , extraId : string) => void;
+  DecreaseDealExtraQuantity: (cartItem: any , extraId : string) => void;
+  IncreaseItemAddonQuantity: (cartItem: any , addonId : string) => void;
+  DecreaseItemAddonQuantity: (cartItem: any , addonId : string) => void;
+  IncreaseItemExtraQuantity: (cartItem: any , extraId : string) => void;
+  DecreaseItemExtraQuantity: (cartItem: any , extraId : string) => void;
 }
+
 
 // Create the context
 export const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -109,6 +127,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [refreshToken, setRefreshToken] = useState<string | null>("");
   const [couponCode, setCouponCode] = useState<string>("");
   const [isTaxAppliedBeforeCoupon, setIsTaxAppliedBeforeCoupon] = useState<boolean>(false);
+  const [deals , setDeals] = useState<any>([])
+  const [dealData,setDealData] = useState<any>({})
 
   const setFavorite = ({ itemId, favId }: Favorite) => {
     // 1. Load current favorites (or empty array)
@@ -222,6 +242,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setAddedInCart(updatedCart);
   };
 
+
+  const updateDealCart = (newItem : {})=>{
+    saveDealCartData(newItem);
+    const dealPaylod =  loadDealFromStorage();
+    setDealData(dealPaylod);
+  }
+
+
+
   const DecreaseQuantity = (item: any) => {
     decreaseQuantity(item);
     const updatedCart = loadCartFromStorage();
@@ -234,14 +263,96 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setAddedInCart(updatedCart);
   }
 
+
+  const DecreaseDealQuantity = (deal : any)=>{
+    decreaseDealQuantity(deal);
+    const updatedDeal = loadDealFromStorage();
+    setDealData(updatedDeal);
+  }  
+
+
+  const IncreaseDealQuantity = (deal : any)=>{
+    increaseDealQuantity(deal);
+    const updatedDeal = loadDealFromStorage();
+    setDealData(updatedDeal);
+  }
+
+
+  const IncreaseDealAddonQuantity = (CartItem : any , addonId : string)=>{
+    increaseAddonQuantity(CartItem , addonId);
+    const updated = loadDealFromStorage();
+    setDealData(updated)
+  }
+
+
+  const DecreaseDealAddonQuantity = (CartItem : any , addonId : string)=>{
+    decreaseAddonQuantity(CartItem , addonId);
+    const updated = loadDealFromStorage();
+    setDealData(updated);
+  }
+
+
+  const IncreaseDealExtraQuantity = (cartItem  : any , extraId : string)=>{
+    increaseExtraQuantity(cartItem,extraId)
+    const updated = loadDealFromStorage();
+    setDealData(updated)
+  }
+
+
+  const DecreaseDealExtraQuantity = (cartItem  : any , extraId : string)=>{
+    decreaseExtraQuantity(cartItem , extraId)
+    const updated = loadDealFromStorage();
+    setDealData(updated)
+  }
+
+
+  const  IncreaseItemAddonQuantity = (cartItem : any , addonId : string)=>{
+    increaseItemAddon(cartItem , addonId);
+    const updated = loadCartFromStorage();
+    setAddedInCart(updated)
+  }
+
+
+  const  DecreaseItemAddonQuantity = (cartItem : any , addonId : string)=>{
+    decreaseItemAddon(cartItem , addonId);
+    const updated = loadCartFromStorage();
+    setAddedInCart(updated);
+  }  
+
+
+  const IncreaseItemExtraQuantity = (cartItem : any , extraId : string)=>{
+    increaseItemExtra(cartItem , extraId)
+    const updated = loadCartFromStorage();
+    setAddedInCart(updated);
+  }
+
+
+  const DecreaseItemExtraQuantity = (cartItem : any , extraId : string)=>{
+    decreaseItemExtra(cartItem , extraId);
+    const updated = loadCartFromStorage();
+    setAddedInCart(updated);
+  }
+
+  
+
   const removeItemFromCart = (variant : any) => {
     removeCartItem(variant)
     const updatedCart = loadCartFromStorage();
     setAddedInCart(updatedCart);
   };
 
+
+  const removeDealFromCart = (deal : any)=>{
+    removeDealItem(deal);
+    const updatedCart = loadDealFromStorage();
+    setDealData(updatedCart);
+  };
+
+
+
   const ClearCart = () => {
     removeItems();
+    setDealData([]);
     setAddedInCart([]);
   };
 
@@ -260,18 +371,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const data = loadCartFromStorage();
+    const Deal = loadDealFromStorage();
     const addressData = JSON.parse(localStorage.getItem("addressData") || "{}");
     setAddressData(addressData ?? "");
     setAddedInCart(data);
 
     const defaultAddress = localStorage.getItem("defaultAddress");
     _setDefaultAddress(defaultAddress ?? "");
+    setDealData(Deal);
   },[]);
 
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity }}>
       {children}
     </CartContext.Provider>
   );

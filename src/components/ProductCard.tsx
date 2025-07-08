@@ -92,10 +92,10 @@ function ProductCard({
           {/* Content Section */}
           <CardContent className="flex flex-col text-left justify-between h-[164px] group py-[0.6em] pb-[0.8em] w-2/3">
             <div className="w-full">
-              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange} leading-[1.2em]`}>{textShortener(product.name, 45)}</h4>
-              {product.description && (
+              <h4 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange} leading-[1.2em]`}>{textShortener(product?.name, 45)}</h4>
+              {product?.description && (
                 <p className={`${designVar.fontStyle.colorGray} ${designVar.fontStyle.fontSize}  line-clamp-2 ${designVar.fontFamily} ${designVar.fontStyle.color}`}>
-                  {textShortener(product.description, 100)}
+                  {textShortener(product?.description, 100)}
                 </p>
               )}
             </div>

@@ -12,11 +12,11 @@ import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
 import { useCartContext } from "@/context/context";
+ 
 
-
-function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
+function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   const { isBannerVisible, activeSectionId, setActiveSectionId } = useObserverStore();
-  const {deliveryClose, dineInClose, pickupClose } = useCartContext()
+  const {deliveryClose, dineInClose, pickupClose , deals } = useCartContext()
  
   
   const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -46,7 +46,7 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
   const [activeSubNavId, setActiveSubNavId] = useState<string | null>(null);
 
   const windowWidth = useWindowSize();
-  const [activeSubItemId, setActiveSubItemId] = useState<string | null>(null);
+ 
 
   // fist category is active by default only if no activeSectionId is set
   useEffect(() => {
@@ -76,6 +76,48 @@ function CategoryLinkMenu({ categories }: { categories: Category[] | null }) {
                 "flex-1 flex gap-3 items-center justify-center"
               )}
             >
+              {
+                deals.length > 0 && (
+
+               <li
+  className={cn(
+    designVar.categoryButton.borderRadius,
+    designVar.categoryButton.paddingX,
+    designVar.categoryButton.paddingY,
+    designVar.categoryButton.fontSize,
+    designVar.categoryButton.fontWeight,
+    designVar.categoryButton.color,
+    designVar.categoryButton.cursor,
+    designVar.categoryButton.transition,
+    designVar.categoryButton.hover.backgroundColor,
+    designVar.categoryButton.hover.borderRadius,
+    designVar.categoryButton.hover.color,
+    designVar.fontFamily,
+    activeSectionId === "deals"
+      ? designVar.categoryButton.activeBackgroundColor
+      : designVar.categoryButton.inactiveBackgroundColor
+  )}
+>
+  <button
+    onClick={e => {
+      e.preventDefault();
+      setActiveSectionId("deals");
+      setTimeout(() => {
+        const target = document.getElementById("deals");
+        if (target) {
+          const yOffset = -143;
+          const y =
+            target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 50);
+    }}
+  >
+    <p className="text-center">Deals</p>
+  </button>
+</li>
+                )
+              }
               {categories &&
                 categories.map((category : any, index : number) => (
                   <li

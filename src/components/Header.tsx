@@ -14,7 +14,7 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 
 const Header = () => {
 
-  const {token , user , deliveryClose , dineInClose , pickupClose  , TaxData } = useCartContext();
+  const {token , user , deliveryClose , dineInClose , pickupClose   } = useCartContext();
 
   const pathname = usePathname();
   
@@ -22,11 +22,10 @@ const Header = () => {
   return (
     <header className={`w-full sticky top-0 z-50 ${deliveryClose || dineInClose || pickupClose ? "h-24" : "h-20"} bg-white shadow-sm shadow-neutral-300`}>
     
-    {
-      TaxData?.timing && (
-        <>
+    <>
          {
      deliveryClose && (
+      
        <p className="text-[12px] text-center  bg-red-500 text-white">{deliveryClose}</p>
      )
     }
@@ -41,8 +40,6 @@ const Header = () => {
      )
     }
         </>
-      )
-    }
 
    
     

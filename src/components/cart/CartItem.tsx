@@ -1,5 +1,5 @@
 import type { CartItem } from "@/types";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {  ChevronDown, Trash2} from "lucide-react";
 import Image from "next/image";
@@ -25,16 +25,16 @@ type CartItems = {
 interface CartItemProps {
   cartItem: CartItems  |any;
   removeItem?: (itemId: string) => void;
+  showAddons?: boolean;
+  setShowAddons?: (val: boolean) => void;
+  showExtras?: boolean;
+  setShowExtras?: (val: boolean) => void;
 }
 
 
  
 
-function CartItem({ cartItem, removeItem }: CartItemProps) {
-
-  
-  const [showAddons, setShowAddons] = useState(false)
-  const [showExtras, setShowExtras] = useState(false)
+function CartItem({ cartItem, removeItem, showAddons = false, setShowAddons = () => {}, showExtras = false, setShowExtras = () => {} }: CartItemProps) {
   const pathname = usePathname();
   const isCheckoutPage = pathname?.includes('/checkout');
 
@@ -47,7 +47,7 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
   // const itemTotal = cartItem.variantPrice * cartItem.quantity + totalAddons + totalExtras
 
 
-  const {removeItemFromCart , updateCart , DecreaseQuantity , IncreaseQuantity} = useCartContext();
+  const {removeItemFromCart , updateCart , DecreaseQuantity , IncreaseQuantity,IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity} = useCartContext();
 
   // const renderAddOns = (addOnOption: any, index: number) => (
   //   <div key={index} className="flex justify-between text-sm text-gray-600">
@@ -171,9 +171,31 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
                   >
                     <div className="flex justify-between w-full">
                       <div>{addon.name.slice(0, 25)}...</div>
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(addon.price)}</span>
-                        {addon.quantity > 1 && (
+                        {
+                          !isCheckoutPage && (
+                            <>
+                             <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          onClick={() => {
+                            DecreaseItemAddonQuantity(cartItem, addon.id);
+                            // Do not reset showAddons here
+                          }}
+                          
+                        >−</button>
+                        <span className="text-gray-800 text-[13px] font-semibold">{addon.quantity}</span>
+                        <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          onClick={() => {
+                            IncreaseItemAddonQuantity(cartItem, addon.id);
+                            // Do not reset showAddons here
+                          }}
+                        >+</button>
+                            </>
+                          )
+                        }
+                        {isCheckoutPage && (
                           <span className="text-gray-500 text-[13px]">×{addon.quantity}</span>
                         )}
                       </div>
@@ -209,9 +231,29 @@ function CartItem({ cartItem, removeItem }: CartItemProps) {
                   >
                     <div className="flex w-full justify-between">
                       <div className="text-[13px]">{extra.name.slice(0, 25)}...</div>
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(extra.price)}</span>
-                        {extra.quantity > 1 && (
+                        {
+                          !isCheckoutPage && (
+                            <>
+                             <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          onClick={()=>{
+                            DecreaseItemExtraQuantity(cartItem , extra.id);
+                          }}
+                      
+                        >−</button>
+                        <span className="text-gray-800 text-[13px] font-semibold">{extra.quantity}</span>
+                        <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          onClick={()=>{
+                            IncreaseItemExtraQuantity(cartItem , extra.id);
+                          }}
+                        >+</button>
+                            </>
+                          ) 
+                        }
+                        {isCheckoutPage && (
                           <span className="text-gray-500 text-[12px]">×{extra.quantity}</span>
                         )}
                       </div>

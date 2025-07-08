@@ -43,14 +43,14 @@ export default function AddressDetails({
     return res.data;
   }
 
-  const { data , status } = useQuery({
+  const { data , isLoading  } = useQuery({
     queryKey: ["addresses", userid],
     queryFn: getAddresses,
   });
  
   const Addresses = data?.data;
 
-  if (status === "pending")
+  if (isLoading)
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <LoadingSpinner />

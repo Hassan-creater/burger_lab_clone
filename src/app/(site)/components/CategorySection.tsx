@@ -48,6 +48,8 @@ function CategorySection({
           <br/>
         </section>
       )}
+
+      
     </>   
   );
 }

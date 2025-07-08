@@ -25,6 +25,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   
   // State management
   const [variantQtys, setVariantQtys] = useState<Record<string, number>>({});
+  const [addonQtys, setAddonQtys] = useState<Record<string, Record<string, number>>>({});
+  const [extraQtys, setExtraQtys] = useState<Record<string, Record<string, number>>>({});
   const [selectedAddons, setSelectedAddons] = useState<Record<string, Set<string>>>({});
   const [selectedExtras, setSelectedExtras] = useState<Record<string, Set<string>>>({});
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
@@ -42,18 +44,29 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
   const variants = data?.data?.item?.variants;
 
-  // Set default variant and quantity to 1
+  // Set default variant and quantity to 1, and initialize addon/extra qtys
   useEffect(() => {
     if (variants && variants.length > 0) {
       const firstVariantId = variants[0].id;
       setSelectedVariantId(firstVariantId);
-      
       // Set default quantity to 1 for all variants
       const initialQtys: Record<string, number> = {};
+      const initialAddonQtys: Record<string, Record<string, number>> = {};
+      const initialExtraQtys: Record<string, Record<string, number>> = {};
       variants.forEach((v: any) => {
         initialQtys[v.id] = 1;
+        initialAddonQtys[v.id] = {};
+        (v.addons || []).forEach((ao: any) => {
+          initialAddonQtys[v.id][ao.id] = 0;
+        });
+        initialExtraQtys[v.id] = {};
+        (v.extras || []).forEach((ex: any) => {
+          initialExtraQtys[v.id][ex.id] = 0;
+        });
       });
       setVariantQtys(initialQtys);
+      setAddonQtys(initialAddonQtys);
+      setExtraQtys(initialExtraQtys);
     }
   }, [variants]);
 
@@ -65,6 +78,34 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       const currentQty = prev[variantId] || 1;
       const newQty = Math.max(1, currentQty + delta); // Minimum quantity is 1
       return { ...prev, [variantId]: newQty };
+    });
+  };
+
+  // Handlers for addon/extra quantity
+  const changeAddonQty = (variantId: string, addonId: string, delta: number) => {
+    setAddonQtys(prev => {
+      const prevQty = prev[variantId]?.[addonId] || 0;
+      const newQty = Math.max(0, prevQty + delta);
+      return {
+        ...prev,
+        [variantId]: {
+          ...prev[variantId],
+          [addonId]: newQty,
+        },
+      };
+    });
+  };
+  const changeExtraQty = (variantId: string, extraId: string, delta: number) => {
+    setExtraQtys(prev => {
+      const prevQty = prev[variantId]?.[extraId] || 0;
+      const newQty = Math.max(0, prevQty + delta);
+      return {
+        ...prev,
+        [variantId]: {
+          ...prev[variantId],
+          [extraId]: newQty,
+        },
+      };
     });
   };
 
@@ -87,54 +128,42 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     });
   };
 
-  // Calculate variant total price
+  // Calculate variant total price (use actual addon/extra qtys)
   const computeVariantTotal = (variant: any) => {
     const qty = variantQtys[variant?.id] || 1;
-    
     let total = variant?.price * qty;
-    
-    const addons = selectedAddons[variant?.id] || new Set();
-    addons.forEach(addonId => {
-      const addon = variant?.addons?.find((ao: any) => ao.id === addonId);
-      if (addon) total += addon.price * qty;
+    const addonQtyMap = addonQtys[variant?.id] || {};
+    (variant?.addons || []).forEach((ao: any) => {
+      const addonQty = addonQtyMap[ao.id] || 0;
+      total += ao.price * addonQty;
     });
-    
-    const extras = selectedExtras[variant?.id] || new Set();
-    extras.forEach(extraId => {
-      const extra = variant?.extras?.find((ex: any) => ex.id === extraId);
-      if (extra) total += extra.price * qty;
+    const extraQtyMap = extraQtys[variant?.id] || {};
+    (variant?.extras || []).forEach((ex: any) => {
+      const extraQty = extraQtyMap[ex.id] || 0;
+      total += ex.price * extraQty;
     });
-    
     return total;
   };
 
-  // Add to cart as new item
+  // Add to cart as new item (use actual addon/extra qtys)
   const addToCart = (variant: any) => {
     const qty = variantQtys[variant?.id] || 1;
-    
-    const addons = Array.from(selectedAddons[variant?.id] || []).map(addonId => ({
-      id: addonId,
-      quantity: qty
-    }));
-    
-    const extras = Array.from(selectedExtras[variant?.id] || []).map(extraId => ({
-      id: extraId,
-      quantity: qty
-    }));
-    
+    const addons = Object.entries(addonQtys[variant?.id] || {})
+      .filter(([_, q]) => q > 0)
+      .map(([id, q]) => ({ id, quantity: q }));
+    const extras = Object.entries(extraQtys[variant?.id] || {})
+      .filter(([_, q]) => q > 0)
+      .map(([id, q]) => ({ id, quantity: q }));
     const newItem = {
-      variant,       // Contains variant data
-      quantity: qty, // Quantity for THIS item
-      addons,        // Addons specific to THIS item
-      extras         // Extras specific to THIS item
+      variant,
+      quantity: qty,
+      addons,
+      extras,
     };
-  
-    // ✅ Always adds a NEW entry to the cart array
     setCartItems(prev => [...prev, newItem]);
-    setVariantQtys(prev => ({ ...prev, [variant?.id]: 1 })); // Reset quantity to 1
- setSelectedAddons(prev => ({ ...prev, [variant?.id]: new Set() }));
-setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
-    
+    setVariantQtys(prev => ({ ...prev, [variant?.id]: 1 }));
+    setAddonQtys(prev => ({ ...prev, [variant?.id]: Object.fromEntries(Object.keys(prev[variant?.id] || {}).map(id => [id, 0])) }));
+    setExtraQtys(prev => ({ ...prev, [variant?.id]: Object.fromEntries(Object.keys(prev[variant?.id] || {}).map(id => [id, 0])) }));
     setShowMessage(`${variant?.name} added to cart!`);
     setTimeout(() => setShowMessage(''), 3000);
   };
@@ -310,23 +339,24 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Addons</span>
                   </div>
                   <div className="flex flex-col  gap-3 mt-3 bg-gray-100 p-2 rounded-md">
-                    {selectedVariant.addons.map((ao: any) => (
-                      <div 
-                        key={ao.id} 
-                        className={`p-3 rounded-xl border transition-all cursor-pointer bg-white
-                          ${selectedAddons[selectedVariant.id]?.has(ao.id) 
-                            ? 'border-orange-500 bg-orange-50' 
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                        onClick={() => toggleAddon(selectedVariant.id, ao.id)}
-                      >
-                        <div className="flex justify-between items-center">
+                    {selectedVariant.addons.map((ao: any) => {
+                      const qty = addonQtys[selectedVariant.id]?.[ao.id] || 0;
+                      const selected = qty > 0;
+                      return (
+                        <div
+                          key={ao.id}
+                          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+                            selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          } cursor-pointer`}
+                          onClick={() => {
+                            if (!selected) changeAddonQty(selectedVariant.id, ao.id, 1);
+                          }}
+                        >
                           <div className="flex items-center">
-                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3
-                              ${selectedAddons[selectedVariant.id]?.has(ao.id) 
-                                ? 'bg-orange-500 border-orange-500' 
-                                : 'border-gray-300'}`}
-                            >
-                              {selectedAddons[selectedVariant.id]?.has(ao.id) && (
+                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                              selected ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
+                            }`}>
+                              {selected && (
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
@@ -334,12 +364,26 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                             </div>
                             <span className="font-medium">{(ao.name).slice(0, 30)}...</span>
                           </div>
-                          <span className="text-[15px]">
-                            +{`(${formatPrice(ao.price)})`}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                            {selected && (
+                              <>
+                                <button
+                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, -1); }}
+                                  disabled={qty <= 1}
+                                >−</button>
+                                <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
+                                <button
+                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, 1); }}
+                                >+</button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -352,23 +396,24 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Extras</span>
                   </div>
                   <div className="flex flex-col gap-3 mt-3 bg-gray-100 p-2 rounded-md">
-                    {selectedVariant.extras.map((ex: any) => (
-                      <div 
-                        key={ex.id} 
-                        className={`p-3 rounded-xl border transition-all cursor-pointer bg-white
-                          ${selectedExtras[selectedVariant.id]?.has(ex.id) 
-                            ? 'border-orange-500 bg-orange-50' 
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                        onClick={() => toggleExtra(selectedVariant.id, ex.id)}
-                      >
-                        <div className="flex justify-between items-center">
+                    {selectedVariant.extras.map((ex: any) => {
+                      const qty = extraQtys[selectedVariant.id]?.[ex.id] || 0;
+                      const selected = qty > 0;
+                      return (
+                        <div
+                          key={ex.id}
+                          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+                            selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          } cursor-pointer`}
+                          onClick={() => {
+                            if (!selected) changeExtraQty(selectedVariant.id, ex.id, 1);
+                          }}
+                        >
                           <div className="flex items-center">
-                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3
-                              ${selectedExtras[selectedVariant.id]?.has(ex.id) 
-                                ? 'bg-orange-500 border-orange-500' 
-                                : 'border-gray-300'}`}
-                            >
-                              {selectedExtras[selectedVariant.id]?.has(ex.id) && (
+                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                              selected ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
+                            }`}>
+                              {selected && (
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
@@ -376,12 +421,26 @@ setSelectedExtras(prev => ({ ...prev, [variant?.id]: new Set() }));
                             </div>
                             <span className="font-medium">{(ex.name).slice(0, 30)}...</span>
                           </div>
-                          <span className="text-[15px]">
-                          +{`(${formatPrice(ex.price)})`}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[15px]">+{`(${formatPrice(ex.price)})`}</span>
+                            {selected && (
+                              <>
+                                <button
+                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, -1); }}
+                                  disabled={qty <= 1}
+                                >−</button>
+                                <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
+                                <button
+                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, 1); }}
+                                >+</button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

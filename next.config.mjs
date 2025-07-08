@@ -27,6 +27,13 @@ const nextConfig = {
 				port: "",
 				pathname: "/**",
 			},
+
+			{
+				protocol: "https", // Adding the missing hostname
+				hostname: "zestupbackend-59oze.sevalla.app",
+				port: "",
+				pathname: "/**",
+			},
 			
 		],
 	},

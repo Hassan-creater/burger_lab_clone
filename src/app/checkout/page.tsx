@@ -188,7 +188,7 @@ function Checkout() {
                 </div>
                 
 
-                <div className="w-full max-h-[25em] overflow-y-scroll no-scrollbar bg-gray-100 p-[0.5em] rounded-md flex gap-2 flex-wrap justify-between">
+                <div className="w-full  max-h-[25em] overflow-y-scroll no-scrollbar bg-gray-100 p-[0.5em] rounded-md flex gap-2 flex-wrap justify-around">
                   {isLoading ? (
                     <div>Loading...</div>
                   ) : Array.isArray(data) && data.length > 0 ? (

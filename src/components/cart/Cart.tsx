@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import ShoppingBagIcon from "../icons/cart-shopping";
 import { useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
+import DealItem from "./DealCartItem";
 
 
 interface CartProps {
@@ -56,8 +57,22 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
-  const {AddedInCart , ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData , couponCode , isTaxAppliedBeforeCoupon } = useCartContext();
+  const {AddedInCart  , dealData, ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , setTaxData , couponCode , isTaxAppliedBeforeCoupon ,pickupClose , deliveryClose , dineInClose ,   } = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, { addons: boolean; extras: boolean }>>({});
+
+  const handleSetShowAddons = (key: string, val: boolean) => {
+    setOpenDropdowns(prev => ({
+      ...prev,
+      [key]: { ...(prev[key] || { addons: false, extras: false }), addons: val },
+    }));
+  };
+  const handleSetShowExtras = (key: string, val: boolean) => {
+    setOpenDropdowns(prev => ({
+      ...prev,
+      [key]: { ...(prev[key] || { addons: false, extras: false }), extras: val },
+    }));
+  };
 
   // Using dummy tax data instead
   // const  getTax = async () => {
@@ -101,13 +116,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     [discount, subTotal, data?.tax, deliveryCharges]
   );
 
-  const taxAmount = useMemo(
-    () => (parseInt(data?.tax ?? "0") / 100) * subTotal,
-    [data?.tax, subTotal]
-  );
-
-
-
+  // Calculate subtotals
+  const dealDataSafe = Array.isArray(dealData) ? dealData : [];
+  const itemSubtotal = AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0);
+  const dealSubtotal = dealDataSafe.reduce((acc, deal) => acc + (deal.totalPrice || 0), 0);
+  const combinedSubtotal = itemSubtotal + dealSubtotal;
+  const taxAmount = (combinedSubtotal) * (parseInt(data?.tax ?? "0") / 100);
+  const grandTotal = combinedSubtotal + taxAmount + deliveryCharges;
 
 
   useEffect(() => {
@@ -170,22 +185,28 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
 
  
 
+ 
+
 
   const handlePlaceOrder = async () => {
     if(!AddressData?.branchId){
       toast.error("Please select location.");
     }
+
+    
+
     const payload = {
       status: "pending",
       orderType: AddressData?.orderType,
       branchId : AddressData?.branchId,
+     
       ...(couponCode && {couponCode: couponCode}),
       ...(defaultAddress && {addressId: defaultAddress}),  
       ...(deliveryAddress && {deliveryAddress: deliveryAddress}),
       ...(deliveryName && {deliveryName: deliveryName}),
       ...(deliveryPhone && {deliveryPhone: deliveryPhone}),
       ...(comment && {comment: comment}),
-      items: AddedInCart.map((item) => ({
+      items: AddedInCart?.map((item) => ({
         variantId: item.variantId,
         quantity: item.quantity,
     
@@ -199,6 +220,19 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
           : {}),
       })),
+
+      dealItems : dealData?.map((deal: any) => ({
+        dealId: deal.dealId,
+        quantity: deal.variantQuantity,
+        // Only include addons if present
+        ...(deal.addons?.length
+          ? { addons: deal.addons.map((addon: any) => ({ id: addon.id, quantity: addon.quantity })) }
+          : {}),
+        // Only include extras if present
+        ...(deal.extras?.length
+          ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
+          : {}),
+      }))
     };
 
     if(AddressData?.orderType){
@@ -241,7 +275,9 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               variant="ghost"
             >
               <span className="w-5 h-5 rounded-full bg-[#fabf2c] text-white absolute -top-4 right-2 z-30 text-xs flex items-center justify-center">
-                {AddedInCart.length}
+                {
+                  dealDataSafe.length > 0 ? (AddedInCart.length + dealDataSafe.length) : AddedInCart.length
+                }
               </span>
               <ShoppingBagIcon width={26} height={26} />
               <CaretDown width={7} height={7} />
@@ -282,53 +318,60 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               Clear Cart
             </Button>
           </SheetHeader>
-          {AddedInCart.length > 0 ? (
+          {AddedInCart.length > 0 || dealDataSafe.length > 0 ? (
             <>
               <div className="flex flex-col gap-2 no-scrollbar items-center w-full h-[calc(100dvh-290px)] overflow-y-scroll pb-[2em] ">
                 {AddedInCart?.map((cartItem : any) => (
                   <CartItem
-                    key={cartItem.totalPrice + cartItem.variantId}
+                    key={cartItem.totalPrice + cartItem.variantId + cartItem.variantName + cartItem.quantity}
                     cartItem={cartItem}
+                    removeItem={removeItemFromCart}
+                    showAddons={!!openDropdowns[cartItem.variantId + cartItem.variantName + cartItem.quantity]?.addons}
+                    setShowAddons={val => handleSetShowAddons(cartItem.variantId + cartItem.variantName + cartItem.quantity, val)}
+                    showExtras={!!openDropdowns[cartItem.variantId + cartItem.variantName + cartItem.quantity]?.extras}
+                    setShowExtras={val => handleSetShowExtras(cartItem.variantId + cartItem.variantName + cartItem.quantity, val)}
+                  />
+                ))}
+
+
+
+                  {dealDataSafe?.map((cartItems : any) => (
+                  <DealItem
+                    key={cartItems.variantTotalPrice + cartItems.dealId}
+                    cartItem={cartItems}
                     removeItem={removeItemFromCart}
                   />
                 ))}
               </div>
               <SheetFooter className="flex bg-white flex-col w-[93%] gap-2 absolute bottom-3 z-50">
                 <hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
+                {/* Subtotals for items and deals */}
+               
+                {/* Combined subtotal */}
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className={`font-normal text-sm ${designVar.fontFamily}`}>Subtotal</p>
-                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
-                  </p>
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>{formatPrice(combinedSubtotal)}</p>
                 </div>
-                {/* <PromoBar
-                  discount={discount}
-                  setDiscount={setDiscount}
-                  setOrderDetails={setOrderDetails}
-                /> */}
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className={`font-normal text-sm ${designVar.fontFamily}`}>
-                    Tax ({parseInt(data?.tax ?? "0") + "%"})
-                  </p>
-                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))}
-                  </p>
+                  <p className={`font-normal text-sm ${designVar.fontFamily}`}>Tax ({parseInt(data?.tax ?? "0") + "%"})</p>
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>{formatPrice(taxAmount)}</p>
                 </div>
+              
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className={`font-normal text-sm ${designVar.fontFamily}`}>Delivery Charges</p>
-                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-                    {deliveryCharges > 0
-                      ? formatPrice(deliveryCharges)
-                      : "Free"}
-                  </p>
+                  <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>{deliveryCharges > 0 ? formatPrice(deliveryCharges) : "Free"}</p>
                 </div>
                 <div className="flex items-center justify-between w-full h-auto">
-                  <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>
-                    Grand Total (Incl. Tax)
-                  </p>
-                  <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
-                    {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + deliveryCharges)}
-                  </p>
+                  <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>Grand Total (Incl. Tax)</p>
+                  <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>{
+                    isTaxAppliedBeforeCoupon 
+                      ? formatPrice(
+                          (combinedSubtotal + taxAmount + deliveryCharges) - ((combinedSubtotal + taxAmount + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
+                        )
+                      : formatPrice(
+                          (combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) + ((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges
+                        )
+                  }</p>
                 </div>
              
                   <Link href="/checkout">
@@ -370,9 +413,22 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
             <CartItem
               key={cartItem.totalPrice + cartItem.variantId + cartItem.variantName + cartItem.quantity}
               cartItem={cartItem}
-              
+              showAddons={!!openDropdowns[cartItem.variantId + cartItem.variantName + cartItem.quantity]?.addons}
+              setShowAddons={val => handleSetShowAddons(cartItem.variantId + cartItem.variantName + cartItem.quantity, val)}
+              showExtras={!!openDropdowns[cartItem.variantId + cartItem.variantName + cartItem.quantity]?.extras}
+              setShowExtras={val => handleSetShowExtras(cartItem.variantId + cartItem.variantName + cartItem.quantity, val)}
             />
           ))}
+
+              {dealDataSafe?.map((cartItems : any) => (
+                  <DealItem
+                    key={cartItems.variantTotalPrice + cartItems.dealId}
+                    cartItem={cartItems}
+                    removeItem={removeItemFromCart}
+                  />
+                ))}
+
+
         </div>
         <section className="flex flex-col w-full gap-2">
           <hr className="bg-categorySeparatorGradient w-full mx-auto h-px mb-2 block" />
@@ -382,42 +438,47 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
             setOrderDetails={setOrderDetails}
             setCouponValidation={setCouponValidation}
           />
+          {/* Subtotals for items and deals */}
+          {/* {itemSubtotal > 0 && (
+            <div className="flex items-center justify-between w-full h-auto">
+              <p className={`font-normal text-sm ${designVar.fontFamily}`}>Subtotal</p>
+              <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
+                {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
+              </p>
+            </div>
+          )} */}
+          {/* {dealSubtotal > 0 && (
+            <div className="flex items-center justify-between w-full h-auto">
+              <p className={`font-normal text-sm ${designVar.fontFamily}`}>Deals Subtotal</p>
+              <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
+                {formatPrice(dealSubtotal)}
+              </p>
+            </div>
+          )} */}
+          {/* Combined subtotal */}
           <div className="flex items-center justify-between w-full h-auto">
             <p className={`font-normal text-sm ${designVar.fontFamily}`}>Subtotal</p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-              {formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0))}
+              {formatPrice(combinedSubtotal)}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className={`font-normal text-sm ${designVar.fontFamily}`}>
-              Tax ({parseInt(data?.tax ?? "0") + "%"})
-            </p>
+            <p className={`font-normal text-sm ${designVar.fontFamily}`}>Tax ({parseInt(data?.tax ?? "0") + "%"})</p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               {
                 isTaxAppliedBeforeCoupon 
-                  ? formatPrice(AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0))
-                  : formatPrice((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
-                                 (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100))
+                  ? formatPrice(combinedSubtotal * (parseInt(data?.tax ?? "0") / 100))
+                  : formatPrice((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100))
               }
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-            <p className={`font-normal text-sm ${designVar.fontFamily}`}>
-              Discount ({parseInt(couponData?.discount ?? "0") + "%"})
-            </p>
+            <p className={`font-normal text-sm ${designVar.fontFamily}`}>Discount ({parseInt(couponData?.discount ?? "0") + "%"})</p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
               {
                 isTaxAppliedBeforeCoupon 
-                  ? formatPrice(
-                      // Apply discount on (subtotal + tax + delivery)
-                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
-                       AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
-                       deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100)
-                    )
-                  : formatPrice(
-                      // Apply discount on subtotal only
-                      AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100)
-                    )
+                  ? formatPrice((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
+                  : formatPrice(combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))
               }
             </p>
           </div>
@@ -428,39 +489,27 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
-              <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>
-              Grand Total (Incl. Tax)
-            </p>
+              <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>Grand Total (Incl. Tax)</p>
             <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
               {
                 isTaxAppliedBeforeCoupon 
-                  ? formatPrice(
-                      // Subtotal + Tax + Delivery - Discount on (Subtotal + Tax + Delivery)
-                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
-                       AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
-                       deliveryCharges) - 
-                      ((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) + 
-                        AddedInCart.reduce((acc, item) => acc + item.totalPrice * (parseInt(data?.tax ?? "0") / 100), 0) + 
-                        deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
-                    )
-                  : formatPrice(
-                      // (Subtotal - Discount on Subtotal) + Tax on (Subtotal - Discount) + Delivery
-                      (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
-                       (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) + 
-                      ((AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) - 
-                        (AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0) * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + 
-                      deliveryCharges
-                    )
+                  ? formatPrice((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) - ((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100)))
+                  : formatPrice((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) + ((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges)
               }
             </p>
           </div>
           <Button
             variant="outline"
             title="checkout"
-            disabled={AddedInCart.length === 0 || addOrder?.isPending  || couponValidation}
+            disabled={(AddedInCart.length === 0 && dealData.length ===0) || addOrder?.isPending  || couponValidation}
             onClick={()=>{
               if(user){
-                handlePlaceOrder();
+                if(dineInClose || pickupClose || deliveryClose){
+                  toast.error(dineInClose || pickupClose || deliveryClose)
+                  return
+                }else{
+                  handlePlaceOrder();
+                }
               }else{
                 setAuthOpen(true);
               }
