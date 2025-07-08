@@ -56,17 +56,17 @@ function DealCard({ deal, className , favorite , status }: { deal:  any; classNa
 
   return (
     <Dialog  open={open}  onOpenChange={setOpen} >
-      <div onClick={() => {
+      <div   onClick={() => {
         if (status === "ACTIVE") setOpen(true);
           }}  className={cn(
-            "flex cursor-pointer group w-full",
+            "flex cursor-pointer group ",
             status == "INACTIVE" && "opacity-50 cursor-not-allowed pointer-events-none"
-          )}>
+          )}   >
 
       <DialogTrigger asChild>
         <Card
           className={cn(
-            "flex justify-center items-center w-[300px] max-w-full",
+            "flex justify-center items-center",
             designVar.cardDesign.width,
             designVar.cardDesign.height,
             designVar.cardDesign.minHeight,
