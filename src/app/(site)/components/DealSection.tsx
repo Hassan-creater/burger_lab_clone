@@ -7,8 +7,10 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useEffect } from 'react'
 import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 
-const DealSection = ({ deals }: { deals?: any[] }) => {
+const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any }) => {
   const { setDeals } = useCartContext()
+
+  
 
   const getAllDeals = async () => {
     const res = await apiClientCustomer.get(`/deal/view/customer`);
@@ -30,6 +32,8 @@ const DealSection = ({ deals }: { deals?: any[] }) => {
     }
   }, [dealList, setDeals])
 
+  console.log(favorites)
+
   return (
     <>
     {
@@ -41,7 +45,7 @@ const DealSection = ({ deals }: { deals?: any[] }) => {
           isLoading
             ? Array.from({ length: 3 }).map((_, idx) => <ProductCardSkeleton key={idx} />)
             : dealList?.map((deal: any) => (
-                <DealCard key={deal.id} deal={deal} />
+                <DealCard favorite={favorites} key={deal.id} deal={deal} />
               ))
         }
         

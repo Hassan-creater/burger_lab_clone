@@ -36,24 +36,37 @@ export type Deal = {
   price: number;
   discountedPrice: number;
   tags?: string;
+   
 };
 
-function DealCard({ deal, className }: { deal: Deal; className?: string }) {
+function DealCard({ deal, className , favorite , status }: { deal:  any; className?: string , favorite : any , status? : string }) {
 
   const [open , setOpen ] = useState(false);
+  const [isFav, setIsFav] = useState(() => {
+    return !!favorite?.some((favorite : any) => favorite.dealId === deal?.id);
+  });
+
+  const favId = favorite?.find((favorite : any) => favorite.dealId === deal?.id)?.id;
 
   
   const hasDiscount =
-    deal.discountedPrice !== null &&
-    deal.discountedPrice !== undefined &&
-    deal.discountedPrice < deal.price;
+    deal?.discountedPrice !== null &&
+    deal?.discountedPrice !== undefined &&
+    deal?.discountedPrice < deal?.price;
 
   return (
     <Dialog  open={open}  onOpenChange={setOpen} >
+      <div onClick={() => {
+        if (status === "ACTIVE") setOpen(true);
+          }}  className={cn(
+            "flex cursor-pointer group w-full",
+            status == "INACTIVE" && "opacity-50 cursor-not-allowed pointer-events-none"
+          )}>
+
       <DialogTrigger asChild>
         <Card
           className={cn(
-            "flex justify-center items-center",
+            "flex justify-center items-center w-[300px] max-w-full",
             designVar.cardDesign.width,
             designVar.cardDesign.height,
             designVar.cardDesign.minHeight,
@@ -81,16 +94,16 @@ function DealCard({ deal, className }: { deal: Deal; className?: string }) {
               className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} `}
             >
               <Image
-                src={deal.image}
+                src={deal?.image}
                 width={300}
                 height={300}
                 priority
-                alt={deal.name}
+                alt={deal?.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
               />
               {hasDiscount && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  {Math.round(100 - (deal.discountedPrice / deal.price) * 100)}% OFF
+                  {Math.round(100 - (deal?.discountedPrice / deal?.price) * 100)}% OFF
                 </div>
               )}
             </div>
@@ -102,28 +115,28 @@ function DealCard({ deal, className }: { deal: Deal; className?: string }) {
               <h4
                 className={`${designVar.carHeading.fontSize} ${designVar.carHeading.fontWeight} ${designVar.fontFamily} ${designVar.carHeading.colorOrange} leading-[1.2em]`}
               >
-                {textShortener(deal.name, 45)}
+                {textShortener(deal?.name, 45)}
               </h4>
-              {deal.description && (
+              {deal?.description && (
                 <p
                   className={`${designVar.fontStyle.colorGray} ${designVar.fontStyle.fontSize}  line-clamp-2 ${designVar.fontFamily} ${designVar.fontStyle.color}`}
                 >
-                  {textShortener(deal.description, 100)}
+                  {textShortener(deal?.description, 100)}
                 </p>
               )}
             </div>
 
             <div className="w-full relative flex flex-col items-start gap-2 justify-between">
-            {/* <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[2.8em] -right-[0.5em]">
+            <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[2.8em] -right-[0.5em]">
                   <LikeButton
-                    itemId={deal.id}
+                    dealId={deal?.id}
                     isFav={isFav}
                     id={favId}
-                    favorites={favorites || []}
+                    favorites={favorite || []}
                     setIsFav={setIsFav}
                     className="bg-white/80 backdrop-blur-sm"
                   />
-                </div> */}
+                </div>
               {/* Price Section */}
               <div className="flex items-center gap-2">
                 {hasDiscount ? (
@@ -132,14 +145,14 @@ function DealCard({ deal, className }: { deal: Deal; className?: string }) {
                       {formatPrice(deal.discountedPrice)}
                     </span>
                     <span className="text-sm text-gray-500 line-through">
-                      {formatPrice(deal.price)}
+                      {formatPrice(deal?.price)}
                     </span>
                   </>
                 ) : (
                   <span
                     className={`${designVar.productPrice.backgroundColor} ${designVar.productPrice.borderRadius} ${designVar.productPrice.paddingX} ${designVar.productPrice.paddingY} ${designVar.productPrice.fontSize} ${designVar.productPrice.fontWeight} ${designVar.productPrice.color} ${designVar.fontFamily} ${designVar.productPrice.textSize} ${designVar.fontFamily} ${designVar.productPrice.width} ${designVar.productPrice.height} whitespace-nowrap  flex justify-center items-center `}
                   >
-                    {formatPrice(deal.price)}
+                    {formatPrice(deal?.price)}
                   </span>
                 )}
               </div>
@@ -154,6 +167,7 @@ function DealCard({ deal, className }: { deal: Deal; className?: string }) {
           </CardContent>
         </Card>
       </DialogTrigger>
+      </div>
       <DialogContent
         className="w-[37em]  descriptionModal overflow-x-hidden h-full max-h-[90vh] overflow-hidden 
                    flex flex-col sm:flex-row gap-0 rounded-3xl border-0 p-0 shadow-2xl"

@@ -68,7 +68,7 @@ export default async function Favorites({}: FavoritesProps) {
 
   
 
-  
+
 
   if(!token){
     redirect("/");
@@ -87,7 +87,7 @@ export default async function Favorites({}: FavoritesProps) {
         <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
           <div className="flex justify-center">
             <FavoriteItemContainer
-                 itemId={favorite?.itemId}
+                 favorite={favorite}
                  favorites={favorites}
                /> 
           </div>

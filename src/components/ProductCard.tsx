@@ -47,11 +47,11 @@ function ProductCard({
 }) {
   // const { addItemToCart } = useCart();
   const [isFav, setIsFav] = useState(() => {
-    return !!favorites?.some((favorite) => favorite.itemId === product.id);
+    return !!favorites?.some((favorite) => favorite.itemId === product?.id);
   });
 
 
-  const favId = favorites?.find((favorite) => favorite.itemId === product.id)?.id;
+  const favId = favorites?.find((favorite) => favorite.itemId === product?.id)?.id;
 
  
   const [open, setOpen] = useState(false);
@@ -59,7 +59,7 @@ function ProductCard({
 
   return (
     <Card
-    className={`flex justify-center items-center ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.cardDesign.shadow} ${designVar.fontFamily} overflow-hidden`}
+    className={`flex justify-center items-center w-[300px] max-w-full ${designVar.cardDesign.width} ${designVar.cardDesign.height} ${designVar.cardDesign.minHeight} ${designVar.cardDesign.duration} ${designVar.cardDesign.backgroundColor} ${designVar.cardDesign.borderRadius} ${designVar.cardDesign.paddingX} ${designVar.cardDesign.paddingY}  ${designVar.cardDesign.border} ${designVar.cardDesign.borderColor} ${designVar.cardDesign.hover.backgroundColor} ${designVar.cardDesign.hover.borderRadius} ${designVar.cardDesign.hover.borderColor} ${designVar.cardDesign.hover.shadow} ${designVar.cardDesign.hover.overflow} ${designVar.cardDesign.shadow} ${designVar.fontFamily} overflow-hidden`}
   >
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -73,16 +73,16 @@ function ProductCard({
           <CardHeader className="relative w-[50%] py-[0.5em] overflow-hidden flex justify-center items-center ">
             <div className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} `}>
               <Image
-                src={product.image}
+                src={product?.image}
                 width={300}
                 height={300}
                 priority
                 alt="product-image"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
               />
-              {product.discountPercent > 0 && (
+              {product?.discountPercent > 0 && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  {product.discountPercent}% OFF
+                  {product?.discountPercent}% OFF
                 </div>
               )}
              
@@ -105,7 +105,7 @@ function ProductCard({
               
                   <div onClick={(e)=>e.stopPropagation()} className="absolute bottom-[2.8em] -right-[0.5em]">
                   <LikeButton
-                    itemId={product.id}
+                    itemId={product?.id}
                     isFav={isFav}
                     id={favId}
                     favorites={favorites || []}
@@ -116,21 +116,21 @@ function ProductCard({
               
               
             
-              {product.discountPercent > 0 ? (
+              {product?.discountPercent > 0 ? (
                 <div>
                   <p className="text-lg font-bold text-orange-600">
                     {formatPrice(
-                      product.variants[0]?.price *
-                        (1 - product.discountPercent / 100)
+                      product?.variants[0]?.price *
+                        (1 - product?.discountPercent / 100)
                     )}
                   </p>
                   <p className="text-sm text-gray-500 line-through">
-                    {formatPrice(product.variants[0]?.price)}
+                    {formatPrice(product?.variants[0]?.price)}
                   </p>
                 </div>
               ) : (
                 <p className={`${designVar.productPrice.backgroundColor} ${designVar.productPrice.borderRadius} ${designVar.productPrice.paddingX} ${designVar.productPrice.paddingY} ${designVar.productPrice.fontSize} ${designVar.productPrice.fontWeight} ${designVar.productPrice.color} ${designVar.fontFamily} ${designVar.productPrice.textSize} ${designVar.fontFamily} ${designVar.productPrice.width} ${designVar.productPrice.height} whitespace-nowrap  flex justify-center items-center `}>
-                  {formatPrice(product.variants[0]?.price)}
+                  {formatPrice(product?.variants[0]?.price)}
                 </p>
               )}
               <div className="flex gap-2">

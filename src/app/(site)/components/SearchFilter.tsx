@@ -88,7 +88,7 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
       ) : currentQuery.trim() || hasSearched ? (
         <>
           {filteredDeals && filteredDeals.length > 0 && (
-            <DealSection deals={filteredDeals} />
+            <DealSection favorites={favorites} deals={filteredDeals} />
           )}
           {filteredCategories.length > 0 ? (
             filteredCategories.map((category: any, index: number) => (
@@ -117,7 +117,7 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
         </>
       ) : (
         <>
-          <DealSection />
+          <DealSection favorites={favorites}  />
           {categories.map((category: any, index: number) => (
             <CategorySection
               key={index}

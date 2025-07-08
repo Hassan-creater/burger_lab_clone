@@ -12,14 +12,15 @@ import { useRouter } from "next/navigation";
 
 interface LikeButtonProps {
   className?: string;
-  itemId: string;
+  itemId?: string;
+  dealId? : string,
   isFav: boolean;
   id?: string;
   setIsFav: React.Dispatch<React.SetStateAction<boolean>>;
   favorites?: any[];
 }
 
-function LikeButton({ className, itemId, isFav, setIsFav, id, favorites }: LikeButtonProps) {
+function LikeButton({ className, itemId, isFav, setIsFav, id, favorites ,dealId }: LikeButtonProps) {
   const { setFavorite, favorite , setAuthOpen , user } = useCartContext();
   const [initialFavorites, setInitialFavorites] = useState(favorites);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,37 +28,62 @@ function LikeButton({ className, itemId, isFav, setIsFav, id, favorites }: LikeB
 
   const addFav = async () => {
     setIsLoading(true);
-    try {
-      const res = await apiClient.post(`/favorite/add`, {
-        itemId: itemId,
-      });
-      if (res.status === 200 || res.status === 201 || res.status === 204) {
-        toast.success("Item Added to Favorites");
-        setIsFav(true);
-        //Extract favoriteId from response and pass both itemId and favId
-        const favoriteId = res.data.data.favoriteId;
-        setFavorite({ itemId, favId: favoriteId });
-      } else {
+
+    if(!dealId){
+
+      try {
+        const res = await apiClient.post(`/favorite/add`, {
+          itemId: itemId,
+        });
+        if (res.status === 200 || res.status === 201 || res.status === 204) {
+          toast.success("Item Added to Favorites");
+          setIsFav(true);
+          //Extract favoriteId from response and pass both itemId and favId
+          const favoriteId = res.data.data.favoriteId;
+          setFavorite({ itemId, favId: favoriteId });
+        } else {
+          setIsFav(false);
+          toast.error("Something went wrong");
+        }
+      } catch (error) {
         setIsFav(false);
         toast.error("Something went wrong");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      setIsFav(false);
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
+    }else{
+      try {
+        const res = await apiClient.post(`/favorite/add`, {
+          dealId: dealId,
+        });
+        if (res.status === 200 || res.status === 201 || res.status === 204) {
+          toast.success("Deal Added to Favorites");
+          setIsFav(true);
+          //Extract favoriteId from response and pass both itemId and favId
+          const favoriteId = res.data.data.favoriteId;
+          setFavorite({ itemId, favId: favoriteId });
+        } else {
+          setIsFav(false);
+          toast.error("Something went wrong");
+        }
+      } catch (error) {
+        setIsFav(false);
+        toast.error("Something went wrong");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   const removeFav = async () => {
     setIsLoading(true);
     try {
-      const Id = favorite?.find((fav: any) => fav.itemId == itemId)?.favId;
-      console.log(Id);
+      const Id = favorite?.find((fav: any) => fav.itemId == itemId)?.favId ||favorite?.find((fav: any) => fav.dealId == dealId)?.favId ;
+     
       if (Id) {
         const res = await apiClient.delete(`favorite/${Id}`);
         if (res.status === 200 || res.status === 201 || res.status === 204) {
-          toast.success("Item Removed from Favorites");
+          toast.success("Removed successfully from favorite.");
           setIsFav(false);
           setFavorite({ itemId, favId: "" }); // Pass empty favId for removal
           setInitialFavorites((prev) => prev?.filter(fav => fav.itemId !== itemId));
@@ -69,7 +95,7 @@ function LikeButton({ className, itemId, isFav, setIsFav, id, favorites }: LikeB
       } else {
         const res = await apiClient.delete(`favorite/${id}`);
         if (res.status === 200 || res.status === 201 || res.status === 204) {
-          toast.success("Item Removed from Favorites");
+          toast.success("Removed successfully from favorite.");
           setIsFav(false);
           setFavorite({ itemId, favId: "" }); // Pass empty favId for removal
         } else {
@@ -87,7 +113,7 @@ function LikeButton({ className, itemId, isFav, setIsFav, id, favorites }: LikeB
 
   return (
     <Button
-      id={itemId.toString()}
+      id={itemId?.toString()}
       variant="default"
       disabled={isLoading}
       className={cn(

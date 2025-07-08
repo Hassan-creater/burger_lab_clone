@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function textShortener(text: string, charactersLimit: number) {
-	return text.length > charactersLimit
+	return text?.length > charactersLimit
 		? `${text.substring(0, charactersLimit)}...`
 		: text;
 }
