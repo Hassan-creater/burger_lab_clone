@@ -240,7 +240,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         <ProductDescriptionSkelton/> : 
 
     // product description
-    <article className={`flex w-[37em]  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
+    <article className={`flex w-full sm:w-[37em]  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
       {/* Left - Product Image & Variants */}
       <div className="w-full  lg:w-full flex flex-col  ">
         {/* Product Image */}
@@ -362,20 +362,21 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ao.name).slice(0, 30)}...</span>
+                            <span className="font-medium hidden sm:block">{(ao.name).slice(0, 30)}...</span>
+                            <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 11)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                            <span className=" text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
                             {selected && (
                               <>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, 1); }}
                                 >+</button>
                               </>
@@ -419,20 +420,21 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium">{(ex.name).slice(0, 30)}...</span>
+                            <span className="font-medium hidden sm:block">{(ex.name).slice(0, 30)}...</span>
+                            <span className="text-[13px] block sm:hidden">{(ex.name).slice(0, 12)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[15px]">+{`(${formatPrice(ex.price)})`}</span>
+                            <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex.price)})`}</span>
                             {selected && (
                               <>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, 1); }}
                                 >+</button>
                               </>
@@ -460,30 +462,30 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                 handleAddToCartClick();
                 setOpen && setOpen(false);
             }}
-            className={`w-[17em] py-2 text-white font-bold rounded-xl transition-all flex justify-between items-center
+            className={`w-[13em] sm:w-[17em] py-2 text-white font-bold rounded-xl transition-all flex justify-between items-center
               bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl px-[1em]`}
           >
-            <span className=" text-[16px] font-semibold  rounded-md">Add to Cart</span>  <span className="  rounded-md">
+            <span className=" text-[14px] sm:text-[16px] font-semibold  rounded-md">Add to Cart</span>  <span className="text-[12px]  sm:rounded-md">
                 {formatPrice(computeVariantTotal(selectedVariant))}
               </span>
           </button>
 
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center ">
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, -1)} 
-    className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+    className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
   >
     −
   </button>
   
-  <span className="w-8 text-center text-gray-800 font-semibold">
+  <span className="w-6 sm:w-8 text-center text-gray-800 font-semibold">
     {variantQtys[selectedVariant?.id] || 1}
   </span>
   
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, 1)} 
-    className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+    className=" w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
   >
     +
   </button>

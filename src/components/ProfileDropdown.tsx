@@ -34,6 +34,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
         Cookies.remove("accessToken", { path: "/" });
         Cookies.remove("refreshToken", { path: "/" });
         Cookies.remove("userData" , {path : "/"});
+        localStorage.removeItem("defaultAddress")
         window.location.reload();
      }
 

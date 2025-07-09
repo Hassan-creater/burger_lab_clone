@@ -229,7 +229,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
       {isLoading ? (
         <ProductDescriptionSkelton />
       ) : (
-        <article className={`flex w-[37em] flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
+        <article className={`flex w-full sm:w-[37em] flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
           {/* Product Image */}
           <div className="w-full lg:w-full flex flex-col">
             <div className="relative w-full h-[25em] overflow-hidden rounded-xl flex justify-center items-center">
@@ -325,22 +325,23 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                     </svg>
                                   )}
                                 </div>
-                                <span className="font-medium">{(ao.name).slice(0, 30)}...</span>
+                                <span className="font-medium hidden sm:block">{(ao.name).slice(0, 30)}...</span>
+                                <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 12)}...</span>
                               </div>
-                              <span className="text-[15px]">
+                              <span className="text-[12px] sm:text-[15px]">
                                 +{`(${formatPrice(ao.price)})`}
                               </span>
                             {selected && (
                               <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleAddonDecrease(ao.id)}
                                 >
                                   −
                                 </button>
-                                <span className="w-6 text-center text-gray-800 font-semibold">{qty}</span>
+                                <span className=" w-6 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleAddonIncrease(ao.id)}
                                 >
                                   +
@@ -385,22 +386,23 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                     </svg>
                                   )}
                                 </div>
-                                <span className="font-medium">{(ex.name).slice(0, 30)}...</span>
+                                <span className="text-[13px] hidden sm:block sm:font-medium">{(ex.name).slice(0, 30)}...</span>
+                                <span className="text-[13px] block sm:hidden sm:font-medium">{(ex.name).slice(0, 12)}...</span>
                               </div>
-                              <span className="text-[15px]">
+                              <span className=" text-[10px] sm:text-[15px]">
                                 +{`(${formatPrice(ex.price)})`}
                               </span>
                             {selected && (
                               <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleExtraDecrease(ex.id)}
                                 >
                                   −
                                 </button>
-                                <span className="w-6 text-center text-gray-800 font-semibold">{qty}</span>
+                                <span className=" w-4 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
                                 <button
-                                  className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                                   onClick={() => handleExtraIncrease(ex.id)}
                                 >
                                   +
@@ -420,28 +422,28 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
             {/* Footer with quantity and add to cart */}
              <div className="w-full absolute bottom-[0.3em] rounded-xl left-0 p-4 bg-white shadow-xl shadow-gray-300 flex flex-row-reverse justify-between items-center">
             <button
-              className={`w-[17em] py-2 text-white font-bold rounded-xl transition-all flex justify-between items-center
+              className={`w-[13em] sm:w-[17em] py-2 text-white font-bold rounded-xl transition-all flex justify-between items-center
                 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl px-[1em]`}
               onClick={handleAddToCart}
             >
-              <span className="text-[16px] font-semibold rounded-md">Add to Cart</span>
-              <span className="rounded-md">
+              <span className=" text-[14px] sm:text-[16px] font-semibold rounded-md">Add to Cart</span>
+              <span className="rounded-md  text-[12px]  sm:text-[16px]">
                 {formatPrice(totalPrice)}
               </span>
             </button>
 
-            <div className="flex items-center gap-2 flex-row-reverse">
+            <div className="flex items-center  flex-row-reverse">
               <button
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                className=" w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                 onClick={handleMainQuantityIncrease}
               >
                 +
               </button>
-              <span className="w-8 text-center text-gray-800 font-semibold">
+              <span className=" w-6 sm:w-8 text-center text-gray-800 font-semibold">
                 {mainQuantity}
               </span>
               <button
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                className=" w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                 onClick={handleMainQuantityDecrease}
                 disabled={mainQuantity === 1}
               >

@@ -169,7 +169,7 @@ function DealCard({ deal, className , favorite , status }: { deal:  any; classNa
       </DialogTrigger>
       </div>
       <DialogContent
-        className="w-[37em]  descriptionModal overflow-x-hidden h-full max-h-[90vh] overflow-hidden 
+        className="w-[90%] sm:w-[37em]  descriptionModal overflow-x-hidden h-full max-h-[90vh] overflow-hidden 
                    flex flex-col sm:flex-row gap-0 rounded-3xl border-0 p-0 shadow-2xl"
       >
         <DialogHeader>
