@@ -77,7 +77,7 @@ export default async function Favorites({}: FavoritesProps) {
   return (
     <main className="w-full  my-5 min-h-screen flex flex-col">
       <h1 className={`text-lg w-[90%] lg:w-[85%] mx-auto font-bold mt-10 mb-7 text-gray-700 ${designVar.fontFamily}`}>
-        My Favorite Items
+        My Favorite
       </h1>
 
       {favorites && favorites?.length > 0 ? (
