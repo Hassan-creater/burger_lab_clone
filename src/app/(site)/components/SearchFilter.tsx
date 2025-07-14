@@ -23,6 +23,7 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
   const [mounted, setMounted] = useState(false);
 
   const { deals } = useCartContext();
+
   const [filteredDeals, setFilteredDeals] = useState(deals);
 
   useEffect(() => {

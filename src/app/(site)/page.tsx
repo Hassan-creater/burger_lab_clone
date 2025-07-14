@@ -17,7 +17,7 @@ import SearchBox from "./components/SearchBox";
 import SearchFilter from "./components/SearchFilter";
 import OnlineStatusWrapper from "./components/OnlineStatusWrapper";
 import DealSection from "./components/DealSection";
-
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 
 
@@ -30,7 +30,7 @@ export const getServerCookie = async (name: string): Promise<string | undefined>
 export const dynamic = "force-dynamic";
 
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(): Promise<Category[] | null> {
   
     // const token = await getServerCookie("accessToken")
 
@@ -53,9 +53,8 @@ export async function getCategories(): Promise<Category[]> {
     const body = await res.json();
     return body.data.categories as Category[];
   } catch (err) {
-    console.error("Categories fetch error:", err);
     // Fallback to dummy data
-    return [];
+    return null;
   }
 }
 
@@ -107,10 +106,18 @@ export default async function Home(
 
   
   const data = await getCategories();
-  
+
+  // Show loader while categories are being fetched
+  if (typeof data === "undefined") {
+    return (
+      <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
+        <LoadingSpinner className="w-12 h-12 border-t-primaryOrange" />
+      </main>
+    );
+  }
 
 
-  const allItems = data?.flatMap((category: any) =>
+  const allItems = (data ?? []).flatMap((category: any) =>
     category?.items?.map((item: any) => ({
       ...item,
       categoryId: category.id,
@@ -125,7 +132,7 @@ export default async function Home(
   const userId = userDataJson.id;
 
 
-  const categories = data;
+  const categories = data ?? [];
   const favorites = await getFavorites({id: userId, token: token || ""});
   
   
@@ -160,13 +167,24 @@ export default async function Home(
     hasSearchResults = filteredCategories.length > 0;
   }
 
-  // Show server error if user is online but categories are missing or empty
-  if (!categories || categories.length === 0) {
+  // Show server error only if fetch failed
+  if (data === null) {
     return (
       <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
         <h1 className="text-2xl font-semibold text-red-600">Server Error</h1>
         <p className="text-gray-600 mt-2 max-w-md">
           We couldn not load product data. Please try again later.
+        </p>
+      </main>
+    );
+  }
+  // Show 'No items found' if backend returns empty data
+  if (categories.length === 0) {
+    return (
+      <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
+        <h1 className="text-2xl font-semibold text-gray-700">No items found</h1>
+        <p className="text-gray-500 mt-2 max-w-md">
+          There are currently no products available.
         </p>
       </main>
     );
@@ -178,7 +196,7 @@ export default async function Home(
         <HydrationBoundary state={dehydrate(queryClient)}>
           <HeroBanner />
           <CategoryLinkMenu categories={categories} />
-          <SearchFilter categories={categories} favorites={favorites || []} allItems={allItems} />
+          <SearchFilter categories={categories} favorites={favorites || []} allItems={allItems ?? []} />
          
         </HydrationBoundary>
       </main>

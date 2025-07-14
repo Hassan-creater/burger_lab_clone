@@ -26,6 +26,7 @@ const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any })
 
   const dealList = deals || data;
 
+
   useEffect(() => {
     if (dealList) {
       setDeals(dealList)

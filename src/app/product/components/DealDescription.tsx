@@ -155,10 +155,22 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     });
   };
 
+  // Add helper for addon price
+  const getAddonEffectivePrice = (addon: any) => {
+    if (
+      typeof addon?.discountedPrice === 'number' &&
+      typeof addon?.price === 'number' &&
+      addon.discountedPrice < addon.price
+    ) {
+      return addon.discountedPrice;
+    }
+    return addon?.price;
+  };
+
   // Price calculations
   const totalAddonsPrice = useMemo(() => {
     return Addons.reduce(
-      (sum: number, ao: any) => sum + (addonQuantities[ao.id] ? addonQuantities[ao.id] * (ao.price || 0) : 0),
+      (sum: number, ao: any) => sum + (addonQuantities[ao.id] ? addonQuantities[ao.id] * getAddonEffectivePrice(ao) : 0),
       0
     );
   }, [Addons, addonQuantities]);
@@ -173,7 +185,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
   // Total price logic: useMemo to always calculate based on latest data
   const totalPrice = useMemo(() => {
     const basePrice = safeData.discountedPrice ?? safeData.price ?? 0;
-    const addonsPrice = Addons.reduce((sum: number, ao: any) => sum + ((addonQuantities[ao.id] || 0) * (ao.price || 0)), 0);
+    const addonsPrice = Addons.reduce((sum: number, ao: any) => sum + ((addonQuantities[ao.id] || 0) * getAddonEffectivePrice(ao)), 0);
     const extrasPrice = Extras.reduce((sum: number, ex: any) => sum + ((extraQuantities[ex.id] || 0) * (ex.price || 0)), 0);
     return (basePrice  * mainQuantity)  + addonsPrice + extrasPrice;
   }, [safeData, Addons, Extras, addonQuantities, extraQuantities, mainQuantity]);
@@ -196,7 +208,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
       .map((ao: any) => ({
         id: ao.id,
         name: ao.name,
-        price: ao.price,
+        price: getAddonEffectivePrice(ao),
         quantity: addonQuantities[ao.id]
       })) || [];
 
@@ -303,6 +315,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                       {Addons.map((ao: any) => {
                         const qty = addonQuantities[ao.id] || 0;
                         const selected = qty > 0;
+                        const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price;
                         return (
                           <div
                             key={ao.id}
@@ -325,26 +338,31 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                 <span className="font-medium hidden sm:block">{(ao.name).slice(0, 30)}...</span>
                                 <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 12)}...</span>
                               </div>
-                              <span className="text-[12px] sm:text-[15px]">
-                                +{`(${formatPrice(ao.price)})`}
-                              </span>
-                            {selected && (
-                              <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
-                                <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={() => handleAddonDecrease(ao.id)}
-                                >
-                                  −
-                                </button>
-                                <span className=" w-6 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
-                                <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={() => handleAddonIncrease(ao.id)}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            )}
+                              {showDiscount ? (
+                                <>
+                                  <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.discountedPrice)})`}</span>
+                                  <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao.price)}</span>
+                                </>
+                              ) : (
+                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                              )}
+                              {selected && (
+                                <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
+                                  <button
+                                    className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                    onClick={() => handleAddonDecrease(ao.id)}
+                                  >
+                                    −
+                                  </button>
+                                  <span className=" w-6 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
+                                  <button
+                                    className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                    onClick={() => handleAddonIncrease(ao.id)}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         );

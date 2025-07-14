@@ -142,6 +142,18 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     return variant?.price;
   };
 
+  // Helper for addon price
+  const getAddonEffectivePrice = (addon: any) => {
+    if (
+      typeof addon?.discountedPrice === 'number' &&
+      typeof addon?.price === 'number' &&
+      addon.discountedPrice < addon.price
+    ) {
+      return addon.discountedPrice;
+    }
+    return addon?.price;
+  };
+
   // Calculate variant total price (use actual addon/extra qtys)
   const computeVariantTotal = (variant: any) => {
     const qty = variantQtys[variant?.id] || 1;
@@ -150,7 +162,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     const addonQtyMap = addonQtys[variant?.id] || {};
     (variant?.addons || []).forEach((ao: any) => {
       const addonQty = addonQtyMap[ao.id] || 0;
-      total += ao.price * addonQty;
+      total += getAddonEffectivePrice(ao) * addonQty;
     });
     const extraQtyMap = extraQtys[variant?.id] || {};
     (variant?.extras || []).forEach((ex: any) => {
@@ -199,7 +211,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         return {
           id: ao.id,
           name: addonData?.name || "Unknown Addon",
-          price: addonData?.price || 0,
+          price: getAddonEffectivePrice(addonData) || 0,
           quantity: ao.quantity,
         };
       });
@@ -290,7 +302,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
             {variants?.map((v: any) => {
               const isActive = v.id === selectedVariantId;
               const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price;
-              const displayPrice = getEffectivePrice(v);
+            
               return (
                 <div key={v.id} className="relative flex flex-col items-center group shrink-0">
                   <button
@@ -366,6 +378,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     {selectedVariant.addons.map((ao: any) => {
                       const qty = addonQtys[selectedVariant.id]?.[ao.id] || 0;
                       const selected = qty > 0;
+                      const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price;
                       return (
                         <div
                           key={ao.id}
@@ -390,7 +403,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                             <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 11)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className=" text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                            {showDiscount ? (
+                              <>
+                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.discountedPrice)})`}</span>
+                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao.price)}</span>
+                              </>
+                            ) : (
+                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                            )}
                             {selected && (
                               <>
                                 <button
