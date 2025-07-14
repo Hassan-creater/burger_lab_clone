@@ -27,8 +27,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   const [variantQtys, setVariantQtys] = useState<Record<string, number>>({});
   const [addonQtys, setAddonQtys] = useState<Record<string, Record<string, number>>>({});
   const [extraQtys, setExtraQtys] = useState<Record<string, Record<string, number>>>({});
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, Set<string>>>({});
-  const [selectedExtras, setSelectedExtras] = useState<Record<string, Set<string>>>({});
+  // const [selectedAddons, setSelectedAddons] = useState<Record<string, Set<string>>>({});
+  // const [selectedExtras, setSelectedExtras] = useState<Record<string, Set<string>>>({});
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
 
   // Fetch product variants
@@ -43,6 +43,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   });
 
   const variants = data?.data?.item?.variants;
+
+ 
 
   // Set default variant and quantity to 1, and initialize addon/extra qtys
   useEffect(() => {
@@ -109,29 +111,42 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     });
   };
 
-  // Addon/Extra handlers
-  const toggleAddon = (variantId: string, addonId: string) => {
-    setSelectedAddons(prev => {
-      const newSet = new Set(prev[variantId] || []);
-      if (newSet.has(addonId)) newSet.delete(addonId);
-      else newSet.add(addonId);
-      return { ...prev, [variantId]: newSet };
-    });
-  };
+  // // Addon/Extra handlers
+  // const toggleAddon = (variantId: string, addonId: string) => {
+  //   setSelectedAddons(prev => {
+  //     const newSet = new Set(prev[variantId] || []);
+  //     if (newSet.has(addonId)) newSet.delete(addonId);
+  //     else newSet.add(addonId);
+  //     return { ...prev, [variantId]: newSet };
+  //   });
+  // };
 
-  const toggleExtra = (variantId: string, extraId: string) => {
-    setSelectedExtras(prev => {
-      const newSet = new Set(prev[variantId] || []);
-      if (newSet.has(extraId)) newSet.delete(extraId);
-      else newSet.add(extraId);
-      return { ...prev, [variantId]: newSet };
-    });
+  // const toggleExtra = (variantId: string, extraId: string) => {
+  //   setSelectedExtras(prev => {
+  //     const newSet = new Set(prev[variantId] || []);
+  //     if (newSet.has(extraId)) newSet.delete(extraId);
+  //     else newSet.add(extraId);
+  //     return { ...prev, [variantId]: newSet };
+  //   });
+  // };
+
+  // Helper function to get the correct price
+  const getEffectivePrice = (variant: any) => {
+    if (
+      typeof variant?.discountedPrice === 'number' &&
+      typeof variant?.price === 'number' &&
+      variant.discountedPrice < variant.price
+    ) {
+      return variant.discountedPrice;
+    }
+    return variant?.price;
   };
 
   // Calculate variant total price (use actual addon/extra qtys)
   const computeVariantTotal = (variant: any) => {
     const qty = variantQtys[variant?.id] || 1;
-    let total = variant?.price * qty;
+    const basePrice = getEffectivePrice(variant) * qty;
+    let total = basePrice;
     const addonQtyMap = addonQtys[variant?.id] || {};
     (variant?.addons || []).forEach((ao: any) => {
       const addonQty = addonQtyMap[ao.id] || 0;
@@ -177,7 +192,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   // Prepare cart payload for context
   const cartPayload = useMemo(() => {
     return cartItems.map(item => {
-      const basePrice = item?.variant?.price * item?.quantity;
+      const basePrice = getEffectivePrice(item?.variant) * item?.quantity;
     
       const addons = (item?.addons || []).map((ao: any) => {
         const addonData = item?.variant?.addons?.find((a: any) => a.id === ao.id);
@@ -208,7 +223,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         itemImage: product.image,
         variantId: item?.variant?.id,
         variantName: item?.variant?.name,
-        variantPrice: item?.variant?.price,
+        variantPrice: getEffectivePrice(item?.variant),
         quantity: item?.quantity,
         totalPrice,
         addons,
@@ -274,6 +289,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           <div className="flex space-x-3  overflow-x-auto pb-2 pt-1 no-scrollbar">
             {variants?.map((v: any) => {
               const isActive = v.id === selectedVariantId;
+              const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price;
+              const displayPrice = getEffectivePrice(v);
               return (
                 <div key={v.id} className="relative flex flex-col items-center group shrink-0">
                   <button
@@ -305,20 +322,27 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     </div>
                     
                     <span className="text-[12px] font-medium text-gray-700 b h-1/2 flex justify-center items-center">
-                      {(v.name).slice(0, 25)}...
+                      {(v.name).slice(0, 15)}...
                     </span>
                     <div className={`
-                     rounded-full px-2 py-0.5 text-xs font-bold
+                     rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-1
                     ${isActive 
                       ? 'bg-orange-500 text-white' 
                       : 'bg-white text-gray-700 border border-gray-300'}
                     shadow-sm
                   `}>
-                    {formatPrice(v.price)}
-                  </div>
+                    {showDiscount ? (
+                      <>
+                        <span>{formatPrice(v.discountedPrice)}</span>
+                      </>
+                    ) : (
+                      <span>{formatPrice(v.price)}</span>
+                    )}
+                    </div>
+                    {showDiscount && (
+                      <span className="line-through text-orange-500 text-[11px] mr-1">{formatPrice(v.price)}</span>
+                    )}
                   </button>
-                  
-                  
                 </div>
               );
             })}

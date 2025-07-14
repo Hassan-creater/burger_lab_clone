@@ -252,42 +252,39 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
             </div>
             
             {/* Variants */}
-            <div className="mt-6 px-4">
-              <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-3">
-                <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
-                <span className="bg-orange-500 px-4 py-1 rounded-r-lg"> Variants Include</span>
-              </div>
-              
-              <div className="flex space-x-3 overflow-x-auto pb-2 pt-1 no-scrollbar">
-                {Variants?.map((v: any) => (
-                  <div key={v.id} className="relative flex flex-col items-center group shrink-0">
-                    <button
-                      className="flex flex-col items-center p-2 rounded-xl transition-all duration-300 border-2 w-[8em] h-[10em] border-orange-500 bg-white hover:bg-gray-50 hover:border-gray-300 overflow-hidden"
-                    >
-                      <div className="relative rounded-lg overflow-hidden mb-1">
-                        <img 
-                          src={v.image} 
-                          alt={v.name} 
-                          className="w-full h-20 object-cover" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg" />
-                        <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+            <div className="w-full pb-2 pt-1">
+              {Variants?.length > 0 && (
+                <div className="mt-6 px-4 w-full">
+                  <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
+                    <span className="bg-orange-500 px-4 py-1 rounded-lg">Included in this Deal</span>
+                  </div>
+                  <div className="flex flex-col gap-3 mt-3 bg-gray-100 p-2 rounded-md w-full">
+                    {Variants?.map((v: any) => (
+                      <div
+                        key={v.id}
+                        className="p-3 rounded-xl border border-gray-200 bg-white flex items-center justify-between w-full"
+                      >
+                        <div className="flex items-center w-full">
+                          <img
+                            src={v?.image}
+                            alt={v?.name}
+                            className="w-8 h-8 rounded-md object-cover mr-3"
+                          />
+                          <div>
+                            <span className="font-medium hidden sm:block">{v?.name?.slice(0, 28)} x {v?.quantity} ...</span>
+                            <span className="text-[13px] block sm:hidden">{v?.name?.slice(0, 13)} x  {v?.quantity}  ...</span>
+                          </div>
+                        </div>
+                        <div className="text-right w-full">
+                          <span className="text-[12px] sm:text-[15px] font-normal text-gray-700 whitespace-nowrap">
+                            {formatPrice(v?.price * v.quantity)}
+                          </span>
                         </div>
                       </div>
-                      
-                      <span className="text-[12px] font-medium text-gray-700 b h-1/2 flex justify-center items-center">
-                        {(v.name).slice(0, 25)}{` x${v.quantity || 1}`}...
-                      </span>
-                      <div className="rounded-full px-2 py-0.5 text-xs font-bold bg-orange-500 text-white shadow-sm">
-                        {formatPrice(v.price)}
-                      </div>
-                    </button>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           </div>
     

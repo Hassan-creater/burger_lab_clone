@@ -116,7 +116,7 @@ const getStatusColor = (status: string) => {
             </div>
             <div className="text-right space-y-2">
               <p className={`${getStatusColor(order?.order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.order?.status ? (order?.order?.status).toUpperCase() : "Pending"}</p>
-              <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</p> {/* Fixed */}
+              <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</p> 
             </div>
           </div>
             <div className={`mt-4 flex items-center justify-between text-sm text-gray-600 ${designVar.fontFamily}`}>
@@ -151,7 +151,7 @@ const getStatusColor = (status: string) => {
             </div>
           </div>
           <div className="space-y-2">
-            <label className={`text-sm font-medium text-gray-600 ${designVar.fontFamily}`}>Total Amount</label>
+            <label className={`text-sm font-medium text-gray-600 ${designVar.fontFamily}`}>Subtotal</label>
             <p className={`text-2xl font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</p> {/* Fixed */}
           </div>
         </div>
@@ -333,7 +333,7 @@ const getStatusColor = (status: string) => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className={`${designVar.fontFamily} text-gray-600`}>Subtotal:</span>
-                    <span className={`${designVar.fontFamily} text-gray-600`}>Rs: {(order?.order?.total + (order?.order?.discount || 0)).toFixed(2)}</span>
+                    <span className={`${designVar.fontFamily} text-gray-600`}>Rs: {(order?.order?.total )}</span>
                   </div>
                   {order?.order?.discount && (
                     <div className="flex justify-between text-green-600">
@@ -344,7 +344,7 @@ const getStatusColor = (status: string) => {
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span className={`${designVar.fontFamily} text-gray-600`}>Total:</span>
-                    <span className={`text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total}</span>
+                    <span className={`text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.order?.total - order?.order?.discount}</span>
                   </div>
                 </div>
               </div>

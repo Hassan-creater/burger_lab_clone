@@ -107,7 +107,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     [localBranchData.storedValue?.orderType]
   );
 
-  const discountAmount = useMemo(
+  const oldDiscountAmount = useMemo(
     () =>
       (parseInt(discount ?? "0") / 100) *
       (subTotal +
@@ -121,8 +121,22 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const itemSubtotal = AddedInCart.reduce((acc, item) => acc + item.totalPrice, 0);
   const dealSubtotal = dealDataSafe.reduce((acc, deal) => acc + (deal.totalPrice || 0), 0);
   const combinedSubtotal = itemSubtotal + dealSubtotal;
-  const taxAmount = (combinedSubtotal) * (parseInt(data?.tax ?? "0") / 100);
-  const grandTotal = combinedSubtotal + taxAmount + deliveryCharges;
+  
+  // Calculate tax and discount based on isTaxAppliedBeforeCoupon
+  let taxAmount, discountAmount, grandTotal;
+  
+  if (isTaxAppliedBeforeCoupon) {
+    // Apply tax first, then discount on original subtotal
+    taxAmount = combinedSubtotal * (parseInt(data?.tax ?? "0") / 100);
+    discountAmount = combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100);
+    grandTotal = combinedSubtotal + taxAmount - discountAmount + deliveryCharges;
+  } else {
+    // Apply discount first, then tax on discounted amount
+    discountAmount = combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100);
+    const discountedSubtotal = combinedSubtotal - discountAmount;
+    taxAmount = discountedSubtotal * (parseInt(data?.tax ?? "0") / 100);
+    grandTotal = discountedSubtotal + taxAmount + deliveryCharges;
+  }
 
 
   useEffect(() => {
@@ -363,15 +377,9 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                 </div>
                 <div className="flex items-center justify-between w-full h-auto">
                   <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>Grand Total (Incl. Tax)</p>
-                  <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>{
-                    isTaxAppliedBeforeCoupon 
-                      ? formatPrice(
-                          (combinedSubtotal + taxAmount + deliveryCharges) - ((combinedSubtotal + taxAmount + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
-                        )
-                      : formatPrice(
-                          (combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) + ((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges
-                        )
-                  }</p>
+                  <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
+                    {formatPrice(grandTotal)}
+                  </p>
                 </div>
              
                   <Link href="/checkout">
@@ -465,21 +473,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           <div className="flex items-center justify-between w-full h-auto">
             <p className={`font-normal text-sm ${designVar.fontFamily}`}>Tax ({parseInt(data?.tax ?? "0") + "%"})</p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-              {
-                isTaxAppliedBeforeCoupon 
-                  ? formatPrice(combinedSubtotal * (parseInt(data?.tax ?? "0") / 100))
-                  : formatPrice((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100))
-              }
+              {formatPrice(taxAmount)}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
             <p className={`font-normal text-sm ${designVar.fontFamily}`}>Discount ({parseInt(couponData?.discount ?? "0") + "%"})</p>
             <p className={`font-normal text-gray-500 text-sm ${designVar.fontFamily}`}>
-              {
-                isTaxAppliedBeforeCoupon 
-                  ? formatPrice((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100))
-                  : formatPrice(combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))
-              }
+              {formatPrice(discountAmount)}
             </p>
           </div>
           <div className="flex items-center justify-between w-full h-auto">
@@ -491,11 +491,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           <div className="flex items-center justify-between w-full h-auto">
               <p className={`font-bold text-[1rem] sm:text-lg ${designVar.fontFamily}`}>Grand Total (Incl. Tax)</p>
             <p className={`font-bold text-gray-500 text-lg ${designVar.fontFamily}`}>
-              {
-                isTaxAppliedBeforeCoupon 
-                  ? formatPrice((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) - ((combinedSubtotal + (combinedSubtotal * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges) * (parseInt(couponData?.discount ?? "0") / 100)))
-                  : formatPrice((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) + ((combinedSubtotal - (combinedSubtotal * (parseInt(couponData?.discount ?? "0") / 100))) * (parseInt(data?.tax ?? "0") / 100)) + deliveryCharges)
-              }
+              {formatPrice(grandTotal)}
             </p>
           </div>
           <Button

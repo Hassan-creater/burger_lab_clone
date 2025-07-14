@@ -32,7 +32,8 @@ const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any })
     }
   }, [dealList, setDeals])
 
-  console.log(favorites)
+
+ 
 
   return (
     <>

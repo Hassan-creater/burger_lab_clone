@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 type SearchBoxProps = {
   onSearchStart?: () => void;
-  onSearchEnd?: () => void;
+  onSearchEnd?: (value: string) => void;
 };
 
 export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps) {
@@ -25,7 +25,7 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
         setQuery(inputValue);
         // Wait an additional 1.5s before ending the loader
         const loaderTimeout = setTimeout(() => {
-          onSearchEnd?.();
+          onSearchEnd?.(inputValue);
         }, 1500); // 1.3 second after debounce
 
         // Cleanup for loader timeout

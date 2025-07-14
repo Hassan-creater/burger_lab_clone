@@ -78,7 +78,10 @@ export default function SearchFilter({ categories, favorites, allItems }: Search
             setIsSearching(true);
             setHasSearched(true);
           }}
-          onSearchEnd={() => setIsSearching(false)}
+          onSearchEnd={(value) => {
+            setIsSearching(false);
+            if (!value.trim()) setHasSearched(false);
+          }}
         />
       </div>
       {isSearching ? (
