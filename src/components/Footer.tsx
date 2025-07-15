@@ -8,6 +8,7 @@ import { apiClientCustomer } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
 import { toast } from "sonner";
+import React from "react"; // Added for React.useState
 
 // const FooterNav = dynamic(() => import("./FooterNav"), { ssr: false });
 
@@ -82,6 +83,50 @@ const Footer = () => {
         }
       }
     }
+  };
+
+  // SocialIcon subcomponent for social media icons with fallback abbreviation
+  type SocialIconProps = {
+    link: string;
+    icon: string;
+    name: string;
+  };
+
+  const SocialIcon: React.FC<SocialIconProps> = ({ link, icon, name }) => {
+    const [imgError, setImgError] = React.useState(false);
+    // Robust abbreviation: first letter of first two words, or first two letters if single word
+    let abbreviation = "";
+    if (name) {
+      const words = name.trim().split(/\s+/);
+      if (words.length === 1) {
+        abbreviation = words[0].slice(0, 2).toUpperCase();
+      } else {
+        abbreviation = (words[0][0] + words[1][0]).toUpperCase();
+      }
+    }
+
+    return (
+      <a
+        href={link}
+        className="w-10 h-10 bg-gray-200 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+        aria-label={name}
+      >
+        {!imgError ? (
+          <Image
+            src={icon}
+            alt={name}
+            width={20}
+            height={20}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-base uppercase">
+            {abbreviation}
+          </span>
+        )}
+      </a>
+    );
   };
 
   return (
@@ -262,15 +307,14 @@ const Footer = () => {
                  <div className="w-full flex gap-2">
                  {
                   socialMediaData?.map((item : any , index : number)=>{
+                    console.log(item.linkIcon)
                     return (
-                      <a
+                      <SocialIcon
                       key={index}
-                    href={item?.linkText}
-                    className="w-10 h-10 bg-gray-200 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-                   aria-label="Facebook"
-                   >
-                    <Image src={item?.linkIcon} alt={item?.linkName} width={20} height={20} className="w-full h-full object-cover" />
-              </a>
+                    link={item?.linkText}
+                    icon={item?.linkIcon}
+                    name={item?.linkName}
+                  />
                     )
                   })
                  }

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useObserverStore } from "@/store/slices/observerSlice";
 import { Category } from "@/models/Category";
@@ -19,9 +19,11 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   const {deliveryClose, dineInClose, pickupClose , deals } = useCartContext()
  
   
-  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
-  const activeLinkRef = React.useRef<HTMLLIElement | null>(null);
-
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const activeLinkRef = useRef<HTMLLIElement | null>(null);
+  const [isUserClick, setIsUserClick] = useState(false);
+  const [ignoreScrollSpyUntil, setIgnoreScrollSpyUntil] = useState(0);
+  const [manualDealsActive, setManualDealsActive] = useState(false);
 
 
   const scrollHandler = (options: "Left" | "Right") => {
@@ -32,6 +34,80 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
         scrollContainerRef.current.scrollLeft += 150;
       }
   };
+
+  // --- Debounced, smooth Scrollspy logic start ---
+  useEffect(() => {
+    if (!categories || categories.length === 0) return;
+
+    const scrollOffset = 400; // or your preferred offset
+    let debounceTimeout: NodeJS.Timeout | null = null;
+
+    const handleScroll = () => {
+      if (!categories || categories.length === 0) return;
+      const dealsSectionExists = !!document.getElementById("deals");
+      if (manualDealsActive && !dealsSectionExists) {
+        // If manually set to deals and section is not present, always force highlight and prevent scrollspy from updating
+        if (activeSectionId !== "deals") {
+          setActiveSectionId("deals");
+          console.log("[ScrollSpy] Forcing Deals highlight due to manualDealsActive");
+        }
+        return;
+      }
+      if (!dealsSectionExists && activeSectionId === "deals") {
+        // If deals section is not present and deals is active, do not change highlight
+        return;
+      }
+      if (Date.now() < ignoreScrollSpyUntil) return;
+
+      let closestSection = categories[0].title;
+      let minDistance = Number.POSITIVE_INFINITY;
+
+      for (let i = 0; i < categories.length; i++) {
+        const section = document.getElementById(categories[i].title);
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          const distance = Math.abs(rect.top - scrollOffset);
+          if (rect.top - scrollOffset <= 0 && distance < minDistance) {
+            minDistance = distance;
+            closestSection = categories[i].title;
+          }
+        }
+      }
+
+      // If no section is above the offset, pick the first section below the offset
+      if (minDistance === Number.POSITIVE_INFINITY) {
+        for (let i = 0; i < categories.length; i++) {
+          const section = document.getElementById(categories[i].title);
+          if (section) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top - scrollOffset > 0) {
+              closestSection = categories[i].title;
+              break;
+            }
+          }
+        }
+      }
+
+      if (closestSection !== activeSectionId) {
+        console.log(`[ScrollSpy] Changing highlight from ${activeSectionId} to ${closestSection}`);
+        setActiveSectionId(closestSection);
+      }
+    };
+
+    const debouncedScroll = () => {
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(handleScroll, 60); // 60ms debounce
+    };
+
+    window.addEventListener("scroll", debouncedScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener("scroll", debouncedScroll);
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+    };
+  }, [categories, setActiveSectionId, activeSectionId, ignoreScrollSpyUntil, manualDealsActive]);
+  // --- Debounced, smooth Scrollspy logic end ---
 
   useEffect(() => {
     if (activeLinkRef.current) {
@@ -55,6 +131,37 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
       setActiveSubNavId(categories[0].title);          // Opens its submenu
     }
   }, [categories, activeSectionId, setActiveSectionId]);
+
+  // Scroll to section only if triggered by user click
+  useEffect(() => {
+    if (isUserClick && activeSectionId) {
+      setIsUserClick(false); // Reset immediately to avoid repeated scrolls
+      setTimeout(() => {
+        const target = document.getElementById(activeSectionId);
+        if (target) {
+          const yOffset = -170; // 150px below the top
+          const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 50);
+    }
+  }, [activeSectionId, isUserClick]);
+
+  // Reset manualDealsActive if deals section appears
+  useEffect(() => {
+    const dealsSectionExists = !!document.getElementById("deals");
+    if (dealsSectionExists && manualDealsActive) {
+      setManualDealsActive(false);
+    }
+  }, [manualDealsActive]);
+
+  // Trigger scrollspy when deals section appears (for async fetch)
+  useEffect(() => {
+    const dealsSection = document.getElementById("deals");
+    if (dealsSection) {
+      window.dispatchEvent(new Event("scroll"));
+    }
+  }, [deals && deals.length]);
 
   return (
     <nav
@@ -93,7 +200,7 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
     designVar.categoryButton.hover.borderRadius,
     designVar.categoryButton.hover.color,
     designVar.fontFamily,
-    activeSectionId === "deals"
+    (activeSectionId === "deals" || manualDealsActive)
       ? designVar.categoryButton.activeBackgroundColor
       : designVar.categoryButton.inactiveBackgroundColor
   )}
@@ -101,16 +208,15 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   <button
     onClick={e => {
       e.preventDefault();
+      const dealsSection = document.getElementById("deals");
+      if (dealsSection) {
+        setIsUserClick(true);
+        setIgnoreScrollSpyUntil(Date.now() + 400);
+        setManualDealsActive(false);
+      } else {
+        setManualDealsActive(true);
+      }
       setActiveSectionId("deals");
-      setTimeout(() => {
-        const target = document.getElementById("deals");
-        if (target) {
-          const yOffset = -143;
-          const y =
-            target.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: "smooth" });
-        }
-      }, 50);
     }}
   >
     <p className="text-center">Deals</p>
@@ -154,19 +260,10 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
                   <button
   onClick={(e) => {
     e.preventDefault();
+    setIsUserClick(true);
+    setIgnoreScrollSpyUntil(Date.now() + 400);
+    setManualDealsActive(false);
     setActiveSectionId(category.title); // set state first
-
-    // Scroll after small delay to allow re-render/layout
-    setTimeout(() => {
-      const target = document.getElementById(category.title);
-      if (target) {
-        const yOffset = -143; // scroll 130px above the element
-        const y =
-          target.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
-    }, 50); // delay just enough to allow layout to complete
   }}
 >
   <p className="text-center">{category.title}</p>

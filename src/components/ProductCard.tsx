@@ -56,6 +56,7 @@ function ProductCard({
  
   const [open, setOpen] = useState(false);
   const {user} = useCartContext();
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Card
@@ -72,14 +73,21 @@ function ProductCard({
           {/* Image Section */}
           <CardHeader className="relative w-[50%] py-[0.5em] overflow-hidden flex justify-center items-center ">
             <div className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} `}>
-              <Image
-                src={product?.image}
-                width={300}
-                height={300}
-                priority
-                alt="product-image"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
-              />
+              {product?.image && !imgError ? (
+                <Image
+                  src={product.image}
+                  width={300}
+                  height={300}
+                  priority
+                  alt="product-image"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 font-semibold text-2xl">
+                  Zest Up
+                </div>
+              )}
               {product?.discountPercent > 0 && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                   {product?.discountPercent}% OFF
