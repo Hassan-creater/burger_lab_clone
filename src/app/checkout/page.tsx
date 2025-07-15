@@ -104,10 +104,9 @@ function Checkout() {
  const [deliveryAddressValue , setDeliveryAddressValue] = useState("");
  const parsedUserData = userData ? JSON.parse(userData) : null;
  const userid = parsedUserData?.id;
-  const {setComment , AddressData , setDeliveryName , setDeliveryPhone , setDeliveryAddress ,deliveryAddress } = useCartContext();
+  const {setComment , AddressData , setDeliveryName , setDeliveryPhone , setDeliveryAddress ,deliveryAddress , user } = useCartContext();
 
-
-
+ 
 
    const getAddresses = async () => {
     const res = await apiClient.get(`/address/user/${userid}`);

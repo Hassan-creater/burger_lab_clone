@@ -18,9 +18,11 @@ import { apiClient } from "@/lib/api";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { designVar } from "@/designVar/desighVar";
+import { useCartContext } from "@/context/context";
+import { useQuery } from "@tanstack/react-query";
 
 function OrderDetails() {
-  const { user } = useUserStore();
+ const {user} = useCartContext()
 
   const {
     data,
@@ -34,64 +36,30 @@ function OrderDetails() {
   } = useOrders(user?.userId!);
 
    
-
-  const [order, setOrder] = useState<any[]>([]); 
-  const [isLoading, setIsLoading] = useState(true);// ✅ initialize as array
+  
+  
+ const getOrders  = async ()=>{
+  try {
+    const res = await apiClient.get(`/order/user/${user?.id}`);
+    if (res.status === 200 || res.status === 201) {
+      return res.data.data?.orders;
+    }
+    // Treat non-200/201 as invalid
+    throw new Error(`Unexpected status: ${res.status}`);
+  } catch (error) {
+    
+    return null;
+  }
+ }
   
 
-  const storedOrderIds = JSON.parse(localStorage.getItem("orders") || "[]");
+  const {data: order , isLoading} = useQuery({
+    queryKey : ["orders"],
+    queryFn : getOrders,
+    enabled : !! user?.id
+  })
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const validOrders: string[] = [];
-      const invalidOrderIds: string[] = [];
-  
-      // Process all orders in parallel
-      const results = await Promise.allSettled(
-        storedOrderIds.map(async (id: string) => {
-          try {
-            const res = await apiClient.get(`/order/${id}`);
-            if (res.status === 200 || res.status === 201) {
-              return res.data.data;
-            }
-            // Treat non-200/201 as invalid
-            throw new Error(`Unexpected status: ${res.status}`);
-          } catch (error) {
-            if (axios.isAxiosError(error) && error.response?.status === 404) {
-              invalidOrderIds.push(id);
-            }
-            return null;
-          }
-        })
-      );
-  
-      // Process results
-      results.forEach((result, index) => {
-        if (result.status === "fulfilled" && result.value) {
-          validOrders.push(result.value);
-        } else if (result.status === "rejected") {
-          invalidOrderIds.push(storedOrderIds[index]);
-        }
-      });
-  
-      // Update localStorage if any invalid orders found
-      if (invalidOrderIds.length > 0) {
-        const updatedOrderIds = storedOrderIds.filter(
-          (id: string) => !invalidOrderIds.includes(id)
-        );
-        localStorage.setItem("orders", JSON.stringify(updatedOrderIds));
-      }
-  
-      setOrder(validOrders);
-      setIsLoading(false);
-    };
-  
-    fetchOrders();
-  }, []);
-  
 
-  
-  
 
   if (status === "pending") {
     return (
@@ -125,9 +93,9 @@ function OrderDetails() {
   </div>
 ) : order?.length > 0 ? (
   <div className="space-y-4">
-    {order.map((orderData, index) => (
+    {order?.map((orderData : any, index : number) => (
       <OrderDetailsModal
-        key={orderData.order.id}  // Use unique ID from nested order
+        key={orderData?.id}  // Use unique ID from nested order
         order={orderData}   // Pass the nested order object directly
         index={index}
       />

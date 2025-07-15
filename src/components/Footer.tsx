@@ -307,7 +307,7 @@ const Footer = () => {
                  <div className="w-full flex gap-2">
                  {
                   socialMediaData?.map((item : any , index : number)=>{
-                    console.log(item.linkIcon)
+                  
                     return (
                       <SocialIcon
                       key={index}

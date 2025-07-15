@@ -135,7 +135,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     if (
       typeof variant?.discountedPrice === 'number' &&
       typeof variant?.price === 'number' &&
-      variant.discountedPrice < variant.price
+      variant.discountedPrice < variant.price && variant.discountedPrice != 0
     ) {
       return variant.discountedPrice;
     }
@@ -147,7 +147,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     if (
       typeof addon?.discountedPrice === 'number' &&
       typeof addon?.price === 'number' &&
-      addon.discountedPrice < addon.price
+      addon.discountedPrice < addon.price && addon.discountedPrice != 0
     ) {
       return addon.discountedPrice;
     }
@@ -301,7 +301,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           <div className="flex space-x-3  overflow-x-auto pb-2 pt-1 no-scrollbar">
             {variants?.map((v: any) => {
               const isActive = v.id === selectedVariantId;
-              const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price;
+              const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price && v.discountedPrice != 0;
             
               return (
                 <div key={v.id} className="relative flex flex-col items-center group shrink-0">
@@ -378,7 +378,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     {selectedVariant.addons.map((ao: any) => {
                       const qty = addonQtys[selectedVariant.id]?.[ao.id] || 0;
                       const selected = qty > 0;
-                      const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price;
+                      const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price && ao.discountedPrice != 0;
                       return (
                         <div
                           key={ao.id}

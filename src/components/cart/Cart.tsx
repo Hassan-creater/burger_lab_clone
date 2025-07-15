@@ -256,15 +256,21 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
         if(res.status === 201){
           ClearCart();
           toast.success("Order placed successfully");
-          const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-          existingOrders.push(res.data.data.id);
-          localStorage.setItem("orders", JSON.stringify(existingOrders));
           localStorage.removeItem("orderType")
           sessionStorage.clear();
           router.push("/order-complete/" + res.data.data.displayId);
         }
-      } catch (error) {
-        toast.error("Failed to place order. Please try again.");
+      } catch (error: any) {
+        // Try to extract a meaningful error message from the response
+        let errorMsg = "Failed to place order. Please try again.";
+        if (error?.response?.data?.error) {
+          errorMsg = error.response.data.error;
+        } else if (error?.response?.data?.message) {
+          errorMsg = error.response.data.message;
+        } else if (typeof error?.message === "string") {
+          errorMsg = error.message;
+        }
+        toast.error(errorMsg);
       } finally {
         setIsLoading(false);
       }
