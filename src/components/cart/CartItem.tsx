@@ -81,10 +81,16 @@ function CartItem({ cartItem, removeItem, showAddons = false, setShowAddons = ()
       <div className="flex gap-4 pb-3">
         <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
           <Image
-            src={cartItem?.itemImage || "/placeholder.svg?height=96&width=96"}
+            src={cartItem?.itemImage}
             alt={cartItem.variantName}
             width={96}
             height={96}
+            onError={e => {
+              const target = e.currentTarget as HTMLImageElement;
+              if (target.src !== "/logo-symbol-2.png") {
+                target.src = "/logo-symbol-2.png";
+              }
+            }}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
           />
         </div>

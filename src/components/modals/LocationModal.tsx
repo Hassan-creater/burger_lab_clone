@@ -573,9 +573,6 @@ const isButtonDisabled =
         <button
         onClick={() => {
           setOpen(false);
-          setDeliveryClose("");
-          setDineInClose("");
-          setPickupClose("");
         }}
         className="absolute top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors"
       >

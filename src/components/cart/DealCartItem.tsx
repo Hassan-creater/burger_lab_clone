@@ -1,15 +1,15 @@
-import type { CartItem } from "@/types";
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {  ChevronDown, Trash2} from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
-import { forbidden, usePathname } from "next/navigation";
+import {  usePathname } from "next/navigation";
 
 
 import { useCartContext } from "@/context/context";
 import { designVar } from "@/designVar/desighVar";
-import { increaseAddonQuantity } from "@/cartStorage/cartStorage";
+
 
 
 type CartItems = {
@@ -49,7 +49,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
   // const itemTotal = cartItem.variantPrice * cartItem.quantity + totalAddons + totalExtras
 
 
-  const {removeItemFromCart  , DecreaseDealQuantity , IncreaseDealQuantity , removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity} = useCartContext();
+  const { DecreaseDealQuantity , IncreaseDealQuantity , removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity} = useCartContext();
 
   // const renderAddOns = (addOnOption: any, index: number) => (
   //   <div key={index} className="flex justify-between text-sm text-gray-600">
@@ -83,9 +83,15 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
       <div className="flex gap-4 pb-3">
         <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
           <Image
-            src={cartItem?.dealImage || "/placeholder.svg?height=96&width=96"}
+            src={cartItem?.dealImage}
             alt={cartItem.dealId || cartItem.variantId || cartItem.id}
             width={96}
+            onError={e => {
+              const target = e.currentTarget as HTMLImageElement;
+              if (target.src !== "/logo-symbol-2.png") {
+                target.src = "/logo-symbol-2.png";
+              }
+            }}
             height={96}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
           />

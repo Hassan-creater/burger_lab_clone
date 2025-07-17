@@ -95,6 +95,12 @@ function DealCard({ deal, className , favorite , status }: { deal:  any; classNa
             >
               <Image
                 src={deal?.image}
+                onError={e => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (target.src !== "/logo-symbol-2.png") {
+                    target.src = "/logo-symbol-2.png";
+                  }
+                }}
                 width={300}
                 height={300}
                 priority
