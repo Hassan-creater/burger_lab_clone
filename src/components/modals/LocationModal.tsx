@@ -393,8 +393,8 @@ const isButtonDisabled =
       </DialogTitle>
     </DialogHeader>
 
-    <div className="w-24 h-16 bg-gradient-to-br flex items-center justify-center">
-      <img src="/logo.webp" alt="logo" className="w-full h-full object-contain" />
+    <div className="w-28 h-16 bg-gray-200 p-2 rounded-lg bg-gradient-to-br flex items-center justify-center">
+      <img src="/zestUp.png" alt="logo" className="w-full h-full object-contain scale-[1.1]" />
     </div>
 
     {dineInClose && (

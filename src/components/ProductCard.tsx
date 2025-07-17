@@ -72,7 +72,7 @@ function ProductCard({
           )}>
           {/* Image Section */}
           <CardHeader className="relative w-[50%] py-[0.5em] overflow-hidden flex justify-center items-center ">
-            <div className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} `}>
+            <div className={`${designVar.cardImage.width} ${designVar.cardImage.height} ${designVar.cardImage.borderRadius} ${designVar.cardImage.border} ${designVar.cardImage.borderColor} ${designVar.cardImage.overflow} ${designVar.cardImage.flex} bg-gray-100 `} >
               {product?.image && !imgError ? (
                 <Image
                   src={product.image}
@@ -84,9 +84,15 @@ function ProductCard({
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 font-semibold text-2xl">
-                  Zest Up
-                </div>
+                <Image
+                  src="/logo-symbol-2.png"
+                  width={300}
+                  height={300}
+                  priority
+                  alt="product-image"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
+                  
+                />
               )}
               {product?.discountPercent > 0 && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">

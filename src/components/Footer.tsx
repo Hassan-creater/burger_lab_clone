@@ -170,9 +170,9 @@ const Footer = () => {
         {/* Logo and App Downloads Section */}
         <div className="space-y-8 ">
           {/* Logo Placeholder */}
-          <div className="flex items-center space-x-3">
-            <div className="w-24 h-24 rounded-lg flex items-center justify-center">
-              <Image src="/logo.webp" alt="logo" className="w-full h-full object-contain" width={64} height={64} />
+          <div className="flex items-center p-2 justify-center bg-gray-200 rounded-lg">
+            <div className="w-40 rounded-lg flex items-center justify-center">
+              <Image src="/zestUp.png" alt="logo" className="w-full h-full object-contain" width={64} height={64} />
             </div>
             
           </div>

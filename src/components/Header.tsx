@@ -52,15 +52,15 @@ const Header = () => {
 
    
      {/* Center: Logo */}
-     <div className="flex-1 flex justify-center">
-       <Link href="/" className="w-[80px] lg:w-[120px] h-full flex items-center justify-center">
+     <div className="flex-1 flex justify-center  h-[5em]">
+       <Link href="/" className="w-[60%] h-full bg-gray-200 flex items-center justify-center">
          <Image
-           src="/logo.webp"
+           src="/zestUp.png"
            alt="website-logo-showing-its-name"
            width={80}
            height={80}
            fetchPriority="high"
-           className="object-contain"
+           className="object-cover scale-[2]"
            title="Burger Lab"
          />
        </Link>
