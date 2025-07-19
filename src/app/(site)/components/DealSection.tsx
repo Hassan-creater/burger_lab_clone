@@ -14,7 +14,7 @@ const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any })
 
   const getAllDeals = async () => {
     const res = await apiClientCustomer.get(`/deal/view/customer`);
-    return res.data.data
+    return res.data.data.deals
   }
 
   // Only fetch if deals prop is not provided

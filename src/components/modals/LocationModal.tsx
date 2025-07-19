@@ -75,12 +75,20 @@ export default function LocationModal() {
 
 
   function convertTo12HourFormat(time24: string): string {
-    // Accepts "HH:mm:ss" or "HH:mm"
-    const [hourStr, minuteStr] = time24?.split(":") || [];
+    if (!time24) return "";
+    
+    // Parse the time string (HH:mm:ss or HH:mm)
+    const [hourStr, minuteStr] = time24.split(":");
     let hour = parseInt(hourStr, 10);
-    const minute = minuteStr?.padStart(2, "0") || "";
+    const minute = minuteStr?.padStart(2, "0") || "00";
+    
+    // Convert to UTC+5 (Pakistan time)
+    hour = (hour + 5) % 24;
+    
+    // Convert to 12-hour format
     const ampm = hour >= 12 ? "PM" : "AM";
     hour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+    
     return `${hour}:${minute} ${ampm}`;
   }
 
@@ -89,15 +97,18 @@ export default function LocationModal() {
     if (!branch) return false;
   
     const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    // Get current time in UTC+5 (Pakistan time)
+    const pakistanTime = new Date(now.getTime() + (5 * 60 * 60 * 1000));
+    const currentMinutes = pakistanTime.getUTCHours() * 60 + pakistanTime.getUTCMinutes();
     
   
     // Parse "HH:mm(:ss)" but take only hours & minutes
     const [oH, oM] = branch?.openTime?.split(":").map(Number) || [];
     const [cH, cM] = branch?.endTime?.split(":").map(Number) || [];
   
-    const openMinutes  = oH * 60 + oM;
-    const closeMinutes = cH * 60 + cM;
+    // Convert to UTC+5
+    const openMinutes  = ((oH + 5) % 24) * 60 + oM;
+    const closeMinutes = ((cH + 5) % 24) * 60 + cM;
   
     const isOvernight = closeMinutes <= openMinutes;
   
@@ -161,38 +172,55 @@ export default function LocationModal() {
     }
   }
 
+  // Function to get current tab value
+  const getCurrentTabValue = () => {
+    return selectedOrderType;
+  }
+
   function utcTimeToLocalTimeString(utcTimeStr : string) {
-    const [hours, minutes, seconds] = utcTimeStr?.split(":")?.map(Number) || [];
-    const now = new Date();
-    // Create a date in UTC for today with the given time
-    const utcDate = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(),
-      hours,
-      minutes,
-      seconds
-    ));
-    // Convert to local time string (e.g., "09:00 PM")
-    return utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (!utcTimeStr) return "";
+    
+    // Parse the UTC time string
+    const [hours, minutes] = utcTimeStr.split(":").map(Number);
+    
+    // Convert UTC to UTC+5 (Pakistan time)
+    let pakistanHour = (hours + 5) % 24;
+    
+    // Convert to 12-hour format
+    const ampm = pakistanHour >= 12 ? "PM" : "AM";
+    pakistanHour = pakistanHour % 12 || 12; // Convert 0 to 12 for 12 AM
+    
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    
+    return `${pakistanHour}:${formattedMinutes} ${ampm}`;
   }
 
 
   function isAreaOpen(openTime : string, closeTime : string) {
+    if (!openTime || !closeTime) return false;
+    
+    // Get current time in UTC+5 (Pakistan time)
     const now = new Date();
-    const [oh, om, os] = openTime.split(":").map(Number);
-    const [ch, cm, cs] = closeTime.split(":").map(Number);
-  
-    // Create UTC dates for today
-    const open = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), oh, om, os));
-    const close = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), ch, cm, cs));
-  
-    // Convert to local time
-    const localOpen = new Date(open.getTime() + (now.getTimezoneOffset() * 60000 * -1));
-    const localClose = new Date(close.getTime() + (now.getTimezoneOffset() * 60000 * -1));
-  
-    // Compare using Date objects (handles AM/PM automatically)
-    return now >= localOpen && now <= localClose;
+    const pakistanTime = new Date(now.getTime() + (5 * 60 * 60 * 1000));
+    const currentMinutes = pakistanTime.getUTCHours() * 60 + pakistanTime.getUTCMinutes();
+    
+    // Parse opening and closing times
+    const [oh, om] = openTime.split(":").map(Number);
+    const [ch, cm] = closeTime.split(":").map(Number);
+    
+    // Convert to UTC+5
+    const openMinutes = ((oh + 5) % 24) * 60 + om;
+    const closeMinutes = ((ch + 5) % 24) * 60 + cm;
+    
+    const isOvernight = closeMinutes <= openMinutes;
+    
+    if (isOvernight) {
+      // e.g. 13:37 → 01:37 next day
+      return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+    } else {
+      // e.g. 09:00 → 17:00 same day
+      return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+    }
   }
 
   const getAllBranches = async ()=>{
@@ -393,8 +421,8 @@ const isButtonDisabled =
       </DialogTitle>
     </DialogHeader>
 
-    <div className="w-28 h-16 bg-gray-200 p-2 rounded-lg bg-gradient-to-br flex items-center justify-center">
-      <img src="/zestUp.png" alt="logo" className="w-full h-full object-contain scale-[1.1]" />
+    <div className="w-36 h-20  p-2 rounded-lg bg-gradient-to-br flex items-center justify-center">
+      <img src="/blueLogo.png" alt="logo" className="w-full h-full object-contain scale-[1.1]" />
     </div>
 
     {dineInClose && (
@@ -572,9 +600,10 @@ const isButtonDisabled =
       AddressData?.orderType && (
         <button
         onClick={() => {
+          if(AddressData.orderType !== selectedOrderType)
           setOpen(false);
         }}
-        className="absolute top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors"
+        className={`absolute ${AddressData.orderType != selectedOrderType ? "hidden" : "block"} top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors`}
       >
         <X className="w-5 h-5" />
     </button>

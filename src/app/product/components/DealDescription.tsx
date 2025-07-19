@@ -44,6 +44,8 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     queryFn: getItemById,
   });
 
+
+
   const safeData = data || { addons: [], extras: [], variants: [], price: 0 };
   const Addons = safeData.addons;
   const Extras = safeData.extras;
@@ -302,8 +304,8 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     
           {/* Product Details */}
           <div className="w-ful flex flex-col">
-            <div className="mt-6 space-y-8 overflow-y-auto flex-1">
-              <div className="border p-5 hover:shadow-lg transition-all bg-white">
+            <div className=" space-y-8 overflow-y-auto flex-1">
+              <div className=" px-5 hover:shadow-lg transition-all bg-white">
                 {/* Addons */}
                 {Addons.length > 0 && (
                   <div className="mt-5">

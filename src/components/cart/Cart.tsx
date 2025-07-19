@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, extractUnavailableAddonsOrExtrasError, formatPrice } from "@/lib/utils";
 import { CaretDown, ShoppingCartIcon } from "../icons";
 import {
   Sheet,
@@ -260,17 +260,73 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           sessionStorage.clear();
           router.push("/order-complete/" + res.data.data.displayId);
         }
-      } catch (error: any) {
-        // Try to extract a meaningful error message from the response
-        let errorMsg = "Failed to place order. Please try again.";
-        if (error?.response?.data?.error) {
-          errorMsg = error.response.data.error;
-        } else if (error?.response?.data?.message) {
-          errorMsg = error.response.data.message;
-        } else if (typeof error?.message === "string") {
-          errorMsg = error.message;
-        }
-        toast.error(errorMsg);
+      } catch (err: any) {
+        const backendError = err?.response?.data;
+          // Always try to parse backendError.error if it's a string
+          if (backendError?.error && typeof backendError.error === 'string') {
+            try {
+              const parsed = JSON.parse(backendError.error);
+              // Only show toast if there are actually unavailable items
+              const hasUnavailable =
+                (Array.isArray(parsed.unavailableAddons) && parsed.unavailableAddons.length > 0) ||
+                (Array.isArray(parsed.unavailableExtras) && parsed.unavailableExtras.length > 0) ||
+                (Array.isArray(parsed.unavailableItems) && parsed.unavailableItems.length > 0) ||
+                (Array.isArray(parsed.unavailableVariants) && parsed.unavailableVariants.length > 0);
+              if (hasUnavailable) {
+                toast.error(extractUnavailableAddonsOrExtrasError(parsed));
+              } else if (
+                Array.isArray(parsed.unavailableVariants) &&
+                parsed.unavailableVariants.length === 0 &&
+                !parsed.unavailableAddons &&
+                !parsed.unavailableExtras &&
+                !parsed.unavailableItems
+              ) {
+                // Only unavailableVariants is present and is an empty array
+                toast.error('Variant not exist');
+              } else if (
+                Array.isArray(parsed.unavailableAddons) &&
+                parsed.unavailableAddons.length === 0 &&
+                !parsed.unavailableVariants &&
+                !parsed.unavailableExtras &&
+                !parsed.unavailableItems
+              ) {
+                toast.error('Addon not exist');
+              } else if (
+                Array.isArray(parsed.unavailableExtras) &&
+                parsed.unavailableExtras.length === 0 &&
+                !parsed.unavailableVariants &&
+                !parsed.unavailableAddons &&
+                !parsed.unavailableItems
+              ) {
+                toast.error('Extra not exist');
+              } else if (
+                Array.isArray(parsed.unavailableItems) &&
+                parsed.unavailableItems.length === 0 &&
+                !parsed.unavailableVariants &&
+                !parsed.unavailableAddons &&
+                !parsed.unavailableExtras
+              ) {
+                toast.error('Item not exist');
+              } else {
+                // If it's just empty arrays, show a generic error
+                toast.error(err?.message || 'Failed to place order. Please try again.');
+              }
+            } catch {
+              // If parsing fails, show the string as a fallback
+              toast.error(err?.message || 'Failed to place order. Please try again.');
+            }
+          } else if (
+            backendError && (
+              (Array.isArray(backendError.unavailableAddons) && backendError.unavailableAddons.length > 0) ||
+              (Array.isArray(backendError.unavailableExtras) && backendError.unavailableExtras.length > 0) ||
+              (Array.isArray(backendError.unavailableItems) && backendError.unavailableItems.length > 0) ||
+              (Array.isArray(backendError.unavailableVariants) && backendError.unavailableVariants.length > 0)
+            )
+          ) {
+            toast.error(extractUnavailableAddonsOrExtrasError(backendError));
+          } else {
+            toast.error(backendError?.error || err?.message || 'Failed to place order. Please try again.');
+          }
       } finally {
         setIsLoading(false);
       }

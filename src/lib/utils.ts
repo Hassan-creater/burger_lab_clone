@@ -135,3 +135,48 @@ export const formatErrorMessage = (error: any): string => {
 	
 	return "An error occurred. Please try again.";
 };
+
+
+
+export function extractUnavailableAddonsOrExtrasError(error: any): string {
+	if (!error || typeof error !== 'object') return String(error);
+	let message = '';
+	// Helper to format a section
+	const formatSection = (title: string, arr: any[]) => {
+	  if (!Array.isArray(arr) || arr.length === 0) return '';
+	  return `${title}:
+  ${arr.map((entry: any) => `  • ${entry.name || 'Unknown'}`).join('\n')}`;
+	};
+	const sections = [];
+	if (Array.isArray(error.unavailableAddons) && error.unavailableAddons.length > 0) {
+	  sections.push(formatSection('Unavailable Addons', error.unavailableAddons));
+	}
+	if (Array.isArray(error.unavailableExtras) && error.unavailableExtras.length > 0) {
+	  sections.push(formatSection('Unavailable Extras', error.unavailableExtras));
+	}
+	if (Array.isArray(error.unavailableItems) && error.unavailableItems.length > 0) {
+	  sections.push(formatSection('Unavailable Items', error.unavailableItems));
+	}
+	if (Array.isArray(error.unavailableVariants) && error.unavailableVariants.length > 0) {
+	  sections.push(formatSection('Unavailable Variants', error.unavailableVariants));
+	}
+	if (sections.length > 0) {
+	  message = sections.join('\n\n');
+	  return message;
+	}
+	// fallback: show stringified error
+	return typeof error === 'string' ? error : JSON.stringify(error);
+  }
+
+
+
+  export function formatDisplayId(displayIdMetadata: string, orderId: number): string {
+	const lastDash = displayIdMetadata.lastIndexOf('-');
+	const prefix = lastDash !== -1 ? displayIdMetadata.slice(0, lastDash) : displayIdMetadata;
+	const suffix = lastDash !== -1 ? displayIdMetadata.slice(lastDash + 1) : '';
+	let paddedId = orderId.toString();
+	if (orderId < 10) paddedId = '00' + paddedId;
+	else if (orderId < 100) paddedId = '0' + paddedId;
+	// else use as is
+	return `${prefix}-${paddedId}-${suffix}`;
+  }

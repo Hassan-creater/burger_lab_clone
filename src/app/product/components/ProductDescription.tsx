@@ -42,28 +42,29 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     queryFn: getItemById,
   });
 
+ 
+
   const variants = data?.data?.item?.variants;
 
- 
 
   // Set default variant and quantity to 1, and initialize addon/extra qtys
   useEffect(() => {
     if (variants && variants.length > 0) {
-      const firstVariantId = variants[0].id;
+      const firstVariantId = variants[0]?.id;
       setSelectedVariantId(firstVariantId);
       // Set default quantity to 1 for all variants
       const initialQtys: Record<string, number> = {};
       const initialAddonQtys: Record<string, Record<string, number>> = {};
       const initialExtraQtys: Record<string, Record<string, number>> = {};
       variants.forEach((v: any) => {
-        initialQtys[v.id] = 1;
-        initialAddonQtys[v.id] = {};
-        (v.addons || []).forEach((ao: any) => {
-          initialAddonQtys[v.id][ao.id] = 0;
+        initialQtys[v?.id] = 1;
+        initialAddonQtys[v?.id] = {};
+        (v?.addons || []).forEach((ao: any) => {
+          initialAddonQtys[v?.id][ao?.id] = 0;
         });
-        initialExtraQtys[v.id] = {};
-        (v.extras || []).forEach((ex: any) => {
-          initialExtraQtys[v.id][ex.id] = 0;
+        initialExtraQtys[v?.id] = {};
+        (v?.extras || []).forEach((ex: any) => {
+          initialExtraQtys[v?.id][ex?.id] = 0;
         });
       });
       setVariantQtys(initialQtys);
@@ -72,7 +73,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     }
   }, [variants]);
 
-  const selectedVariant = variants?.find((v: any) => v.id === selectedVariantId);
+  const selectedVariant = variants?.find((v: any) => v?.id === selectedVariantId);
 
   // Quantity handlers - only update UI state
   const changeVariantQty = (variantId: string, delta: number) => {
@@ -132,14 +133,17 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
   // Helper function to get the correct price
   const getEffectivePrice = (variant: any) => {
+    
     if (
       typeof variant?.discountedPrice === 'number' &&
       typeof variant?.price === 'number' &&
-      variant.discountedPrice < variant.price && variant.discountedPrice != 0
+      variant?.discountedPrice < variant?.price && variant?.discountedPrice != 0
     ) {
-      return variant.discountedPrice;
+     
+      return variant?.discountedPrice;
     }
-    return variant?.price;
+
+    return variant?.price || 0;
   };
 
   // Helper for addon price
@@ -147,29 +151,31 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     if (
       typeof addon?.discountedPrice === 'number' &&
       typeof addon?.price === 'number' &&
-      addon.discountedPrice < addon.price && addon.discountedPrice != 0
+      addon?.discountedPrice < addon?.price && addon?.discountedPrice != 0
     ) {
-      return addon.discountedPrice;
+      return addon?.discountedPrice;
     }
-    return addon?.price;
+    return addon?.price || 0;
   };
 
   // Calculate variant total price (use actual addon/extra qtys)
   const computeVariantTotal = (variant: any) => {
+  
     const qty = variantQtys[variant?.id] || 1;
     const basePrice = getEffectivePrice(variant) * qty;
     let total = basePrice;
     const addonQtyMap = addonQtys[variant?.id] || {};
     (variant?.addons || []).forEach((ao: any) => {
-      const addonQty = addonQtyMap[ao.id] || 0;
+      const addonQty = addonQtyMap[ao?.id] || 0;
       total += getAddonEffectivePrice(ao) * addonQty;
     });
     const extraQtyMap = extraQtys[variant?.id] || {};
     (variant?.extras || []).forEach((ex: any) => {
-      const extraQty = extraQtyMap[ex.id] || 0;
-      total += ex.price * extraQty;
+      const extraQty = extraQtyMap[ex?.id] || 0;
+      total += (ex?.price || 0) * extraQty;
     });
-    return total;
+
+    return isNaN(total) ? 0 : total;
   };
 
   // Add to cart as new item (use actual addon/extra qtys)
@@ -207,23 +213,23 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       const basePrice = getEffectivePrice(item?.variant) * item?.quantity;
     
       const addons = (item?.addons || []).map((ao: any) => {
-        const addonData = item?.variant?.addons?.find((a: any) => a.id === ao.id);
+        const addonData = item?.variant?.addons?.find((a: any) => a?.id === ao?.id);
         return {
-          id: ao.id,
+          id: ao?.id,
           name: addonData?.name || "Unknown Addon",
           price: getAddonEffectivePrice(addonData) || 0,
-          quantity: ao.quantity,
+          quantity: ao?.quantity,
         };
       });
     
       const extras = (item?.extras || []).map((exItem: any) => {
-        const extraDef = item?.variant?.extras?.find((e: any) => e.id === exItem.id);
+        const extraDef = item?.variant?.extras?.find((e: any) => e?.id === exItem?.id);
         const unitPrice = extraDef?.priceDifference ?? extraDef?.price ?? 0;
         return {
-          id: exItem.id,
+          id: exItem?.id,
           name: extraDef?.name || "Unknown Extra",
           price: unitPrice,
-          quantity: exItem.quantity,
+          quantity: exItem?.quantity,
         };
       });
     
@@ -232,7 +238,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       const totalPrice = basePrice + addonsTotal + extrasTotal;
     
       return {
-        itemImage: product.image,
+        itemImage: product?.image,
         variantId: item?.variant?.id,
         variantName: item?.variant?.name,
         variantPrice: getEffectivePrice(item?.variant),
@@ -300,13 +306,13 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           
           <div className="flex space-x-3  overflow-x-auto pb-2 pt-1 no-scrollbar">
             {variants?.map((v: any) => {
-              const isActive = v.id === selectedVariantId;
+              const isActive = v?.id === selectedVariantId;
               const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price && v.discountedPrice != 0;
             
               return (
-                <div key={v.id} className="relative flex flex-col items-center group shrink-0">
+                <div key={v?.id} className="relative flex flex-col items-center group shrink-0">
                   <button
-                    onClick={() => setSelectedVariantId(v.id)}
+                    onClick={() => setSelectedVariantId(v?.id)}
                     className={`
                       flex flex-col items-center p-2 rounded-xl transition-all duration-300
                        border-2 w-[8em] h-[10em]
@@ -318,8 +324,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                   >
                     <div className="relative rounded-lg overflow-hidden mb-1">
                       <img 
-                        src={v.image} 
-                        alt={v.name} 
+                        src={v?.image} 
+                        alt={v?.name} 
                         className="w-full h-20 object-cover" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg" />
@@ -334,7 +340,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     </div>
                     
                     <span className="text-[12px] font-medium text-gray-700 b h-1/2 flex justify-center items-center">
-                      {(v.name).slice(0, 15)}...
+                      {(v?.name).slice(0, 15)}...
                     </span>
                     <div className={`
                      rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-1
@@ -345,14 +351,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                   `}>
                     {showDiscount ? (
                       <>
-                        <span>{formatPrice(v.discountedPrice)}</span>
+                        <span>{formatPrice(v?.discountedPrice)}</span>
                       </>
                     ) : (
-                      <span>{formatPrice(v.price)}</span>
+                      <span>{formatPrice(v?.price)}</span>
                     )}
                     </div>
                     {showDiscount && (
-                      <span className="line-through text-orange-500 text-[11px] mr-1">{formatPrice(v.price)}</span>
+                      <span className="line-through text-orange-500 text-[11px] mr-1">{formatPrice(v?.price)}</span>
                     )}
                   </button>
                 </div>
@@ -368,25 +374,35 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           <div className="mt-6 space-y-8 overflow-y-auto flex-1">
             <div className="border  p-5 hover:shadow-lg transition-all bg-white">
                {/* Addons */}
-              {selectedVariant.addons?.length > 0 && (
+             {selectedVariant.addons?.filter((ao: any) => 
+               ao !== null && 
+               ao?.id && 
+               ao?.name && 
+               ao?.price > 0
+             ).length > 0 && (
                 <div className="mt-5">
                   <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
                     <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Addons</span>
                   </div>
                   <div className="flex flex-col  gap-3 mt-3 bg-gray-100 p-2 rounded-md">
-                    {selectedVariant.addons.map((ao: any) => {
-                      const qty = addonQtys[selectedVariant.id]?.[ao.id] || 0;
+                    {selectedVariant.addons.filter((ao: any) => 
+                      ao !== null && 
+                      ao?.id && 
+                      ao?.name && 
+                      ao?.price > 0
+                    ).map((ao: any) => {
+                      const qty = addonQtys[selectedVariant?.id]?.[ao?.id] || 0;
                       const selected = qty > 0;
-                      const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price && ao.discountedPrice != 0;
+                      const showDiscount = typeof ao?.discountedPrice === 'number' && typeof ao?.price === 'number' && ao?.discountedPrice < ao?.price && ao?.discountedPrice != 0;
                       return (
                         <div
-                          key={ao.id}
+                          key={ao?.id}
                           className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
                             selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                           } cursor-pointer`}
                           onClick={() => {
-                            if (!selected) changeAddonQty(selectedVariant.id, ao.id, 1);
+                            if (!selected) changeAddonQty(selectedVariant?.id, ao?.id, 1);
                           }}
                         >
                           <div className="flex items-center">
@@ -399,29 +415,29 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium hidden sm:block">{(ao.name).slice(0, 30)}...</span>
-                            <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 11)}...</span>
+                            <span className="font-medium hidden sm:block">{(ao?.name).slice(0, 30)}...</span>
+                            <span className="text-[13px] block sm:hidden">{(ao?.name).slice(0, 11)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
                             {showDiscount ? (
                               <>
-                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.discountedPrice)})`}</span>
-                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao.price)}</span>
+                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao?.discountedPrice)})`}</span>
+                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao?.price)}</span>
                               </>
                             ) : (
-                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
+                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao?.price)})`}</span>
                             )}
                             {selected && (
                               <>
                                 <button
                                   className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, -1); }}
+                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
                                   className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant.id, ao.id, 1); }}
+                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, 1); }}
                                 >+</button>
                               </>
                             )}
@@ -434,24 +450,34 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
               )}
     
               {/* Extras */}
-              {selectedVariant.extras?.length > 0 && (
+             {selectedVariant.extras?.filter((ex: any) => 
+               ex !== null && 
+               ex?.id && 
+               ex?.name && 
+               ex?.price > 0
+             ).length > 0 && (
                 <div className="mt-6">
                   <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
                     <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
                     <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Extras</span>
                   </div>
                   <div className="flex flex-col gap-3 mt-3 bg-gray-100 p-2 rounded-md">
-                    {selectedVariant.extras.map((ex: any) => {
-                      const qty = extraQtys[selectedVariant.id]?.[ex.id] || 0;
+                   {selectedVariant.extras.filter((ex: any) => 
+                     ex !== null && 
+                     ex?.id && 
+                     ex?.name && 
+                     ex?.price > 0
+                   ).map((ex: any) => {
+                      const qty = extraQtys[selectedVariant?.id]?.[ex?.id] || 0;
                       const selected = qty > 0;
                       return (
                         <div
-                          key={ex.id}
+                          key={ex?.id}
                           className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
                             selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                           } cursor-pointer`}
                           onClick={() => {
-                            if (!selected) changeExtraQty(selectedVariant.id, ex.id, 1);
+                            if (!selected) changeExtraQty(selectedVariant?.id, ex?.id, 1);
                           }}
                         >
                           <div className="flex items-center">
@@ -464,22 +490,22 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                                 </svg>
                               )}
                             </div>
-                            <span className="font-medium hidden sm:block">{(ex.name).slice(0, 30)}...</span>
-                            <span className="text-[13px] block sm:hidden">{(ex.name).slice(0, 12)}...</span>
+                            <span className="font-medium hidden sm:block">{(ex?.name).slice(0, 30)}...</span>
+                            <span className="text-[13px] block sm:hidden">{(ex?.name).slice(0, 12)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex.price)})`}</span>
+                            <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex?.price)})`}</span>
                             {selected && (
                               <>
                                 <button
                                   className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, -1); }}
+                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
                                   className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
-                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant.id, ex.id, 1); }}
+                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, 1); }}
                                 >+</button>
                               </>
                             )}
@@ -510,7 +536,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
               bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl px-[1em]`}
           >
             <span className=" text-[14px] sm:text-[16px] font-semibold  rounded-md">Add to Cart</span>  <span className="text-[12px]  sm:rounded-md">
-                {formatPrice(computeVariantTotal(selectedVariant))}
+                {selectedVariant ? formatPrice(computeVariantTotal(selectedVariant)) : formatPrice(0)}
               </span>
           </button>
 

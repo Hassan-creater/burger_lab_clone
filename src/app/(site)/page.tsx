@@ -178,17 +178,7 @@ export default async function Home(
       </main>
     );
   }
-  // Show 'No items found' if backend returns empty data
-  if (categories.length === 0) {
-    return (
-      <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
-        <h1 className="text-2xl font-semibold text-gray-700">No items found</h1>
-        <p className="text-gray-500 mt-2 max-w-md">
-          There are currently no products available.
-        </p>
-      </main>
-    );
-  }
+
 
   return (
     <OnlineStatusWrapper>

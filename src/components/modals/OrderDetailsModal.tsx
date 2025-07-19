@@ -12,7 +12,7 @@ import {
 import { Badge, Calendar, CrossIcon, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
 
-import { formatPrice } from "@/lib/utils";
+import { formatDisplayId, formatPrice } from "@/lib/utils";
 import { parseOrderItems } from "@/lib/orderUtils";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "@radix-ui/react-select";
@@ -118,7 +118,11 @@ const getStatusColor = (status: string) => {
                 <Package className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className={`text-lg font-semibold text-gray-900 ${designVar.fontFamily}`}>Order #{order?.displayId}</h3> {/* Fixed */}
+                <h3 className={`text-lg font-semibold text-gray-900 ${designVar.fontFamily}`}> Order ID: {
+                order.displayIdMetadata && !isNaN(Number(order.displayId))
+                  ? formatDisplayId(order.displayIdMetadata, Number(order.displayId))
+                  : order.displayId
+              }</h3> {/* Fixed */}
                 <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>{formatDate(order?.createdAt)}</p> {/* Fixed */}
               </div>
             </div>
@@ -145,7 +149,11 @@ const getStatusColor = (status: string) => {
       <DialogHeader>
         <DialogTitle className={`flex items-center gap-2 text-xl ${designVar.fontFamily}`}>
           <Package className="w-6 h-6 text-orange-500" />
-          Order Details #{order?.displayId} {/* Fixed */}
+          Order Detail: {
+                order.displayIdMetadata && !isNaN(Number(order.displayId))
+                  ? formatDisplayId(order.displayIdMetadata, Number(order.displayId))
+                  : order.displayId
+              }
         </DialogTitle>  
       </DialogHeader>
 
