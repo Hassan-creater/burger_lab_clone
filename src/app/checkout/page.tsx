@@ -101,15 +101,15 @@ function Checkout() {
 
 
  const userData = Cookies.get("userData");
- const [deliveryAddressValue , setDeliveryAddressValue] = useState("");
+
  const parsedUserData = userData ? JSON.parse(userData) : null;
  const userid = parsedUserData?.id;
-  const {setComment , AddressData , setDeliveryName , setDeliveryPhone , setDeliveryAddress ,deliveryAddress , user } = useCartContext();
+  const {setComment , AddressData , setDeliveryName , setDeliveryPhone } = useCartContext();
 
  
 
    const getAddresses = async () => {
-    const res = await apiClient.get(`/address/user/${userid}`);
+    const res = await apiClient.get(`/address/user`);
     return res.data.data;
    }
 

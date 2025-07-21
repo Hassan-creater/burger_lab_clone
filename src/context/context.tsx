@@ -242,6 +242,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setAddedInCart(updatedCart);
   };
 
+  
+
 
   const updateDealCart = (newItem : {})=>{
     saveDealCartData(newItem);

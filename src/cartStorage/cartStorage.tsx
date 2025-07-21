@@ -287,6 +287,17 @@ export const removeVariantFromCart = (variantId: string) => {
 export const saveDealCartData = (dealCartData: any) => {
   if (typeof window === "undefined") return;
   const CART_DEAL_STORAGE_KEY = "deal_paylod";
+  // If passed an empty array, clear storage
+  if (Array.isArray(dealCartData) && dealCartData.length === 0) {
+    localStorage.removeItem(CART_DEAL_STORAGE_KEY);
+    return;
+  }
+  // If passed an array, store it directly (replace all)
+  if (Array.isArray(dealCartData)) {
+    localStorage.setItem(CART_DEAL_STORAGE_KEY, JSON.stringify(dealCartData));
+    return;
+  }
+  // Otherwise, add a single deal (legacy behavior)
   const existing = localStorage.getItem(CART_DEAL_STORAGE_KEY);
   let arr = [];
   if (existing) {

@@ -247,7 +247,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
 
     updateDealCart(dealCartData);
     setOpen(false);
-    toast.success("Item added to cart!");
+    toast.success("Deal added to cart!");
   };
 
   return (

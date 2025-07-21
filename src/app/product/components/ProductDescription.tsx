@@ -218,6 +218,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   const handleAddToCartClick = () => {
     if (!selectedVariant) return;
     addToCart(selectedVariant);
+    toast.success("Item added to cart.")
   };
 
   // Prepare cart payload for context
