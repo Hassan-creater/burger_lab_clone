@@ -2,7 +2,9 @@
 'use client'
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import axios from "axios";
+
+import { apiClient } from "@/lib/api";
+import { toast } from "sonner";
 
 interface UpdateVerificationPageProps {
   params: Promise<{ token: string }>;
@@ -26,12 +28,31 @@ const SuccessTick = () => (
   </svg>
 );
 
+const CrossIcon = () => (
+  <svg
+    className="w-16 h-16 text-red-500 mb-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 9l-6 6m0-6l6 6"
+    />
+  </svg>
+);
+
 const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params }) => {
   const { token } = React.use(params);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [alreadyVerified, setAlreadyVerified] = useState(false);
 
   React.useEffect(() => {
     setMounted(true);
@@ -41,14 +62,22 @@ const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params 
     setLoading(true);
     setError("");
     try {
-      const res = await axios.put(`/auth/update-verification/${token}`);
-      if (res.status === 200) {
+      const res = await apiClient.put(`/auth/update-verification/${token}`);
+      if (res.status === 204 && res.data?.success) {
         setSuccess(true);
+      } else if (res.status == 409){
+        setAlreadyVerified(true);
+        setError(res.data?.error || "User is already verified");
       } else {
         setError(res.data?.message || "Verification failed.");
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Verification failed.");
+      if (err?.response?.status === 409) {
+        setAlreadyVerified(true);
+        setError(err?.response?.data?.error || "User is already verified");
+      } else {
+        setError(err?.response?.data?.message || "Verification failed.");
+      }
     } finally {
       setLoading(false);
     }
@@ -61,6 +90,12 @@ const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params 
           <>
             <SuccessTick />
             <h2 className="text-xl font-bold mb-2 text-green-600">Your account is verified</h2>
+            <p className="text-gray-700">You can close this page.</p>
+          </>
+        ) : alreadyVerified ? (
+          <>
+            <CrossIcon />
+            <h2 className="text-xl font-bold mb-2 text-red-600">{error || "User is already verified"}</h2>
             <p className="text-gray-700">You can close this page.</p>
           </>
         ) : (

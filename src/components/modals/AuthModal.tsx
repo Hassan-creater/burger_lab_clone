@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogFooter,
   DialogTrigger,
   DialogHeader,
   DialogTitle,
@@ -42,29 +41,19 @@ function AuthModal() {
   >("LOGIN");
 
 
-
   const { register, handleSubmit, reset, watch, formState: { isDirty, errors } } = useForm<Login>();
-
- 
-  
-  
-
   const [isPassVisible, setIsPassVisible] = React.useState(false);
   const [isConfPassVisible, setIsConfPassVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [email , setEmail] = useState("");
   const [forgotLoading,setForgotLoading] = useState(false);
-
-  
   const {setLoggedIn , authOpen , setAuthOpen } = useCartContext()
-
-
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-const [otpLoading, setOtpLoading] = useState(false);
-const [passwordLoading,setPasswordLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [passwordLoading,setPasswordLoading] = useState(false);
 
 
-const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
   const value = e.target.value.replace(/[^0-9]/g, "");
   if (!value) return;
   const newOtp = [...otp];
