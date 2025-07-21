@@ -44,7 +44,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     queryFn: getItemById,
   });
 
-
+  
 
   const safeData = data || { addons: [], extras: [], variants: [], price: 0 };
   const Addons = safeData.addons;
@@ -162,11 +162,23 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     if (
       typeof addon?.discountedPrice === 'number' &&
       typeof addon?.price === 'number' &&
-      addon.discountedPrice < addon.price
+      addon?.discountedPrice < addon?.price && addon?.discountedPrice != 0
     ) {
       return addon.discountedPrice;
     }
     return addon?.price;
+  };
+
+  // Add helper for extra price (same logic as addon)
+  const getExtraEffectivePrice = (extra: any) => {
+    if (
+      typeof extra?.discountedPrice === 'number' &&
+      typeof extra?.price === 'number' &&
+      extra?.discountedPrice < extra.price && extra?.discountedPrice != 0
+    ) {
+      return extra.discountedPrice;
+    }
+    return extra?.price;
   };
 
   // Price calculations
@@ -179,7 +191,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
 
   const totalExtrasPrice = useMemo(() => {
     return Extras.reduce(
-      (sum: number, ex: any) => sum + (extraQuantities[ex.id] ? extraQuantities[ex.id] * (ex.price || 0) : 0),
+      (sum: number, ex: any) => sum + (extraQuantities[ex.id] ? extraQuantities[ex.id] * getExtraEffectivePrice(ex) : 0),
       0
     );
   }, [Extras, extraQuantities]);
@@ -188,7 +200,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
   const totalPrice = useMemo(() => {
     const basePrice = safeData.discountedPrice ?? safeData.price ?? 0;
     const addonsPrice = Addons.reduce((sum: number, ao: any) => sum + ((addonQuantities[ao.id] || 0) * getAddonEffectivePrice(ao)), 0);
-    const extrasPrice = Extras.reduce((sum: number, ex: any) => sum + ((extraQuantities[ex.id] || 0) * (ex.price || 0)), 0);
+    const extrasPrice = Extras.reduce((sum: number, ex: any) => sum + ((extraQuantities[ex.id] || 0) * getExtraEffectivePrice(ex)), 0);
     return (basePrice  * mainQuantity)  + addonsPrice + extrasPrice;
   }, [safeData, Addons, Extras, addonQuantities, extraQuantities, mainQuantity]);
 
@@ -218,7 +230,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
       .map((ex: any) => ({
         id: ex.id,
         name: ex.name,
-        price: ex.price,
+        price: getExtraEffectivePrice(ex),
         quantity: extraQuantities[ex.id]
       })) || [];
 
@@ -317,7 +329,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                       {Addons.map((ao: any) => {
                         const qty = addonQuantities[ao.id] || 0;
                         const selected = qty > 0;
-                        const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price;
+                        const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price && ao.discountedPrice != 0;
                         return (
                           <div
                             key={ao.id}
@@ -384,6 +396,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                       {Extras.map((ex: any) => {
                         const qty = extraQuantities[ex.id] || 0;
                         const selected = qty > 0;
+                        const showDiscount = typeof ex.discountedPrice === 'number' && typeof ex.price === 'number' && ex.discountedPrice < ex.price && ex.discountedPrice != 0;
                         return (
                           <div
                             key={ex.id}
@@ -406,9 +419,14 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                                 <span className="text-[13px] hidden sm:block sm:font-medium">{(ex.name).slice(0, 30)}...</span>
                                 <span className="text-[13px] block sm:hidden sm:font-medium">{(ex.name).slice(0, 12)}...</span>
                               </div>
-                              <span className=" text-[10px] sm:text-[15px]">
-                                +{`(${formatPrice(ex.price)})`}
-                              </span>
+                              {showDiscount ? (
+                                <>
+                                  <span className="text-[10px] sm:text-[15px]">+{`(${formatPrice(ex.discountedPrice)})`}</span>
+                                  <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ex.price)}</span>
+                                </>
+                              ) : (
+                                <span className="text-[10px] sm:text-[15px]">+{`(${formatPrice(getExtraEffectivePrice(ex))})`}</span>
+                              )}
                             {selected && (
                               <div className="flex items-center gap-2 " onClick={e => e.stopPropagation()}>
                                 <button

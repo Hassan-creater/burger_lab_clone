@@ -47,6 +47,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   const variants = data?.data?.item?.variants;
 
 
+
   // Set default variant and quantity to 1, and initialize addon/extra qtys
   useEffect(() => {
     if (variants && variants.length > 0) {
@@ -158,6 +159,18 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     return addon?.price || 0;
   };
 
+  // Helper for extra price (same logic as addon)
+  const getExtraEffectivePrice = (extra: any) => {
+    if (
+      typeof extra?.discountedPrice === 'number' &&
+      typeof extra?.price === 'number' &&
+      extra?.discountedPrice < extra?.price && extra?.discountedPrice != 0
+    ) {
+      return extra?.discountedPrice;
+    }
+    return extra?.price || 0;
+  };
+
   // Calculate variant total price (use actual addon/extra qtys)
   const computeVariantTotal = (variant: any) => {
   
@@ -172,7 +185,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     const extraQtyMap = extraQtys[variant?.id] || {};
     (variant?.extras || []).forEach((ex: any) => {
       const extraQty = extraQtyMap[ex?.id] || 0;
-      total += (ex?.price || 0) * extraQty;
+      total += getExtraEffectivePrice(ex) * extraQty;
     });
 
     return isNaN(total) ? 0 : total;
@@ -224,7 +237,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     
       const extras = (item?.extras || []).map((exItem: any) => {
         const extraDef = item?.variant?.extras?.find((e: any) => e?.id === exItem?.id);
-        const unitPrice = extraDef?.priceDifference ?? extraDef?.price ?? 0;
+        const unitPrice = getExtraEffectivePrice(extraDef);
         return {
           id: exItem?.id,
           name: extraDef?.name || "Unknown Extra",
@@ -470,6 +483,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                    ).map((ex: any) => {
                       const qty = extraQtys[selectedVariant?.id]?.[ex?.id] || 0;
                       const selected = qty > 0;
+                      const showDiscount = typeof ex?.discountedPrice === 'number' && typeof ex?.price === 'number' && ex?.discountedPrice < ex?.price && ex?.discountedPrice != 0;
                       return (
                         <div
                           key={ex?.id}
@@ -494,7 +508,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                             <span className="text-[13px] block sm:hidden">{(ex?.name).slice(0, 12)}...</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex?.price)})`}</span>
+                            {showDiscount ? (
+                              <>
+                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex?.discountedPrice)})`}</span>
+                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ex?.price)}</span>
+                              </>
+                            ) : (
+                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(getExtraEffectivePrice(ex))})`}</span>
+                            )}
                             {selected && (
                               <>
                                 <button

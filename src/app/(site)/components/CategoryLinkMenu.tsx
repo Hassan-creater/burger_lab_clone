@@ -89,7 +89,7 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
       }
 
       if (closestSection !== activeSectionId) {
-        console.log(`[ScrollSpy] Changing highlight from ${activeSectionId} to ${closestSection}`);
+      
         setActiveSectionId(closestSection);
       }
     };

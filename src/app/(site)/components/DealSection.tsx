@@ -28,10 +28,11 @@ const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any })
 
 
   useEffect(() => {
-    if (dealList) {
-      setDeals(dealList)
+    // Only set deals in context if not provided as a prop (i.e., on initial fetch)
+    if (!deals && dealList) {
+      setDeals(dealList);
     }
-  }, [dealList, setDeals])
+  }, [dealList, setDeals, deals])
 
 
  

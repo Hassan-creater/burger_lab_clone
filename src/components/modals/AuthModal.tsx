@@ -565,7 +565,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
           </DialogTitle>
         </DialogHeader>
         {renderModalContent()}
-        <DialogClose onClick={()=>setModalType("LOGIN")} disabled={loading || forgotLoading || otpLoading || passwordLoading} className="bg-black/80 p-1 rounded-xl text-white right-2 top-2 sm:right-2 sm:top-2">
+        <DialogClose onClick={()=>{setModalType("LOGIN"), reset()}} disabled={loading || forgotLoading || otpLoading || passwordLoading} className="bg-black/80 p-1 rounded-xl text-white right-2 top-2 sm:right-2 sm:top-2">
           <XIcon className="w-6 h-6" />
         </DialogClose>
       </DialogContent>

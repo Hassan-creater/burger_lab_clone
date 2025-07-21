@@ -22,24 +22,25 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
   useEffect(() => {
     if (inputValue !== query) {
       const debounceTimeout = setTimeout(() => {
-        setQuery(inputValue);
+        // Only update if the URL param is actually different
+        if (inputValue !== query) {
+          setQuery(inputValue);
+        }
         // Wait an additional 1.5s before ending the loader
         const loaderTimeout = setTimeout(() => {
           onSearchEnd?.(inputValue);
-        }, 1500); // 1.3 second after debounce
-
-        // Cleanup for loader timeout
+        }, 1500);
         return () => clearTimeout(loaderTimeout);
-      }, 1000); // 1.3 second debounce
-
-      // Cleanup for debounce timeout
+      }, 1000);
       return () => clearTimeout(debounceTimeout);
     }
   }, [inputValue, setQuery, query, onSearchEnd]);
 
   // Update input value when URL parameter changes (for external updates)
   useEffect(() => {
-    setInputValue(query);
+    if (document.activeElement !== inputRef.current) {
+      setInputValue(query);
+    }
   }, [query]);
 
   useEffect(() => {

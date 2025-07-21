@@ -22,10 +22,13 @@ export const useSearchParam = (key: string, defaultValue?: string): [string, Dis
     )
 
     useEffect(() => {
-        router.push(`${pathname}?${createQueryString(key, query)}`, {
-            scroll: false
-        });
-    }, [createQueryString, key, pathname, query, router])
+        // Only push if the param is actually different
+        if (searchParams.get(key) !== query) {
+            router.push(`${pathname}?${createQueryString(key, query)}`, {
+                scroll: false
+            });
+        }
+    }, [createQueryString, key, pathname, query, router, searchParams])
 
     return [query, setQuery];
 };
