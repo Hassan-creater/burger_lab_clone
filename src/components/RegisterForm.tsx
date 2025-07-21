@@ -22,7 +22,7 @@ export type UserData = {
   image?: any;
 };
 
-export default function RegisterForm({setModalType}:{setModalType:React.Dispatch<React.SetStateAction<"LOGIN" | "REGISTER">>}) {
+export default function RegisterForm({setModalType}:{setModalType:React.Dispatch<React.SetStateAction<"LOGIN" | "REGISTER" | "FORGOT" | "OTP" | "RESET-PASSWORD">>}) {
   const {
     register,
     handleSubmit,
@@ -79,7 +79,11 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
 
 
       if(res.status == 201 || res.status == 200 ){
-         toast.success('Registration successful!');
+        if(res.data.message == "User registered successfully"){
+          toast.success("Verification link is sent to you email.")
+        }else{
+          toast.success('Registration successful!');
+        }
           reset();
           setIsSubmitting(false);
           setModalType("LOGIN");

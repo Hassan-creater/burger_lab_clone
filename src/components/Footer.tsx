@@ -341,7 +341,7 @@ const Footer = () => {
        
       </div>
       <div className="pt-4 text-[12px] text-center mt-4 border-t-[1.3px] border-gray-200">
-        <p>Copyright © {new Date().getFullYear()} Burger Lab. All rights reserved.</p>
+        <p>Copyright © {new Date().getFullYear()} Zest Up. All rights reserved.</p>
       </div>
     </div>
   </footer>
