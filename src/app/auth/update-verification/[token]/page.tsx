@@ -84,7 +84,7 @@ const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params 
   };
 
   const content = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-white">
       <div className="bg-white rounded-lg  p-8 flex flex-col items-center max-w-lg w-full">
         {success ? (
           <>

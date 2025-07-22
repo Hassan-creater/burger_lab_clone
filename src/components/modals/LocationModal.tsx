@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useCartContext } from "@/context/context"
 import { VisuallyHidden } from "../ui/visually-hidden"
 import { designVar } from "@/designVar/desighVar"
+import { usePathname } from "next/navigation"
 
 // Dummy data
 
@@ -381,6 +382,7 @@ useEffect(() => {
 }, [orderTypes])
 
 
+const pathname = usePathname();
 
 
 const isButtonDisabled =
@@ -393,7 +395,7 @@ const isButtonDisabled =
 
   return (
 
-<Dialog open={open} onOpenChange={setOpen}>
+<Dialog open={pathname.includes("/auth/update-verification/") ? false : open} onOpenChange={setOpen}>
 <DialogTrigger asChild>
   <button className="flex items-center gap-2 text-sm text-gray-700 hover:text-orange-500">
     <MapPin className="w-6 h-6 text-orange-500" />
