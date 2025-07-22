@@ -34,7 +34,7 @@ export default function DeleteAddress({
     setDisabled(true);
 
   
-    const promise = apiClient.delete(`/address/delete/${id}`);
+    const promise = apiClient.delete(`/address/${id}`);
   
     toast.promise(promise, {
       loading: "Deleting address...",

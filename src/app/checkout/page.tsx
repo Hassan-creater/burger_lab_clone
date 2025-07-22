@@ -110,7 +110,7 @@ function Checkout() {
 
    const getAddresses = async () => {
     const res = await apiClient.get(`/address/user`);
-    return res.data.data;
+    return res.data.data.addresses;
    }
 
    const {data , isLoading} = useQuery({
