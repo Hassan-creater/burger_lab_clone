@@ -253,7 +253,11 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     if(backendError == "Invalid email"){
       toast.error("Invalid email")
     }else{
-    toast.error(backendError);
+
+      if(backendError == "USER not found"){
+        toast.error("User not found");
+      }
+ 
     }
     } finally {
   
