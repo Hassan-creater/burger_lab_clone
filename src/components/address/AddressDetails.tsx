@@ -40,15 +40,18 @@ export default function AddressDetails({
 
   const getAddresses = async ()=>{
     const res = await apiClient.get(`/address/user`);
-    return res.data;
+    return res.data.data;
   }
 
   const { data , isLoading  } = useQuery({
     queryKey: ["addresses", userid],
     queryFn: getAddresses,
   });
+
+  
  
-  const Addresses = data?.data;
+  const Addresses = data?.addresses;
+
 
   if (isLoading)
     return (
