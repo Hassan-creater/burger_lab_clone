@@ -170,12 +170,16 @@ const Footer = () => {
         {/* Logo and App Downloads Section */}
         <div className="space-y-8 ">
           {/* Logo Placeholder */}
-          <div className="flex items-center p-2 justify-center rounded-lg">
-            <div className="w-40 rounded-lg flex items-center justify-center">
-              <Image src="/blueLogo.png" alt="logo" className="w-full h-full object-contain" width={64} height={64} />
-            </div>
-            
-          </div>
+          <div className="w-40 h-16">
+  <img
+    src="/blueLogo.png"
+    alt="logo"
+
+
+  className="w-full h-full object-contain"
+  />
+</div>
+
 
           {/* App Download Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">

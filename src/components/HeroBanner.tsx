@@ -79,7 +79,7 @@ function HeroBanner() {
 			>
 			  <div className="w-full h-full flex items-center justify-center aspect-[2400/1000]">
 				<Image
-				  src={slide?.image || ""}
+				 src={(slide?.image || "").trimStart()}
 				  alt={`Slide no ${slide?.id}`}
 				  width={3000}
 				  height={1000}

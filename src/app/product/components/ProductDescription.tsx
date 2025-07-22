@@ -300,7 +300,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       </div>
         
         <div className="w-full p-4 mt-[1em]">
-        <div className="flex justify-between items-start bg-white p-2 rounded-md shadow-xl">
+        <div className="flex justify-between items-start bg-white p-2 rounded-md shadow-sm border border-slate-300">
           <div>
             <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
             {product.description && (
@@ -312,13 +312,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         
         
         {/* Variant Selector */}
-        <div className="mt-6 px-4 ">
-          <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-3">
-            <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
-            <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Variant</span>
-          </div>
+        <div className="mt-6 px-4 relative ">
+        <div className="z-0 relative -mb-3 flex justify-start">
+                  <span className="bg-orange-500 px-6 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                    Select Variants
+                  </span>
+                </div>
           
-          <div className="flex space-x-3  overflow-x-auto pb-2 pt-1 no-scrollbar">
+          <div className="flex justify-start  gap-3 bg-gray-100  p-2 rounded-lg z-10 relative overflow-x-scroll no-scrollbar">
             {variants?.map((v: any) => {
               const isActive = v?.id === selectedVariantId;
               const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price && v.discountedPrice != 0;
@@ -394,12 +395,13 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                ao?.name && 
                ao?.price > 0
              ).length > 0 && (
-                <div className="mt-5">
-                  <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
-                    <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
-                    <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Addons</span>
-                  </div>
-                  <div className="flex flex-col  gap-3 mt-3 bg-gray-100 p-2 rounded-md">
+                <div className="mt-6 relative">
+                    <div className="z-0 relative flex justify-start pb-2">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                    Select Addons
+                  </span>
+                </div>
+                  <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
                     {selectedVariant.addons.filter((ao: any) => 
                       ao !== null && 
                       ao?.id && 
@@ -413,7 +415,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                         <div
                           key={ao?.id}
                           className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
-                            selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            selected ? 'border-orange-500' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                           } cursor-pointer`}
                           onClick={() => {
                             if (!selected) changeAddonQty(selectedVariant?.id, ao?.id, 1);
@@ -442,18 +444,18 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                               <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao?.price)})`}</span>
                             )}
                             {selected && (
-                              <>
+                              <div className="flex gap-2 p-1 rounded-full justify-center items-center border border-slate-300">
                                 <button
-                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full  text-black font-bold hover:bg-orange-600  hover:text-white cursor-pointer transition-colors "
                                   onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm "
                                   onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, 1); }}
                                 >+</button>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -470,12 +472,13 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                ex?.name && 
                ex?.price > 0
              ).length > 0 && (
-                <div className="mt-6">
-                  <div className="inline-flex items-center text-sm lg:text-md font-bold text-gray-700 mb-4">
-                    <span className="bg-black text-white px-3 py-1 rounded-l-lg">More</span>
-                    <span className="bg-orange-500 px-4 py-1 rounded-r-lg">Select Extras</span>
-                  </div>
-                  <div className="flex flex-col gap-3 mt-3 bg-gray-100 p-2 rounded-md">
+                <div className="mt-5 relative">
+                  <div className="z-0 relative flex justify-start pb-2">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                    Select Extras
+                  </span>
+                </div>
+                  <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
                    {selectedVariant.extras.filter((ex: any) => 
                      ex !== null && 
                      ex?.id && 
@@ -489,7 +492,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                         <div
                           key={ex?.id}
                           className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
-                            selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            selected ? 'border-orange-500' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                           } cursor-pointer`}
                           onClick={() => {
                             if (!selected) changeExtraQty(selectedVariant?.id, ex?.id, 1);
@@ -518,18 +521,18 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                               <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(getExtraEffectivePrice(ex))})`}</span>
                             )}
                             {selected && (
-                              <>
+                              <div className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1">
                                 <button
-                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full hover:text-white text-black font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
                                   onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, -1); }}
                                   
                                 >−</button>
                                 <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
                                 <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
                                   onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, 1); }}
                                 >+</button>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -544,7 +547,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         )}
     
         {/* Total Price & Add to Cart */}
-        <div className="w-full  absolute bottom-[0.3em] rounded-xl left-0 p-4 bg-white shadow-xl shadow-gray-300 flex flex-row-reverse justify-between items-center">
+        <div className="w-full fixed bottom-0 rounded-xl p-4 left-0 bg-white shadow-xl shadow-gray-300 flex flex-row-reverse justify-between items-center mt-auto z-20">
           <button
             onClick={() => {
               if(dineInClose || pickupClose || deliveryClose){
@@ -563,21 +566,21 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           </button>
 
 
-          <div className="flex items-center ">
+          <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, -1)} 
-    className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+    className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black hover:text-white cursor-pointer border border-slate-300 font-bold hover:bg-orange-600 transition-colors shadow-sm "
   >
     −
   </button>
   
-  <span className="w-6 sm:w-8 text-center text-gray-800 font-semibold">
+  <span className="w-6 sm:w-10 text-center text-gray-800 font-semibold">
     {variantQtys[selectedVariant?.id] || 1}
   </span>
   
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, 1)} 
-    className=" w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+    className=" w-6 h-6 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg- text-black border border-slate-300 font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors shadow-sm "
   >
     +
   </button>
