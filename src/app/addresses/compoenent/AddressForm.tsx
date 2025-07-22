@@ -41,7 +41,7 @@ export default function AddressForm() {
   const addAddress = async (data: AddressFormProps) => {
     setLoading(true);
   
-    const promise = apiClient.post("/address/add", data);
+    const promise = apiClient.post("/address", data);
   
     toast.promise(promise, {
       loading: "Adding address...",
