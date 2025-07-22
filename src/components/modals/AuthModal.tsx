@@ -29,6 +29,7 @@ type Login = {
     email: string;
     password: string;
     confirmPassword : string,
+    rememberMe : boolean,
 };
 
 type forgotPassword = {
@@ -41,7 +42,9 @@ function AuthModal() {
   >("LOGIN");
 
 
-  const { register, handleSubmit, reset, watch, formState: { isDirty, errors } } = useForm<Login>();
+  const { register, handleSubmit, reset, watch, formState: {  errors  , isValid} } = useForm<Login>({
+    mode : "onChange"
+  });
   const [isPassVisible, setIsPassVisible] = React.useState(false);
   const [isConfPassVisible, setIsConfPassVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -67,11 +70,22 @@ function AuthModal() {
 };
 
 const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number) => {
-  if (e.key === "Backspace" && !otp[idx] && idx > 0) {
-    const prev = document.getElementById(`otp-input-${idx - 1}`);
-    if (prev) (prev as HTMLInputElement).focus();
+  if (e.key === "Backspace") {
+    const newOtp = [...otp];
+
+    // If current field has a value, clear it
+    if (otp[idx]) {
+      newOtp[idx] = "";
+      setOtp(newOtp);
+    }
+    // If empty, move focus to previous
+    else if (idx > 0) {
+      const prev = document.getElementById(`otp-input-${idx - 1}`);
+      prev && (prev as HTMLInputElement).focus();
+    }
   }
 };
+
 
   // Handler for OTP form submit
   const handleOtpSubmit = async () => {
@@ -148,7 +162,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
  
 
 
-  const handleLogin = async (data: {email: string, password: string}) => {
+  const handleLogin = async (data: {email: string, password: string , rememberMe : boolean}) => {
     try {
         setLoading(true);
     
@@ -156,6 +170,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
         const res = await apiClient.post("/auth/login/customer", {
           email : data.email,
           password : data.password,
+          rememberMe : data.rememberMe
         });
     
         // Extract tokens
@@ -298,7 +313,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
                 placeholder="Enter your email"
                 {...register("email", {required: true, pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address"}})}
                
-                className="w-full focus-visible:ring-primaryOrange     "
+                className="w-full focus-visible:ring-primaryOrange  mb-2  "
               />
               {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             </Label>
@@ -309,7 +324,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
                 type={isPassVisible ? "text" : "password"}
                 placeholder="Enter your password"
                 {...register("password", {required: true, minLength: {value: 8, message: "Password must be at least 8 characters long"}})}
-                className="w-full focus-visible:ring-primaryOrange  "
+                className="w-full focus-visible:ring-primaryOrange mb-2 "
               />
               {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               <Button
@@ -323,20 +338,37 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
                 {isPassVisible ? <LucideEyeOff /> : <LucideEye />}
               </Button>
             </Label>
-            <Button
-              className="w-max p-2 self-end my-1"
-              variant="link"
-              onClick={(e) => {
-                e.preventDefault();
-                setModalType("FORGOT")
-              
-              }}
-            >
-              Forgot Password?
-            </Button>
+            <div className="flex w-full items-center justify-between gap-2 mt-2 mb-4">
+  {/* Left side: Checkbox + Label */}
+  <div className="flex items-center gap-2">
+    <input
+      id="remember-me"
+      {...register("rememberMe")}
+      type="checkbox"
+      className="h-4 w-4 cursor-pointer rounded-md border-gray-300 text-orange-500 focus:ring-orange-500"
+    />
+    <label htmlFor="remember-me" className="text-sm text-gray-600 cursor-pointer">
+      Remember me for 30 days
+    </label>
+  </div>
+
+  {/* Right side: Forgot Password Link */}
+  <Button
+    variant="link"
+    className="text-sm text-orange-600 hover:underline p-0"
+    onClick={(e) => {
+      e.preventDefault();
+      setModalType("FORGOT");
+    }}
+  >
+    Forgot Password?
+  </Button>
+</div>
+
+            
             <Button
               type="submit"
-              disabled={!isDirty || loading}
+              disabled={!isValid || loading}
               className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor} mb-3`}
             ><div className="w-full flex items-center justify-center p-2">
                 {loading ? <LoadingSpinner className="size-6 border-t-white" /> :
@@ -384,7 +416,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
             </Label>
             <Button
               type="submit"
-              disabled={forgotLoading || !isDirty}
+              disabled={forgotLoading || !isValid}
               className="w-full p-2 flex items-center justify-center rounded-2xl mb-3 bg-primaryOrange hover:bg-primaryOrange/80 text-black font-semibold"
             >
               {
@@ -433,6 +465,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
                 />
               ))}
             </Label>
+            <p className="w-full text-start text-red-500 text-sm mb-2">Otp will expire in 5 minutes</p>
             <Button
               type="submit"
               disabled={otpLoading || otp.some((d) => d === "")}
@@ -517,7 +550,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
             </Label>
             <Button
               type="submit"
-              disabled={!isDirty || passwordLoading}
+              disabled={!isValid || passwordLoading}
               className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor} mt-[1.5em]`}
             >
               <div className="w-full flex items-center justify-center p-2">
