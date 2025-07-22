@@ -39,7 +39,7 @@ export default function AddressDetails({
 
 
   const getAddresses = async ()=>{
-    const res = await apiClient.get(`/address/user/${userid}`);
+    const res = await apiClient.get(`/address/user`);
     return res.data;
   }
 
