@@ -89,7 +89,7 @@ export default function AddressForm() {
         Add Address
       </Button>
 
-       <DialogContent  className="w-[80%] sm:w-[30em] max-w-full h-max max-h-[39em] flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
+       <DialogContent  className="w-[90%] sm:w-[30em] max-w-full h-max max-h-[90vh] flex flex-col px-5 sm:py-6 gap-0 rounded-xl border-0 descriptionModal overflow-y-scroll">
       <DialogHeader>
         <DialogTitle asChild>
           <VisuallyHidden>Address Form</VisuallyHidden>
@@ -105,7 +105,7 @@ export default function AddressForm() {
             <MapPin className="w-8 h-8 text-white" />
            </div>
         <div className="flex items-center justify-between"> 
-          <h2 className={`text-[1.5em]  font-semibold text-center w-full text-gray-800 ${designVar.fontFamily}`}>
+          <h2 className={`text-[1em] sm:text-[1.5em]  font-semibold text-center w-full text-gray-800 ${designVar.fontFamily}`}>
             Address Information
           </h2>
         </div>
