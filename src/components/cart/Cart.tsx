@@ -264,9 +264,11 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
         }
       } catch (err: any) {
         const backendError = err?.response?.data;
+
           if (backendError?.error && typeof backendError.error === 'string') {
             try {
               const parsed = JSON.parse(backendError.error);
+
           
 
             // Handle unavailable variants
@@ -321,25 +323,28 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               return;
             }
 
-            // Handle unavailable deals and unavailable addons for deals
             if (parsed.dealItems?.length > 0) {
               let filteredDeals = dealData;
-
-              // Remove unavailable deals
+            
+              //  Remove unavailable deals
               if (parsed.dealItems?.length > 0) {
-                const unavailableDealIds = new Set(parsed.dealItems);
+                const unavailableDealIds = new Set(parsed.dealItems.map((d: any) => d.id));
                 filteredDeals = filteredDeals.filter((deal: any) => !unavailableDealIds.has(deal.dealId));
               }
-
-              // Remove unavailable addons from deals and adjust price
+            
+              //  Remove unavailable addons from deals
               if (parsed.unavailableAddons?.length > 0) {
-                const unavailableAddonIds = new Set(parsed.unavailableAddons);
+                const unavailableAddonIds = new Set(parsed.unavailableAddons.map((a: any) => a.id));
                 filteredDeals = filteredDeals.map((deal: any) => {
-                  const removedAddons = deal.addons?.filter((addon: any) => unavailableAddonIds.has(addon.id)) || [];
+                  const removedAddons = deal.addons?.filter((addon: any) =>
+                    unavailableAddonIds.has(addon.id)
+                  ) || [];
+            
                   const removedAddonsTotal = removedAddons.reduce(
-                    (total: number, addon: any) => total + (addon.price * addon.quantity),
+                    (total: number, addon: any) => total + ((addon?.price || 0) * addon.quantity),
                     0
                   );
+            
                   return {
                     ...deal,
                     addons: deal.addons?.filter((addon: any) => !unavailableAddonIds.has(addon.id)) || [],
@@ -347,16 +352,36 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                   };
                 });
               }
-
-              // Update localStorage and deal cart
+            
+              //  Remove unavailable extras from deals
+              if (parsed.unavailableDealExtras?.length > 0) {
+                const unavailableDealExtraIds = new Set(parsed.unavailableDealExtras.map((e: any) => e.id));
+                filteredDeals = filteredDeals.map((deal: any) => {
+                  const removedExtras = deal.extras?.filter((extra: any) =>
+                    unavailableDealExtraIds.has(extra.id)
+                  ) || [];
+            
+                  const removedExtrasTotal = removedExtras.reduce(
+                    (total: number, extra: any) => total + ((extra?.price || 0) * extra.quantity),
+                    0
+                  );
+            
+                  return {
+                    ...deal,
+                    extras: deal.extras?.filter((extra: any) => !unavailableDealExtraIds.has(extra.id)) || [],
+                    totalPrice: deal.totalPrice - removedExtrasTotal,
+                  };
+                });
+              }
+            
+              //  Final update
               if (filteredDeals.length === 0) {
                 localStorage.removeItem("deal_paylod");
                 updateDealCart([]);
               } else {
                 updateDealCart(filteredDeals);
               }
-
-              // Update order payload with filtered deals
+            
               orderPayload.dealItems = filteredDeals.map((deal: any) => ({
                 dealId: deal.dealId,
                 quantity: deal.variantQuantity,
@@ -367,155 +392,174 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
                   ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
                   : {}),
               }));
-
-              toast.error("Some deals/addons are unavailable and have been removed from your order");
+            
+              toast.error("Some deals, addons, or extras were unavailable and have been removed");
               return;
             }
+            
 
-            // Handle unavailableAddons for both cart items and deals, but only update the relevant one
-            if (parsed.unavailableAddons?.length > 0) {
-              const unavailableAddonIds = new Set(parsed.unavailableAddons);
+           // Handle unavailable deal addons
+            if (parsed.unavailableDealAddons?.length > 0) {
+  const unavailableDealAddonIds = new Set(parsed.unavailableDealAddons.map((a: any) => a.id));
 
-              // Check if any deal contains the unavailable addon
-              const dealHasUnavailableAddon = dealData.some(deal =>
-                (deal.addons || []).some((addon: any) => unavailableAddonIds.has(addon.id))
-              );
-              // Check if any cart item contains the unavailable addon
-              const itemHasUnavailableAddon = AddedInCart.some(item =>
-                (item.addons || []).some((addon: any) => unavailableAddonIds.has(addon.id))
-              );
+  const filteredDeals = dealData.map((deal: any) => {
+    const removedAddons = deal.addons?.filter((addon: any) =>
+      unavailableDealAddonIds.has(addon.id)
+    ) || [];
 
-              if (dealHasUnavailableAddon) {
-                // Update only deals
-                const filteredDeals = dealData.map((deal: any) => {
-                  const removedAddons = deal.addons?.filter((addon: any) => unavailableAddonIds.has(addon.id)) || [];
-                  const removedAddonsTotal = removedAddons.reduce((total: number, addon: any) => total + ((addon?.price || 0) * addon.quantity), 0);
-                  return {
-                    ...deal,
-                    addons: deal.addons?.filter((addon: any) => !unavailableAddonIds.has(addon.id)) || [],
-                    totalPrice: deal.totalPrice - removedAddonsTotal,
-                  };
-                });
-                const nonEmptyDeals = filteredDeals.filter((deal: any) => deal);
-                const flatDeals = nonEmptyDeals.flat ? nonEmptyDeals.flat() : nonEmptyDeals;
-                if (flatDeals.length === 0) {
-                  localStorage.removeItem("deal_paylod");
-                  updateDealCart([]);
-                } else {
-                  localStorage.removeItem("deal_paylod");
-                  updateDealCart(flatDeals);
-                }
-                orderPayload.dealItems = flatDeals.map((deal: any) => ({
-                  dealId: deal.dealId,
-                  quantity: deal.variantQuantity,
-                  ...(deal.addons?.length
-                    ? { addons: deal.addons.map((addon: any) => ({ id: addon.id, quantity: addon.quantity })) }
-                    : {}),
-                  ...(deal.extras?.length
-                    ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
-                    : {}),
-                }));
-                toast.error("Some deal addons are unavailable and have been removed from your order");
-                return;
-              } else if (itemHasUnavailableAddon) {
-                // Update only cart items
-                const filteredCart = AddedInCart.map(item => {
-                  const removedAddons = item.addons?.filter(addon => unavailableAddonIds.has(addon.id)) || [];
-                  const removedAddonsTotal = removedAddons.reduce((total, addon) => total + ((addon?.price || 0) * addon.quantity), 0);
-                  return {
-                    ...item,
-                    addons: item.addons?.filter(addon => !unavailableAddonIds.has(addon.id)) || [],
-                    totalPrice: item.totalPrice - removedAddonsTotal
-                  };
-                });
-                localStorage.removeItem("my_cart_payload");
-                updateCart(filteredCart);
-                orderPayload.items = filteredCart.map(item => ({
-                  variantId: item.variantId,
-                  quantity: item.quantity,
-                  ...(item.addons?.length
-                    ? { addons: item.addons.map(addon => ({ id: addon.id, quantity: addon.quantity })) }
-                    : {}),
-                  ...(item.extras?.length
-                    ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
-                    : {}),
-                }));
-                toast.error("Some item addons are unavailable and have been removed from your order");
-                return;
+    const removedAddonsTotal = removedAddons.reduce(
+      (total: number, addon: any) => total + ((addon?.price || 0) * addon.quantity),
+      0
+    );
+
+    return {
+      ...deal,
+      addons: deal.addons?.filter((addon: any) => !unavailableDealAddonIds.has(addon.id)) || [],
+      totalPrice: deal.totalPrice - removedAddonsTotal,
+    };
+  });
+
+  const nonEmptyDeals = filteredDeals.filter((deal: any) => deal);
+  const flatDeals = nonEmptyDeals.flat ? nonEmptyDeals.flat() : nonEmptyDeals;
+
+  localStorage.removeItem("deal_paylod");
+  updateDealCart(flatDeals.length === 0 ? [] : flatDeals);
+
+  orderPayload.dealItems = flatDeals.map((deal: any) => ({
+    dealId: deal.dealId,
+    quantity: deal.variantQuantity,
+    ...(deal.addons?.length
+      ? { addons: deal.addons.map((addon: any) => ({ id: addon.id, quantity: addon.quantity })) }
+      : {}),
+    ...(deal.extras?.length
+      ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
+      : {}),
+  }));
+
+  toast.error("Some deal addons are unavailable and have been removed from your order");
+  return;
               }
-            }
+
+             // Handle unavailable regular addons (items)
+            if (parsed.unavailableAddons?.length > 0) {
+  const unavailableAddonIds = new Set(parsed.unavailableAddons.map((a: any) => a.id));
+
+  const filteredCart = AddedInCart.map(item => {
+    const removedAddons = item.addons?.filter(addon =>
+      unavailableAddonIds.has(addon.id)
+    ) || [];
+
+    const removedAddonsTotal = removedAddons.reduce(
+      (total, addon) => total + ((addon?.price || 0) * addon.quantity),
+      0
+    );
+
+    return {
+      ...item,
+      addons: item.addons?.filter(addon => !unavailableAddonIds.has(addon.id)) || [],
+      totalPrice: item.totalPrice - removedAddonsTotal
+    };
+  });
+
+  localStorage.removeItem("my_cart_payload");
+  updateCart(filteredCart);
+
+  orderPayload.items = filteredCart.map(item => ({
+    variantId: item.variantId,
+    quantity: item.quantity,
+    ...(item.addons?.length
+      ? { addons: item.addons.map(addon => ({ id: addon.id, quantity: addon.quantity })) }
+      : {}),
+    ...(item.extras?.length
+      ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
+      : {}),
+  }));
+
+  toast.error("Some item addons are unavailable and have been removed from your order");
+  return;
+              }
+
+            
 
             // Handle unavailableExtras for both cart items and deals, but only update the relevant one
-            if (parsed.unavailableExtras?.length > 0) {
-              const unavailableExtraIds = new Set(parsed.unavailableExtras);
-
-              // Check if any deal contains the unavailable extra
-              const dealHasUnavailableExtra = dealData.some(deal =>
-                (deal.extras || []).some((extra: any) => unavailableExtraIds.has(extra.id))
-              );
-              // Check if any cart item contains the unavailable extra
-              const itemHasUnavailableExtra = AddedInCart.some(item =>
-                (item.extras || []).some((extra: any) => unavailableExtraIds.has(extra.id))
-              );
-
-              if (dealHasUnavailableExtra) {
-                // Update only deals
-                const filteredDeals = dealData.map((deal: any) => {
-                  const removedExtras = deal.extras?.filter((extra: any) => unavailableExtraIds.has(extra.id)) || [];
-                  const removedExtrasTotal = removedExtras.reduce((total: number, extra: any) => total + ((extra?.price || 0) * extra.quantity), 0);
-                  return {
-                    ...deal,
-                    extras: deal.extras?.filter((extra: any) => !unavailableExtraIds.has(extra.id)) || [],
-                    totalPrice: deal.totalPrice - removedExtrasTotal,
-                  };
-                });
-                const nonEmptyDeals = filteredDeals.filter((deal: any) => deal);
-                const flatDeals = nonEmptyDeals.flat ? nonEmptyDeals.flat() : nonEmptyDeals;
-                if (flatDeals.length === 0) {
-                  localStorage.removeItem("deal_paylod");
-                  updateDealCart([]);
-                } else {
-                  updateDealCart(flatDeals);
-                }
-                orderPayload.dealItems = flatDeals.map((deal: any) => ({
-                  dealId: deal.dealId,
-                  quantity: deal.variantQuantity,
-                  ...(deal.addons?.length
-                    ? { addons: deal.addons.map((addon: any) => ({ id: addon.id, quantity: addon.quantity })) }
-                    : {}),
-                  ...(deal.extras?.length
-                    ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
-                    : {}),
-                }));
-                toast.error("Some deal extras are unavailable and have been removed from your order");
-                return;
-              } else if (itemHasUnavailableExtra) {
-                // Update only cart items
-                const filteredCart = AddedInCart.map(item => {
-                  const removedExtras = item.extras?.filter(extra => unavailableExtraIds.has(extra.id)) || [];
-                  const removedExtrasTotal = removedExtras.reduce((total, extra) => total + ((extra?.price || 0) * extra.quantity), 0);
-                  return {
-                    ...item,
-                    extras: item.extras?.filter(extra => !unavailableExtraIds.has(extra.id)) || [],
-                    totalPrice: item.totalPrice - removedExtrasTotal
-                  };
-                });
-                localStorage.removeItem("my_cart_payload");
-                updateCart(filteredCart);
-                orderPayload.items = filteredCart.map(item => ({
-                  variantId: item.variantId,
-                  quantity: item.quantity,
-                  ...(item.addons?.length
-                    ? { addons: item.addons.map(addon => ({ id: addon.id, quantity: addon.quantity })) }
-                    : {}),
-                  ...(item.extras?.length
-                    ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
-                    : {}),
-                }));
-                toast.error("Some item extras are unavailable and have been removed from your order");
-                return;
-              }
+            if (parsed.unavailableDealExtras?.length > 0) {
+              const unavailableDealExtraIds = new Set(parsed.unavailableDealExtras.map((e: any) => e.id));
+            
+              const filteredDeals = dealData.map((deal: any) => {
+                const removedExtras = deal.extras?.filter((extra: any) =>
+                  unavailableDealExtraIds.has(extra.id)
+                ) || [];
+            
+                const removedExtrasTotal = removedExtras.reduce(
+                  (total: number, extra: any) => total + ((extra?.price || 0) * extra.quantity),
+                  0
+                );
+            
+                return {
+                  ...deal,
+                  extras: deal.extras?.filter((extra: any) => !unavailableDealExtraIds.has(extra.id)) || [],
+                  totalPrice: deal.totalPrice - removedExtrasTotal,
+                };
+              });
+            
+              const flatDeals = filteredDeals.filter(Boolean);
+              localStorage.removeItem("deal_paylod");
+              updateDealCart(flatDeals.length === 0 ? [] : flatDeals);
+            
+              orderPayload.dealItems = flatDeals.map((deal: any) => ({
+                dealId: deal.dealId,
+                quantity: deal.variantQuantity,
+                ...(deal.addons?.length
+                  ? { addons: deal.addons.map((addon: any) => ({ id: addon.id, quantity: addon.quantity })) }
+                  : {}),
+                ...(deal.extras?.length
+                  ? { extras: deal.extras.map((extra: any) => ({ id: extra.id, quantity: extra.quantity })) }
+                  : {}),
+              }));
+            
+              toast.error("Some deal extras are unavailable and have been removed from your order");
+              return;
             }
+           
+            if (parsed.unavailableExtras?.length > 0) {
+              const unavailableExtraIds = new Set(parsed.unavailableExtras.map((e: any) => e.id));
+            
+              const filteredCart = AddedInCart.map(item => {
+                const removedExtras = item.extras?.filter(extra =>
+                  unavailableExtraIds.has(extra.id)
+                ) || [];
+            
+                const removedExtrasTotal = removedExtras.reduce(
+                  (total, extra) => total + ((extra?.price || 0) * extra.quantity),
+                  0
+                );
+            
+                return {
+                  ...item,
+                  extras: item.extras?.filter(extra => !unavailableExtraIds.has(extra.id)) || [],
+                  totalPrice: item.totalPrice - removedExtrasTotal
+                };
+              });
+            
+              localStorage.removeItem("my_cart_payload");
+              updateCart(filteredCart);
+            
+              orderPayload.items = filteredCart.map(item => ({
+                variantId: item.variantId,
+                quantity: item.quantity,
+                ...(item.addons?.length
+                  ? { addons: item.addons.map(addon => ({ id: addon.id, quantity: addon.quantity })) }
+                  : {}),
+                ...(item.extras?.length
+                  ? { extras: item.extras.map(extra => ({ id: extra.id, quantity: extra.quantity })) }
+                  : {}),
+              }));
+            
+              toast.error("Some item extras are unavailable and have been removed from your order");
+              return;
+            }
+            
+            
 
                 toast.error(err?.message || 'Failed to place order. Please try again.');
             } catch {
