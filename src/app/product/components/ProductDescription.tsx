@@ -291,16 +291,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       {/* Left - Product Image & Variants */}
       <div className="w-full  lg:w-full flex flex-col  ">
         {/* Product Image */}
-        <div className="relative w-full h-[25em] overflow-hidden rounded-xl flex justify-center items-center">
-       <img 
-         src={product.image} 
-         alt={product.name} 
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-       />
-      </div>
-        
         <div className="w-full p-4 mt-[1em]">
-        <div className="flex justify-between items-start bg-white p-2 rounded-md shadow-sm border border-slate-300">
+        <div className="flex justify-between items-start bg-white p-2 rounded-md  ">
           <div>
             <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
             {product.description && (
@@ -309,10 +301,19 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           </div>
         </div>
         </div>
+        <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center ">
+       <img 
+         src={product.image} 
+         alt={product.name} 
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+       />
+      </div>
+        
+       
         
         
         {/* Variant Selector */}
-        <div className="mt-6 px-4 relative ">
+        <div className="mt-8 px-4 relative ">
         <div className="z-0 relative -mb-3 flex justify-start">
                   <span className="bg-orange-500 px-6 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
                     Select Variants
@@ -386,8 +387,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       {/* Right - Product Details */}
       <div className="w-ful flex flex-col ">
         {selectedVariant && (
-          <div className="mt-6 space-y-8 overflow-y-auto flex-1">
-            <div className="border  p-5 hover:shadow-lg transition-all bg-white">
+          <div className=" space-y-8 overflow-y-auto flex-1">
+            <div className="  p-5 hover:shadow-lg transition-all bg-white">
                {/* Addons */}
              {selectedVariant.addons?.filter((ao: any) => 
                ao !== null && 

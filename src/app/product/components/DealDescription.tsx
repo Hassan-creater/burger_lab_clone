@@ -258,7 +258,18 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
         <article className={`flex w-full sm:w-[37em] flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
           {/* Product Image */}
           <div className="w-full lg:w-full flex flex-col">
-            <div className="relative w-full h-[25em] overflow-hidden rounded-xl flex justify-center items-center">
+          <div className="w-full p-4 mt-[1em]">
+          <div className="flex justify-between items-start bg-white p-2 rounded-md ">
+            <div>
+              <h1 className="text-[20px] font-bold text-gray-800">{deal.name}</h1>
+              {deal.description && (
+                <p className="mt-2 text-gray-600 max-w-2xl text-[14px]">{deal.description}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+            <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center">
               <img 
                 src={deal.image} 
                 alt={deal.name} 
@@ -266,21 +277,12 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
               />
             </div>
             
-            <div className="w-full p-4 mt-[1em]">
-              <div className="flex justify-between items-start bg-white p-2 rounded-md shadow-sm border border-slate-300">
-                <div>
-                  <h1 className="text-[20px] font-bold text-gray-800">{deal.name}</h1>
-                  {deal.description && (
-                    <p className="mt-2 text-gray-600 max-w-2xl text-[14px]">{deal.description}</p>
-                  )}
-                </div>
-              </div>
-            </div>
+           
             
             {/* Variants */}
             <div className="w-full pb-2 pt-1">
               {Variants?.length > 0 && (
-                <div className="mt-6 px-4 w-full">
+                <div className="mt-8 px-4 w-full">
                   <div className="z-0 relative -mb-3 flex justify-start">
                   <span className="bg-orange-500 px-6 py-2 pb-6 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
                     Included in this deal
@@ -482,7 +484,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 {mainQuantity}
               </span>
               <button
-                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black hover:text-white cursor-pointer border border-slate-300 font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                className="w-6 h-6 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black hover:text-white cursor-pointer border border-slate-300 font-bold hover:bg-orange-600 transition-colors shadow-sm"
                 onClick={handleMainQuantityDecrease}
                 disabled={mainQuantity === 1}
               >

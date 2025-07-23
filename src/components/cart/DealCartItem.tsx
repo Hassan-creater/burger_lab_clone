@@ -74,7 +74,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
         variant="ghost"
         size="sm"
         onClick={() => removeDealFromCart(cartItem)}
-        className="absolute top-6 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+        className="absolute top-6 right-3 opactiy-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
       >
         <Trash2 className="h-4 w-4" />
       </Button>
@@ -132,10 +132,10 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                 ) : (
                   <div className="flex items-center gap-2">
                   {!isCheckoutPage && (
-                    <>
+                    <div className="flex gap-2 justify-center items-center border border-slate-300 p-1 rounded-full">
                       <button 
                         onClick={() => DecreaseDealQuantity([cartItem])}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-6 h-6 flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         −
                       </button>
@@ -143,11 +143,11 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                       <span className="text-gray-800 font-semibold">{cartItem.variantQuantity || cartItem.quantity}</span>
                       <button 
                         onClick={() => IncreaseDealQuantity([cartItem])}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         +
                       </button>
-                    </>
+                    </div>
                   )}
                   {isCheckoutPage && (
                     <span className="text-gray-800 font-semibold">Qty: {cartItem.variantQuantity || cartItem.quantity}</span>
@@ -191,15 +191,15 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                     key={addon.id}
                     className="flex items-center text-sm rounded-lg bg-white px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
-                    <div className="flex justify-between w-full">
+                    <div className="flex justify-between w-full items-center">
                       <div>{addon.name.slice(0, 25)}...</div>
                       <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(addon.price)}</span>
                         {
                           !isCheckoutPage && (
-                            <>
+                            <div className="flex gap-2 justify-center items-center p-1 border border-slate-300 rounded-full">
                              <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          className="w-5 h-5 flex items-center justify-center rounded-full  text-black hover:text-white font-bold hover:bg-orange-600 transition-colors"
                           onClick={() => {
                            
                             DecreaseDealAddonQuantity(cartItem , addon?.id)
@@ -208,13 +208,13 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                         >−</button>
                         <span className="text-gray-800 text-[13px] font-semibold">{addon.quantity}</span>
                         <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          className="w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                           onClick={() => {
                            
                             IncreaseDealAddonQuantity(cartItem  , addon?.id)
                           }}
                         >+</button>
-                            </>
+                            </div>
                           )
                         }
 
@@ -255,15 +255,15 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                     key={extra.id}
                     className="flex items-center text-sm bg-white rounded-lg px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
-                    <div className="flex w-full justify-between">
+                    <div className="flex w-full justify-between items-center">
                       <div className="text-[13px]">{extra.name.slice(0, 25)}...</div>
                       <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(extra.price)}</span>
                         {
                           !isCheckoutPage && (
-                            <>
+                            <div className="flex gap-2 justify-center items-center p-1 border border-slate-300 rounded-full">
                              <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          className="w-5 h-5 flex items-center justify-center rounded-full hover:text-white  text-black font-bold hover:bg-orange-600 transition-colors"
                           onClick={() => {
                            
                             DecreaseDealExtraQuantity(cartItem , extra?.id);
@@ -273,13 +273,13 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                         >−</button>
                         <span className="text-gray-800 text-[13px] font-semibold">{extra.quantity}</span>
                         <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          className="w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                           onClick={() => {
                            
                             IncreaseDealExtraQuantity(cartItem , extra?.id);
                           }}
                         >+</button>
-                            </>
+                            </div>
                           ) 
                         }
 

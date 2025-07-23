@@ -145,7 +145,7 @@ const getStatusColor = (status: string) => {
       </Card>
     </DialogTrigger>
 
-    <DialogContent className="w-[40em] productdetail  descriptionModal lg:w-[70%] mx-auto max-h-[80vh] overflow-y-auto">
+    <DialogContent className="  w-[95%] productdetail  descriptionModal lg:w-[70%] mx-auto max-h-[80vh] overflow-y-auto rounded-lg">
       <DialogHeader>
         <DialogTitle className={`flex items-center gap-2 text-xl ${designVar.fontFamily}`}>
           <Package className="w-6 h-6 text-orange-500" />

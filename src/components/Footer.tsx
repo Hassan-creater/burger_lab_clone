@@ -282,7 +282,7 @@ const Footer = () => {
         </div>
 
         {/* Timings and Social Media Section */}
-        <div className="space-y-6 pl-[3em]">
+        <div className="space-y-6  sm:pl-[3em] ">
           {/* Operating Hours */}
           {
             AddressData?.openTime ? (

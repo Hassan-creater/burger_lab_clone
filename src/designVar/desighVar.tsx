@@ -86,13 +86,13 @@ export const designVar = {
         paddingX : "px-[0em]",
         paddingY : "py-[0em]",
         border : "border-[1px]",
-        shadow : "shadow-md",
+        shadow : "shadow-sm",
         borderColor : "",    
         hover : {
             backgroundColor : "hover:bg-white",
             borderRadius : "hover:rounded-2xl",
             borderColor : "",
-            shadow : "hover:shadow-xl",
+            shadow : "hover:shadow-lg",
             overflow : "hover:overflow-hidden",
 
         }
@@ -159,7 +159,7 @@ export const designVar = {
         paddingY : "py-[0.5em]",
         fontSize : "text-base",
         fontWeight : "font-normal",
-        textSize : "text-[1em]",
+        textSize : "text-xs sm:text-[1em]",
         color : "text-black",
         cursor : "cursor-pointer",
         transition : "transition-all duration-300 ease",

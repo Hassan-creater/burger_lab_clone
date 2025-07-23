@@ -304,7 +304,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     if (modalType === "LOGIN") {
       return (
         <div className="flex flex-col items-center justify-center">
-          <h3 className="text-2xl font-bold mb-3">Welcome Back</h3>
+          <h3 className="text-xl sm:text-2xl font-bold mb-3">Welcome Back</h3>
           <form
             className="flex w-full flex-col items-center justify-center mb-1"
             onSubmit={handleSubmit(handleLogin)}
@@ -351,7 +351,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
       type="checkbox"
       className="h-4 w-4 cursor-pointer rounded-md border-gray-300 text-orange-500 focus:ring-orange-500"
     />
-    <label htmlFor="remember-me" className="text-sm text-gray-600 cursor-pointer">
+    <label htmlFor="remember-me" className="text-xs sm:text-sm text-gray-600 cursor-pointer">
       Remember me for 30 days
     </label>
   </div>
@@ -359,7 +359,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
   {/* Right side: Forgot Password Link */}
   <Button
     variant="link"
-    className="text-sm text-orange-600 hover:underline p-0"
+    className="text-xs sm:text-sm text-orange-600 hover:underline p-0"
     onClick={(e) => {
       e.preventDefault();
       setModalType("FORGOT");
@@ -405,7 +405,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     if (modalType === "FORGOT") {
       return (
         <div className="flex flex-col items-center justify-center">
-          <h3 className="text-2xl font-bold mb-3">Change Your Password!</h3>
+          <h3 className="text-xl sm:text-2xl font-bold mb-3">Change Your Password!</h3>
           <form onSubmit={handleSubmit(forgotPassword)} className="flex w-full flex-col items-center justify-center">
             <Label className="w-full rounded-2xl my-4 mb-6">
               <span className="sr-only">Email</span>
@@ -446,7 +446,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     if (modalType === "OTP") {
       return (
         <div className="flex flex-col items-center justify-center">
-          <h3 className="text-2xl font-bold mb-3">Enter OTP</h3>
+          <h3 className="text-xl xm:text-2xl font-bold mb-3">Enter OTP</h3>
           <form
             onSubmit={handleSubmit(handleOtpSubmit)}
             className="flex w-full flex-col items-center justify-center"
@@ -461,7 +461,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
-                  className="w-10 h-12 text-center text-xl border-2 border-primaryOrange focus-visible:ring-primaryOrange rounded-lg mx-1"
+                  className="w-10 h-8 sm:w-10 sm:h-12 text-center text-xs sm:text-xl border-2 border-primaryOrange focus-visible:ring-primaryOrange rounded-lg sm:mx-1"
                   value={digit}
                   onChange={(e) => handleOtpChange(e, idx)}
                   onKeyDown={(e) => handleOtpKeyDown(e, idx)}
