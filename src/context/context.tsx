@@ -6,6 +6,7 @@ import { Josefin_Sans } from "next/font/google";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { getClientCookie } from "@/lib/getCookie";
+import { toast } from "sonner";
 
 
 
@@ -213,33 +214,32 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
 
-  const deduplicateItems = (items: CartItem[]) => {
-    const result: CartItem[] = [];
-  
+  const deduplicateItems = (items: CartItem[]): boolean => {
+    // same comparison as before
     const isSameItem = (a: CartItem, b: CartItem) =>
       a.variantId === b.variantId &&
       JSON.stringify(a.addons || []) === JSON.stringify(b.addons || []) &&
       JSON.stringify(a.extras || []) === JSON.stringify(b.extras || []);
   
+    const seen: CartItem[] = [];
     for (const item of items) {
-      const existing = result.find((r) => isSameItem(r, item));
-      if (existing) {
-        existing.quantity += item.quantity;
-        existing.totalPrice += item.totalPrice;
-      } else {
-        result.push({ ...item });
+      // if we already saw an “equal” item, we have a duplicate
+      if (seen.find(s => isSameItem(s, item))) {
+        return true;
       }
+      seen.push(item);
     }
   
-    return result;
+    // no duplicates found
+    return false;
   };
   
 
   const updateCart = (newItems: CartItem[]) => {
-    const deduped = deduplicateItems(newItems);
-    mergeAndSaveCart(deduped);
+    mergeAndSaveCart(newItems);
     const updatedCart = loadCartFromStorage();
     setAddedInCart(updatedCart);
+
   };
 
   

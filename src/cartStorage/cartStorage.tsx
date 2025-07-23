@@ -1,5 +1,7 @@
 // utils/cartStorage.ts
 
+import { toast } from "sonner";
+
 // utils/cartStorage.ts
 
 const CART_STORAGE_KEY = "my_cart_payload";
@@ -120,69 +122,113 @@ export const increaseQuantity = (newItems: any[]) => {
 
 
 // Merge-and-save version
+// export const mergeAndSaveCart = (newItems: any[]) => {
+//   if (typeof window === "undefined") return;
+
+//   const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+
+//   const filteredNewItems = newItems.filter((item) => item.quantity > 0);
+
+//   const isSameAddonOrExtraWithQty = (a: any[], b: any[]) => {
+//     if (a.length !== b.length) return false;
+//     const sortById = (arr: any[]) => arr.slice().sort((x, y) => x.id.localeCompare(y.id));
+//     const strippedA = sortById(a).map(({ id, name, price, quantity }) => ({ id, name, price, quantity }));
+//     const strippedB = sortById(b).map(({ id, name, price, quantity }) => ({ id, name, price, quantity }));
+//     return JSON.stringify(strippedA) === JSON.stringify(strippedB);
+//   };
+
+//   const isSameCartItemWithQty = (a: any, b: any) => {
+//     return (
+//       a.variantId === b.variantId &&
+//       a.variantName === b.variantName &&
+//       a.variantPrice === b.variantPrice &&
+//       a.itemImage === b.itemImage &&
+//       a.quantity === b.quantity &&
+//       isSameAddonOrExtraWithQty(a.addons, b.addons) &&
+//       isSameAddonOrExtraWithQty(a.extras, b.extras)
+//     );
+//   };
+
+//   let updatedCart = [...stored];
+
+//   for (const newItem of filteredNewItems) {
+//     const existingIndex = updatedCart.findIndex((item) => isSameCartItemWithQty(item, newItem));
+
+//     if (existingIndex !== -1) {
+//       const existingItem = updatedCart[existingIndex];
+//       const combinedQuantity = existingItem.quantity + newItem.quantity;
+
+//       // Combine addons quantities if they match by id and quantity
+//       const combinedAddons = existingItem.addons.map((oldAddon: any) => {
+//         const match = newItem.addons.find((na: any) => na.id === oldAddon.id && na.quantity === oldAddon.quantity);
+//         return match
+//           ? { ...oldAddon, quantity: oldAddon.quantity + (match?.quantity || 0) }
+//           : oldAddon;
+//       });
+
+//       const combinedExtras = existingItem.extras.map((oldExtra: any) => {
+//         const match = newItem.extras.find((na: any) => na.id === oldExtra.id && na.quantity === oldExtra.quantity);
+//         return match
+//           ? { ...oldExtra, quantity: oldExtra.quantity + (match?.quantity || 0) }
+//           : oldExtra;
+//       });
+
+//       updatedCart[existingIndex] = {
+//         ...existingItem,
+//         quantity: combinedQuantity,
+//         addons: combinedAddons,
+//         extras: combinedExtras,
+//         totalPrice: combinedQuantity * newItem.variantPrice + combinedAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0) + combinedExtras.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0),
+//       };
+//     } else {
+//       updatedCart.push(newItem);
+//     }
+//   }
+
+//   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
+// };
+
 export const mergeAndSaveCart = (newItems: any[]) => {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
-  const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+  // 1. Load existing cart
+  const stored: any[] = JSON.parse(
+    localStorage.getItem(CART_STORAGE_KEY) || '[]'
+  );
 
-  const filteredNewItems = newItems.filter((item) => item.quantity > 0);
+  // 2. Only keep positive‑qty payloads
+  const filteredNewItems = newItems.filter(item => item.quantity > 0);
 
-  const isSameAddonOrExtraWithQty = (a: any[], b: any[]) => {
-    if (a.length !== b.length) return false;
-    const sortById = (arr: any[]) => arr.slice().sort((x, y) => x.id.localeCompare(y.id));
-    const strippedA = sortById(a).map(({ id, name, price, quantity }) => ({ id, name, price, quantity }));
-    const strippedB = sortById(b).map(({ id, name, price, quantity }) => ({ id, name, price, quantity }));
-    return JSON.stringify(strippedA) === JSON.stringify(strippedB);
-  };
+  // 3. Helper: normalize to [{id, quantity}] sorted by id
+  const normalizeIdQty = (arr: any[] = []) =>
+    arr
+      .map(({ id, quantity }) => ({ id, quantity }))
+      .sort((a, b) => a.id.localeCompare(b.id));
 
-  const isSameCartItemWithQty = (a: any, b: any) => {
-    return (
-      a.variantId === b.variantId &&
-      a.variantName === b.variantName &&
-      a.variantPrice === b.variantPrice &&
-      a.itemImage === b.itemImage &&
-      a.quantity === b.quantity &&
-      isSameAddonOrExtraWithQty(a.addons, b.addons) &&
-      isSameAddonOrExtraWithQty(a.extras, b.extras)
-    );
-  };
+  // 4. Compare two arrays of {id,quantity}
+  const sameIdAndQty = (a: any[], b: any[]) =>
+    JSON.stringify(normalizeIdQty(a)) === JSON.stringify(normalizeIdQty(b));
 
-  let updatedCart = [...stored];
+  // 5. Full item equality check
+  const isSameCartItem = (a: any, b: any) =>
+    a.variantId === b.variantId &&
+    sameIdAndQty(a.addons, b.addons) &&
+    sameIdAndQty(a.extras, b.extras);
 
+  // 6. Build updatedCart, toast on exact duplicates
+  const updatedCart = [...stored];
   for (const newItem of filteredNewItems) {
-    const existingIndex = updatedCart.findIndex((item) => isSameCartItemWithQty(item, newItem));
+    const duplicate = updatedCart.some(item => isSameCartItem(item, newItem));
 
-    if (existingIndex !== -1) {
-      const existingItem = updatedCart[existingIndex];
-      const combinedQuantity = existingItem.quantity + newItem.quantity;
-
-      // Combine addons quantities if they match by id and quantity
-      const combinedAddons = existingItem.addons.map((oldAddon: any) => {
-        const match = newItem.addons.find((na: any) => na.id === oldAddon.id && na.quantity === oldAddon.quantity);
-        return match
-          ? { ...oldAddon, quantity: oldAddon.quantity + (match?.quantity || 0) }
-          : oldAddon;
-      });
-
-      const combinedExtras = existingItem.extras.map((oldExtra: any) => {
-        const match = newItem.extras.find((na: any) => na.id === oldExtra.id && na.quantity === oldExtra.quantity);
-        return match
-          ? { ...oldExtra, quantity: oldExtra.quantity + (match?.quantity || 0) }
-          : oldExtra;
-      });
-
-      updatedCart[existingIndex] = {
-        ...existingItem,
-        quantity: combinedQuantity,
-        addons: combinedAddons,
-        extras: combinedExtras,
-        totalPrice: combinedQuantity * newItem.variantPrice + combinedAddons.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0) + combinedExtras.reduce((sum: number, a: any) => sum + a.price * a.quantity, 0),
-      };
+    if (duplicate) {
+      toast.error('Item already exists in cart');
     } else {
       updatedCart.push(newItem);
+      toast.success("Item added to cart.");
     }
   }
 
+  // 7. Persist
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
 };
 
@@ -284,40 +330,58 @@ export const removeVariantFromCart = (variantId: string) => {
 };
 
 // Save the custom deal cart data structure to localStorage
+const normalizeIdQty = (arr: any[] = []) =>
+  arr
+    .map(({ id, quantity }) => ({ id, quantity }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+
+const sameIdAndQty = (a: any[], b: any[]) =>
+  JSON.stringify(normalizeIdQty(a)) === JSON.stringify(normalizeIdQty(b));
+
 export const saveDealCartData = (dealCartData: any) => {
-  if (typeof window === "undefined") return;
-  const CART_DEAL_STORAGE_KEY = "deal_paylod";
-  // If passed an empty array, clear storage
+  if (typeof window === 'undefined') return;
+
+  // Clear storage if an empty array is passed
   if (Array.isArray(dealCartData) && dealCartData.length === 0) {
     localStorage.removeItem(CART_DEAL_STORAGE_KEY);
     return;
   }
-  // If passed an array, store it directly (replace all)
+
+  // Replace all if an array is passed
   if (Array.isArray(dealCartData)) {
-    localStorage.setItem(CART_DEAL_STORAGE_KEY, JSON.stringify(dealCartData));
+    localStorage.setItem(
+      CART_DEAL_STORAGE_KEY,
+      JSON.stringify(dealCartData)
+    );
     return;
   }
-  // Otherwise, add a single deal (legacy behavior)
+
+  // Otherwise, add a single deal item
+  let arr: any[] = [];
   const existing = localStorage.getItem(CART_DEAL_STORAGE_KEY);
-  let arr = [];
   if (existing) {
     try {
-      arr = JSON.parse(existing);
-      if (!Array.isArray(arr)) arr = [];
+      const parsed = JSON.parse(existing);
+      if (Array.isArray(parsed)) arr = parsed;
     } catch {
       arr = [];
     }
   }
-  // Check for duplicate by dealId AND identical addons/extras (with quantity)
-  const isDuplicate = arr.some((item: any) =>
+
+  // Duplicate check: same dealId AND identical addons/extras (by id+qty)
+  const isDuplicate = arr.some(item =>
     item.dealId === dealCartData.dealId &&
-    isSameAddonOrExtraWithQty(item.addons || [], dealCartData.addons || []) &&
-    isSameAddonOrExtraWithQty(item.extras || [], dealCartData.extras || [])
+    sameIdAndQty(item.addons || [], dealCartData.addons || []) &&
+    sameIdAndQty(item.extras || [], dealCartData.extras || [])
   );
-  if (!isDuplicate) {
+
+  if (isDuplicate) {
+    toast.error('Deal already exist in cart');
+  } else {
     arr.push(dealCartData);
+    localStorage.setItem(CART_DEAL_STORAGE_KEY, JSON.stringify(arr));
+    toast.success("Deal added to cart");
   }
-  localStorage.setItem(CART_DEAL_STORAGE_KEY, JSON.stringify(arr));
 };
 
 // Helper for deep compare of addons/extras arrays (including quantity)

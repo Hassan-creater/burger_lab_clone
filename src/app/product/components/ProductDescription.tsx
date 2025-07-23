@@ -218,7 +218,6 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   const handleAddToCartClick = () => {
     if (!selectedVariant) return;
     addToCart(selectedVariant);
-    toast.success("Item added to cart.")
   };
 
   // Prepare cart payload for context
@@ -278,14 +277,75 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     }
   }, [cartPayload, updateCart]);
 
+
+// skelton loader
+  const loading =  <article className="flex w-full h-full flex-col rounded-2xl overflow-y-scroll overflow-x-hidden bg-white shadow-lg pb-[3em] animate-pulse">
+  {/* Top Section */}
+  <div className="w-full flex flex-col">
+    <div className="w-full p-4 mt-[1em]">
+      <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+      <div className="mt-2 h-4 bg-gray-200 rounded w-2/3"></div>
+    </div>
+    <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl bg-gray-200"></div>
+
+    {/* Variants Placeholder */}
+    <div className="mt-8 px-4">
+      <div className="h-6 w-48 bg-gray-200 rounded mb-3"></div>
+      <div className="flex flex-col gap-3 bg-gray-100 p-2 rounded-lg">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="p-3 rounded-xl border border-gray-200 bg-white flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-200 rounded-md mr-3"></div>
+              <div className="h-4 bg-gray-200 rounded w-32"></div>
+            </div>
+            <div className="h-4 bg-gray-200 rounded w-16"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* Bottom Section */}
+  <div className="w-full flex flex-col p-4 mt-6">
+    <div className="space-y-8 overflow-y-auto flex-1">
+      {[...Array(2)].map((_, section) => (
+        <div key={section} className="py-5 bg-white rounded-lg">
+          {/* Section Header */}
+          <div className="h-6 w-32 bg-gray-200 rounded mb-4"></div>
+          <div className="flex flex-col gap-3 bg-gray-100 p-2 rounded-lg">
+            {[...Array(3)].map((_, j) => (
+              <div key={j} className="p-3 rounded-xl border bg-white flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-5 h-5 bg-gray-200 rounded-full mr-3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-40"></div>
+                </div>
+                <div className="h-4 bg-gray-200 rounded w-12"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Fixed Footer */}
+    <div className="w-full fixed bottom-0 left-0 p-4 bg-white shadow-xl flex justify-between items-center rounded-t-xl">
+      <div className="h-10 bg-gray-200 rounded w-32"></div>
+      <div className="flex items-center gap-4">
+        <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+        <div className="h-6 bg-gray-200 rounded w-8"></div>
+        <div className="h-6 bg-gray-200 rounded w-8"></div>
+      </div>
+    </div>
+  </div>
+</article>
+
   
 
   return (
     <>
     {
       isLoading ? // skelton loader 
-        <ProductDescriptionSkelton/> : 
-
+        loading : 
     // product description
     <article className={`flex w-full sm:w-[37em]  flex-col lg:flex-col shadow-lg rounded-2xl overflow-scroll overflow-x-hidden productdetail pb-[5em] ${designVar.fontFamily}`}>
       {/* Left - Product Image & Variants */}
@@ -402,67 +462,118 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     Select Addons
                   </span>
                 </div>
-                  <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
-                    {selectedVariant.addons.filter((ao: any) => 
-                      ao !== null && 
-                      ao?.id && 
-                      ao?.name && 
-                      ao?.price > 0
-                    ).map((ao: any) => {
-                      const qty = addonQtys[selectedVariant?.id]?.[ao?.id] || 0;
-                      const selected = qty > 0;
-                      const showDiscount = typeof ao?.discountedPrice === 'number' && typeof ao?.price === 'number' && ao?.discountedPrice < ao?.price && ao?.discountedPrice != 0;
-                      return (
-                        <div
-                          key={ao?.id}
-                          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
-                            selected ? 'border-orange-500' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                          } cursor-pointer`}
-                          onClick={() => {
-                            if (!selected) changeAddonQty(selectedVariant?.id, ao?.id, 1);
-                          }}
-                        >
-                          <div className="flex items-center">
-                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
-                              selected ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
-                            }`}>
-                              {selected && (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                              )}
-                            </div>
-                            <span className="font-medium hidden sm:block">{(ao?.name).slice(0, 30)}...</span>
-                            <span className="text-[13px] block sm:hidden">{(ao?.name).slice(0, 11)}...</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {showDiscount ? (
-                              <>
-                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao?.discountedPrice)})`}</span>
-                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao?.price)}</span>
-                              </>
-                            ) : (
-                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao?.price)})`}</span>
-                            )}
-                            {selected && (
-                              <div className="flex gap-2 p-1 rounded-full justify-center items-center border border-slate-300">
-                                <button
-                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full  text-black font-bold hover:bg-orange-600  hover:text-white cursor-pointer transition-colors "
-                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, -1); }}
-                                  
-                                >−</button>
-                                <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
-                                <button
-                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm "
-                                  onClick={e => { e.stopPropagation(); changeAddonQty(selectedVariant?.id, ao?.id, 1); }}
-                                >+</button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+  {selectedVariant.addons
+    .filter((ao: any) =>
+      ao &&
+      ao.id &&
+      ao.name &&
+      ao.price > 0
+    )
+    .map((ao: any) => {
+      const qty = addonQtys[selectedVariant.id]?.[ao.id] || 0;
+      const selected = qty > 0;
+      const showDiscount =
+        typeof ao.discountedPrice === 'number' &&
+        ao.discountedPrice < ao.price;
+
+      return (
+        <div
+          key={ao.id}
+          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+            selected
+              ? 'border-orange-500'
+              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+          } cursor-pointer`}
+          onClick={() => {
+            if (selected) {
+              // Uncheck: reset quantity to zero
+              changeAddonQty(selectedVariant.id, ao.id, -qty);
+            } else {
+              // Check: add one
+              changeAddonQty(selectedVariant.id, ao.id, 1);
+            }
+          }}
+        >
+          <div className="flex items-center">
+            <div
+              className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                selected
+                  ? 'bg-orange-500 border-orange-500'
+                  : 'border-gray-300'
+              }`}
+            >
+              {selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1
+                       0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8
+                       12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+            <span className="font-medium hidden sm:block">
+              {ao.name.slice(0, 30)}...
+            </span>
+            <span className="text-[13px] block sm:hidden">
+              {ao.name.slice(0, 11)}...
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {showDiscount ? (
+              <>
+                <span className="text-[12px] sm:text-[15px]">
+                  +({formatPrice(ao.discountedPrice)})
+                </span>
+                <span className="line-through text-orange-500 text-[11px] ml-1">
+                  {formatPrice(ao.price)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[12px] sm:text-[15px]">
+                +({formatPrice(ao.price)})
+              </span>
+            )}
+            {selected && (
+              <div className="flex gap-2 p-1 rounded-full justify-center items-center border border-slate-300">
+                <button
+                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                  onClick={e => {
+                    e.stopPropagation();
+                    // Decrease by 1
+                    changeAddonQty(selectedVariant.id, ao.id, -1);
+                  }}
+                >
+                  −
+                </button>
+                <span className="text-gray-800 text-[13px] font-semibold">
+                  {qty}
+                </span>
+                <button
+                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                  onClick={e => {
+                    e.stopPropagation();
+                    // Increase by 1
+                    changeAddonQty(selectedVariant.id, ao.id, 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    })}
+</div>
                 </div>
               )}
     
@@ -479,67 +590,116 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     Select Extras
                   </span>
                 </div>
-                  <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
-                   {selectedVariant.extras.filter((ex: any) => 
-                     ex !== null && 
-                     ex?.id && 
-                     ex?.name && 
-                     ex?.price > 0
-                   ).map((ex: any) => {
-                      const qty = extraQtys[selectedVariant?.id]?.[ex?.id] || 0;
-                      const selected = qty > 0;
-                      const showDiscount = typeof ex?.discountedPrice === 'number' && typeof ex?.price === 'number' && ex?.discountedPrice < ex?.price && ex?.discountedPrice != 0;
-                      return (
-                        <div
-                          key={ex?.id}
-                          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
-                            selected ? 'border-orange-500' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                          } cursor-pointer`}
-                          onClick={() => {
-                            if (!selected) changeExtraQty(selectedVariant?.id, ex?.id, 1);
-                          }}
-                        >
-                          <div className="flex items-center">
-                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
-                              selected ? 'bg-orange-500 border-orange-500' : 'border-gray-300'
-                            }`}>
-                              {selected && (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                              )}
-                            </div>
-                            <span className="font-medium hidden sm:block">{(ex?.name).slice(0, 30)}...</span>
-                            <span className="text-[13px] block sm:hidden">{(ex?.name).slice(0, 12)}...</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {showDiscount ? (
-                              <>
-                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ex?.discountedPrice)})`}</span>
-                                <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ex?.price)}</span>
-                              </>
-                            ) : (
-                              <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(getExtraEffectivePrice(ex))})`}</span>
-                            )}
-                            {selected && (
-                              <div className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1">
-                                <button
-                                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full hover:text-white text-black font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
-                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, -1); }}
-                                  
-                                >−</button>
-                                <span className="text-gray-800 text-[13px] font-semibold">{qty}</span>
-                                <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
-                                  onClick={e => { e.stopPropagation(); changeExtraQty(selectedVariant?.id, ex?.id, 1); }}
-                                >+</button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+  {selectedVariant.extras
+    .filter((ex: any) =>
+      ex &&
+      ex.id &&
+      ex.name &&
+      ex.price > 0
+    )
+    .map((ex: any) => {
+      const qty      = extraQtys[selectedVariant.id]?.[ex.id] || 0;
+      const selected = qty > 0;
+      const showDiscount =
+        typeof ex.discountedPrice === 'number' &&
+        ex.discountedPrice < ex.price;
+
+      return (
+        <div
+          key={ex.id}
+          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+            selected
+              ? 'border-orange-500'
+              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+          } cursor-pointer`}
+          onClick={() => {
+            if (selected) {
+              // Uncheck: reset to zero
+              changeExtraQty(selectedVariant.id, ex.id, -qty);
+            } else {
+              // Check: add one
+              changeExtraQty(selectedVariant.id, ex.id, 1);
+            }
+          }}
+        >
+          <div className="flex items-center">
+            <div
+              className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                selected
+                  ? 'bg-orange-500 border-orange-500'
+                  : 'border-gray-300'
+              }`}
+            >
+              {selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1
+                       0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8
+                       12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+            <span className="font-medium hidden sm:block">
+              {ex.name.slice(0, 30)}…
+            </span>
+            <span className="text-[13px] block sm:hidden">
+              {ex.name.slice(0, 12)}…
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {showDiscount ? (
+              <>
+                <span className="text-[12px] sm:text-[15px]">
+                  +({formatPrice(ex.discountedPrice)})
+                </span>
+                <span className="line-through text-orange-500 text-[11px] ml-1">
+                  {formatPrice(ex.price)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[12px] sm:text-[15px]">
+                +({formatPrice(getExtraEffectivePrice(ex))})
+              </span>
+            )}
+            {selected && (
+              <div className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1">
+                <button
+                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                  onClick={e => {
+                    e.stopPropagation();
+                    changeExtraQty(selectedVariant.id, ex.id, -1);
+                  }}
+                >
+                  −
+                </button>
+                <span className="text-gray-800 text-[13px] font-semibold">
+                  {qty}
+                </span>
+                <button
+                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                  onClick={e => {
+                    e.stopPropagation();
+                    changeExtraQty(selectedVariant.id, ex.id, 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    })}
+</div>
                 </div>
               )}
             </div>

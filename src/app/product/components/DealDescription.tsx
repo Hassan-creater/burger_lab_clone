@@ -247,7 +247,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
 
     updateDealCart(dealCartData);
     setOpen(false);
-    toast.success("Deal added to cart!");
+   
   };
 
   return (
@@ -330,63 +330,113 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                     Select Addons
                   </span>
                 </div>
-                    <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
-                      {Addons.map((ao: any) => {
-                        const qty = addonQuantities[ao.id] || 0;
-                        const selected = qty > 0;
-                        const showDiscount = typeof ao.discountedPrice === 'number' && typeof ao.price === 'number' && ao.discountedPrice < ao.price && ao.discountedPrice != 0;
-                        return (
-                          <div
-                            key={ao.id}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                              selected ? "border-orange-500 " : "border-gray-300 bg-white"
-                            } hover:bg-gray-50`}
-                            onClick={() => !selected && handleSelectAddon(ao.id)}
-                          >
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center">
-                                <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
-                                  selected ? "bg-orange-500 border-orange-500" : "bg-white border-gray-300"
-                                }`}>
-                                  {selected && (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                  )}
-                                </div>
-                                <span className="font-medium hidden sm:block">{(ao.name).slice(0, 30)}...</span>
-                                <span className="text-[13px] block sm:hidden">{(ao.name).slice(0, 12)}...</span>
-                              </div>
-                              {showDiscount ? (
-                                <>
-                                  <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.discountedPrice)})`}</span>
-                                  <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ao.price)}</span>
-                                </>
-                              ) : (
-                                <span className="text-[12px] sm:text-[15px]">+{`(${formatPrice(ao.price)})`}</span>
-                              )}
-                              {selected && (
-                                <div className="flex gap-2 p-1 rounded-full justify-center items-center border border-slate-300 " onClick={e => e.stopPropagation()}>
-                                  <button
-                                    className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full  text-black font-bold hover:bg-orange-600  hover:text-white cursor-pointer transition-colors "
-                                    onClick={() => handleAddonDecrease(ao.id)}
-                                  >
-                                    −
-                                  </button>
-                                  <span className=" w-6 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
-                                  <button
-                                    className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm "
-                                    onClick={() => handleAddonIncrease(ao.id)}
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+  {Addons.map((ao: any) => {
+    const qty      = addonQuantities[ao.id] || 0;
+    const selected = qty > 0;
+    const showDiscount =
+      typeof ao.discountedPrice === 'number' &&
+      ao.discountedPrice < ao.price;
+
+    return (
+      <div
+        key={ao.id}
+        className={`p-3 rounded-xl border transition-all cursor-pointer ${
+          selected
+            ? "border-orange-500 bg-white"
+            : "border-gray-300 bg-white hover:bg-gray-50"
+        }`}
+        onClick={() => {
+          if (selected) {
+            // Uncheck: remove all units at once
+            handleAddonDecrease(ao.id);
+          } else {
+            // Check: add one
+            handleSelectAddon(ao.id);
+          }
+        }}
+      >
+        <div className="flex justify-between items-center">
+          {/* Checkbox & Label */}
+          <div className="flex items-center">
+            <div
+              className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                selected
+                  ? "bg-orange-500 border-orange-500"
+                  : "border-gray-300 bg-white"
+              }`}
+            >
+              {selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1
+                       0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8
+                       12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+            <span className="font-medium hidden sm:block">
+              {ao.name.slice(0, 30)}…
+            </span>
+            <span className="text-[13px] block sm:hidden">
+              {ao.name.slice(0, 12)}…
+            </span>
+          </div>
+
+          {/* Price */}
+          <div>
+            {showDiscount ? (
+              <>
+                <span className="text-[12px] sm:text-[15px]">
+                  +({formatPrice(ao.discountedPrice)})
+                </span>
+                <span className="line-through text-orange-500 text-[11px] ml-1">
+                  {formatPrice(ao.price)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[12px] sm:text-[15px]">
+                +({formatPrice(ao.price)})
+              </span>
+            )}
+          </div>
+
+          {/* Qty Controls */}
+          {selected && (
+            <div
+              className="flex gap-2 p-1 rounded-full justify-center items-center border border-slate-300"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                onClick={() => handleAddonDecrease(ao.id)}
+              >
+                −
+              </button>
+              <span className="w-6 sm:w-6 text-center text-gray-800 font-semibold">
+                {qty}
+              </span>
+              <button
+                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                onClick={() => handleAddonIncrease(ao.id)}
+              >
+                +
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  })}
+</div>
                   </div>
                 )}
     
@@ -398,63 +448,109 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                     Select Extras
                   </span>
                 </div>
-                    <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
-                      {Extras.map((ex: any) => {
-                        const qty = extraQuantities[ex.id] || 0;
-                        const selected = qty > 0;
-                        const showDiscount = typeof ex.discountedPrice === 'number' && typeof ex.price === 'number' && ex.discountedPrice < ex.price && ex.discountedPrice != 0;
-                        return (
-                          <div
-                            key={ex.id}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                              selected ? "border-orange-500 " : "border-gray-300 bg-white"
-                            } hover:bg-gray-50`}
-                            onClick={() => !selected && handleSelectExtra(ex.id)}
-                          >
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center">
-                                <div className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
-                                  selected ? "bg-orange-500 border-orange-500" : "bg-white border-gray-300"
-                                }`}>
-                                  {selected && (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                  )}
-                                </div>
-                                <span className="text-[13px] hidden sm:block sm:font-medium">{(ex.name).slice(0, 30)}...</span>
-                                <span className="text-[13px] block sm:hidden sm:font-medium">{(ex.name).slice(0, 12)}...</span>
-                              </div>
-                              {showDiscount ? (
-                                <>
-                                  <span className="text-[10px] sm:text-[15px]">+{`(${formatPrice(ex.discountedPrice)})`}</span>
-                                  <span className="line-through text-orange-500 text-[11px] ml-1">{formatPrice(ex.price)}</span>
-                                </>
-                              ) : (
-                                <span className="text-[10px] sm:text-[15px]">+{`(${formatPrice(getExtraEffectivePrice(ex))})`}</span>
-                              )}
-                            {selected && (
-                              <div className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1 " onClick={e => e.stopPropagation()}>
-                                <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full hover:text-white text-black font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
-                                  onClick={() => handleExtraDecrease(ex.id)}
-                                >
-                                  −
-                                </button>
-                                <span className=" w-4 sm:w-6 text-center text-gray-800 font-semibold">{qty}</span>
-                                <button
-                                  className=" w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm  cursor-pointer"
-                                  onClick={() => handleExtraIncrease(ex.id)}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+  {Extras.map((ex: any) => {
+    const qty      = extraQuantities[ex.id] || 0;
+    const selected = qty > 0;
+    const showDiscount =
+      typeof ex.discountedPrice === 'number' &&
+      ex.discountedPrice < ex.price;
+
+    return (
+      <div
+        key={ex.id}
+        className={`p-3 rounded-xl border transition-all cursor-pointer ${
+          selected ? "border-orange-500 bg-white" : "border-gray-300 bg-white hover:bg-gray-50"
+        }`}
+        onClick={() => {
+          if (selected) {
+            // Uncheck: remove all at once
+            handleExtraDecrease(ex.id);
+          } else {
+            // Check: add one
+            handleSelectExtra(ex.id);
+          }
+        }}
+      >
+        <div className="flex justify-between items-center">
+          {/* Checkbox & Label */}
+          <div className="flex items-center">
+            <div
+              className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 ${
+                selected ? "bg-orange-500 border-orange-500" : "border-gray-300 bg-white"
+              }`}
+            >
+              {selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3 text-white"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1
+                       0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8
+                       12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </div>
+            <span className="text-[13px] hidden sm:block font-medium">
+              {ex.name.slice(0, 30)}…
+            </span>
+            <span className="text-[13px] block sm:hidden font-medium">
+              {ex.name.slice(0, 12)}…
+            </span>
+          </div>
+
+          {/* Price */}
+          <div>
+            {showDiscount ? (
+              <>
+                <span className="text-[10px] sm:text-[15px]">
+                  +({formatPrice(ex.discountedPrice)})
+                </span>
+                <span className="line-through text-orange-500 text-[11px] ml-1">
+                  {formatPrice(ex.price)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[10px] sm:text-[15px]">
+                +({formatPrice(getExtraEffectivePrice(ex))})
+              </span>
+            )}
+          </div>
+
+          {/* Qty Controls */}
+          {selected && (
+            <div
+              className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                onClick={() => handleExtraDecrease(ex.id)}
+              >
+                −
+              </button>
+              <span className="w-4 sm:w-6 text-center text-gray-800 font-semibold">
+                {qty}
+              </span>
+              <button
+                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                onClick={() => handleExtraIncrease(ex.id)}
+              >
+                +
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  })}
+</div>
                   </div>
                 )}
               </div>
