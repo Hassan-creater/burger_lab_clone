@@ -10,6 +10,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 type SearchBoxProps = {
   onSearchStart?: () => void;
   onSearchEnd?: (value: string) => void;
+  
 };
 
 export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps) {
@@ -83,6 +84,7 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
       </div>
       <Input
         ref={inputRef}
+
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);
@@ -90,9 +92,10 @@ export default function SearchBox({ onSearchStart, onSearchEnd }: SearchBoxProps
         }}
         placeholder={`Search for ${placeholder}`}
         id="search"
+
         type="search"
         autoComplete="off"
-        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent w-full rounded-none placeholder:text-gray-400 placeholder:text-sm"
+        className="mainSearchInput border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent w-full rounded-none placeholder:text-gray-400 placeholder:text-sm"
       />
     </div>
   );

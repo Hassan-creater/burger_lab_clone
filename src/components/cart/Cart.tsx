@@ -626,10 +626,17 @@ useEffect(() => {
               onClick={(e) => {
                 e.stopPropagation();
                 window.scrollTo({ top: 0, behavior: "smooth" });
+            
+              
+                setTimeout(() => {
+                  const input = document.querySelector(".mainSearchInput") as HTMLInputElement;
+                  input?.focus();
+                }, 500);
               }}
             >
               <Search width={26} height={26} className="text-black" />
             </div>
+            
             
             
             )}
