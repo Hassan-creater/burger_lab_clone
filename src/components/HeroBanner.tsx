@@ -36,13 +36,14 @@ function HeroBanner() {
 		return res.data.data?.slides;
 	}
 
-	getAllSlides();
 
-	const {data: slides} = useQuery({
+	const { data: slides } = useQuery({
 		queryKey: ["slides"],
 		queryFn: getAllSlides,
-	
-	})	
+		
+	  });
+	  
+	  
 	
 	const carouselRef = useRef<HTMLDivElement>(null);
 	const [currentIndex, setCurrentIndex] = useState(0);

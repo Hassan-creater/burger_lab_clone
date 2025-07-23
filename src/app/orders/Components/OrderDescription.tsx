@@ -66,6 +66,8 @@ type OrderDetailsModalProps = {
           queryFn : getOrder,
           enabled : !!orders?.id && !!dialogOpen
         })
+
+       
   if(isLoading){
     return(
         <div key={index} className="space-y-6 animate-pulse">
@@ -388,7 +390,7 @@ type OrderDetailsModalProps = {
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span className={`${designVar.fontFamily} text-gray-600`}>Total:</span>
-                    <span className={`text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.total - order?.discount}</span>
+                    <span className={`text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.total}</span>
                   </div>
                 </div>
               </div>

@@ -59,7 +59,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
-  const {AddedInCart  , dealData, ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData , updateCart, couponCode , isTaxAppliedBeforeCoupon ,pickupClose , deliveryClose , dineInClose , updateDealCart  } = useCartContext();
+  const {AddedInCart  , dealData, ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData ,setCouponData, updateCart, couponCode , isTaxAppliedBeforeCoupon ,pickupClose , deliveryClose , dineInClose , updateDealCart  } = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, { addons: boolean; extras: boolean }>>({});
 
@@ -139,6 +139,14 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     taxAmount = discountedSubtotal * (parseInt(data?.tax ?? "0") / 100);
     grandTotal = discountedSubtotal + taxAmount + deliveryCharges;
   }
+
+
+
+ useEffect(()=>{
+  if(couponData){
+    setCouponData({});
+  }
+ },[])
 
 
   useEffect(() => {

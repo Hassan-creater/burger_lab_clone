@@ -34,6 +34,13 @@ const nextConfig = {
 				port: "",
 				pathname: "/**",
 			},
+
+			{
+				protocol: "http", // Adding the missing hostname
+				hostname: "localhost",
+				port: "8000",
+				pathname: "/**",
+			},
 			
 		],
 	},
