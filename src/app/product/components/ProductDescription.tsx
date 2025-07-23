@@ -475,7 +475,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       const selected = qty > 0;
       const showDiscount =
         typeof ao.discountedPrice === 'number' &&
-        ao.discountedPrice < ao.price;
+        ao.discountedPrice < ao.price && ao.discountedPrice != 0;
 
       return (
         <div
@@ -603,7 +603,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       const selected = qty > 0;
       const showDiscount =
         typeof ex.discountedPrice === 'number' &&
-        ex.discountedPrice < ex.price;
+        ex.discountedPrice < ex.price && ex.discountedPrice != 0;
 
       return (
         <div
