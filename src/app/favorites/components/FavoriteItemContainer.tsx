@@ -9,7 +9,15 @@ export default function FavoriteItemContainer({
 }: {
   favorite: Favorite;
   favorites: Favorite[];
+
+
 }) {
+
+
+
+
+
+  
   return (
     <div className="w-full h-auto p-2">
       {favorite.itemId && favorite.item && (

@@ -1,3 +1,5 @@
+
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 // import FavoriteItemContainer from "./components/FavoriteItemContainer";
@@ -24,6 +26,9 @@ export const dynamic = "force-dynamic";
 
 
 const getFavorites = async ({id, token} : {id : string, token : string}) => {
+  if(!token){
+    redirect("/");
+  }
   try {
     const res = await fetch(
       `${process.env.NEXT_BASE_URL}/favorite/user/${id}`,
@@ -39,15 +44,14 @@ const getFavorites = async ({id, token} : {id : string, token : string}) => {
 
     if (!res.ok) {
       throw new Error(`Failed to fetch categories (${res.status})`);
+      
     }
 
     // assuming response shape { data: { categories: Category[] } }
     const body = await res.json();
     return body.data?.favorites as any[];
   } catch (err) {
-    console.error("Categories fetch error:", err);
-    // Fallback to dummy data
-     toast.error("Failed to fetch favorites");
+  
   }
 }   
 
@@ -70,9 +74,6 @@ export default async function Favorites({}: FavoritesProps) {
 
 
 
-  if(!token){
-    redirect("/");
-  }
 
   return (
     <main className="w-full  my-5 min-h-screen flex flex-col">
