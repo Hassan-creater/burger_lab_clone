@@ -12,6 +12,7 @@ import { useCartContext } from "@/context/context"
 import { VisuallyHidden } from "../ui/visually-hidden"
 import { designVar } from "@/designVar/desighVar"
 import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 // Dummy data
 
@@ -400,11 +401,24 @@ const isButtonDisabled =
   <button className="flex items-center gap-2 text-sm text-gray-700 hover:text-orange-500">
     <MapPin className="w-6 h-6 text-orange-500" />
     <div className="text-sm text-black flex flex-col justify-start items-start hover:text-orange-500 hover:underline duration-300 text-[14px]">
-    <p className="font-bold text-[0.7em] sm:text-[1em]">{
-        AddressData?.orderType ? `${(AddressData?.orderType).charAt(0).toUpperCase() + (AddressData?.orderType).slice(1)} location` : "Select your desired"
-        
-      }</p>
-    <p className="flex items-center gap-2 hover:underline duration-300 text-[0.6em] sm:text-[12px] ">
+    <p
+  className={cn(
+    "font-bold text-[0.7em] sm:text-[1em]",
+    "truncate max-w-[80%] overflow-hidden whitespace-nowrap",
+    window.innerWidth < 500 ? "block" : "w-auto"
+  )}
+>
+  {AddressData?.orderType
+    ? `${AddressData.orderType.charAt(0).toUpperCase() + AddressData.orderType.slice(1)} location`
+    : "Select your desired"}
+</p>
+
+<p
+  className={cn(
+    "flex items-center gap-2 hover:underline duration-300 text-[0.6em] sm:text-[12px]",
+    "truncate max-w-[70%] overflow-hidden whitespace-nowrap"
+  )}
+>
   {!AddressData?.orderType
     ? "Location"
     : AddressData?.area
@@ -412,6 +426,7 @@ const isButtonDisabled =
     : AddressData?.branch}
   <ChevronDown className="w-4 h-4" />
 </p>
+
     </div>
     
   </button>
@@ -601,10 +616,7 @@ const isButtonDisabled =
     {
       AddressData?.orderType && (
         <button
-        onClick={() => {
-          if(AddressData.orderType !== selectedOrderType)
-          setOpen(false);
-        }}
+        onClick={() =>  setOpen(false)}
         className={`absolute ${AddressData.orderType != selectedOrderType ? "hidden" : "block"} top-3 right-3 p-2 bg-gray-500/80 hover:bg-gray-600/80 rounded-full text-white transition-colors`}
       >
         <X className="w-5 h-5" />

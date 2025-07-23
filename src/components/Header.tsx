@@ -53,7 +53,7 @@ const Header = () => {
    
      {/* Center: Logo */}
      <div className="flex-1 flex justify-center  h-[5em]">
-       <Link href="/" className="w-[45%] sm:w-[60%] h-full  flex items-center justify-center">
+       <Link href="/" className="w-[50%] sm:w-[60%] h-full  flex items-center justify-center">
          <img
            src="/blueLogo.png"
            alt="website-logo-showing-its-name"

@@ -19,7 +19,7 @@ import PromoBar from "./PromoBar";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { OrderDetails } from "@/app/checkout/page";
 import { useRouter } from "next/navigation";
-import { Loader2, LucideChevronRightCircle } from "lucide-react";
+import { Loader2, LucideChevronRightCircle, Search } from "lucide-react";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import { apiClient, apiClientCustomer } from "@/lib/api";
@@ -533,11 +533,26 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
     }
   };
 
+
+  const totalCartItems = AddedInCart.length + dealDataSafe.length;
+
+  const [showSearchIcon, setShowSearchIcon] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setShowSearchIcon(window.scrollY > 200);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+
   if (type === "CART") {
     return (
       <Sheet open={isCartOpen} onOpenChange={() => setIsCartOpen(!isCartOpen)}>
         <SheetTrigger asChild>
-          {windowWidth >= 200 ? (
+          {windowWidth >= 500 ? (
             <Button
               className={cn(
                 "flex items-center  gap-2 h-full relative hover:bg-inherit",
@@ -555,25 +570,40 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
               <CaretDown width={7} height={7} />
             </Button>
           ) : (
-            <div
+            <div>
+            {showSearchIcon && (
+              <div
               className={cn(
-                "fixed -bottom-1 p-4 py-6 flex md:hidden w-full bg-primaryOrange left-[0.01rem] items-center justify-between",
-                items.length === 0 && "hidden"
+                "fixed bottom-[80px] right-4 z-[9999] p-3 bg-[#fabf2c] rounded-full shadow-md transition-all duration-500 transform",
+                showSearchIcon
+                  ? "opacity-100 pointer-events-auto translate-y-0"
+                  : "opacity-0 pointer-events-none translate-y-6"
               )}
-            >     
-              <div className="flex flex-col items-center justify-center">
-                <p className="text-black font-normal">
-                  {cartItemsQuantity} Item(s)
-                </p>
-                <p className="text-black font-bold text-lg">
-                  {formatPrice(total)}
-                </p>
-              </div>
-              <div className="flex gap-2 items-center">
-                <p className="text-black font-bold text-lg">View Cart</p>
-                <LucideChevronRightCircle className="size-8 text-black" />
-              </div>
+              onClick={(e) => {
+                e.stopPropagation();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              <Search width={26} height={26} className="text-black" />
             </div>
+            
+            
+            )}
+        
+            <div
+              className="fixed bottom-4 right-4 z-[9999] flex items-center justify-center bg-[#fabf2c] rounded-full p-3 shadow-lg transition-all duration-300"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <ShoppingBagIcon width={26} height={26} className="text-white" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                  {totalCartItems}
+                </span>
+              )}
+            </div>
+          </div>
+        
+        
           )}
         </SheetTrigger>
         <SheetContent
