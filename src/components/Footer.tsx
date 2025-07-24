@@ -241,7 +241,7 @@ const Footer = () => {
              
 
              {
-              AddressData?.tax ? (
+              AddressData?.supportEmail ? (
                 <div className="flex items-start space-x-3 text-[14px]">
               <Mail className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div>

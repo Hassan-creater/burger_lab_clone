@@ -15,6 +15,8 @@ import { dummySlides } from "@/lib/dummyData";
 import { apiClientCustomer } from "@/lib/api";
 import { chownSync } from "fs";
 import { useQuery } from "@tanstack/react-query";
+import { useCartContext } from "@/context/context";
+import { toast } from "sonner";
 
 function HeroBanner() {
 	/* Original data fetching code
@@ -30,6 +32,52 @@ function HeroBanner() {
 		status: 200,
 		slides: dummySlides
 	};
+
+
+	const {AddressData , UpdateAddressData} = useCartContext()
+    
+ 
+
+	const CheckBranch = async () => {
+	  try {
+		const res = await apiClientCustomer.get(`branch/${AddressData.branchId}/view/customer`);
+	
+		if(AddressData?.orderType == "delivery" && !res.data.data.isDeliveryAvailable){
+			localStorage.removeItem("addressData");
+			UpdateAddressData({})
+		}
+
+		if(AddressData?.orderType == "pickup" && !res.data.data.isTakeAwayAvailable){
+			localStorage.removeItem("addressData");
+			UpdateAddressData({})
+		}
+
+
+		if(AddressData?.orderType == "dine_in" && !res.data.data.isDineInAvailable){
+			localStorage.removeItem("addressData");
+			UpdateAddressData({})
+		}
+
+		
+	
+	  } catch (error : any) {
+		// Axios error object contains the status code under error.response.status
+		if (error.response && error.response.status) {
+	
+		  if(error.response.status == 404){
+			localStorage.removeItem("addressData")
+		    UpdateAddressData({});
+		  }
+		} 
+	  }
+	};
+	  
+	  
+
+
+	
+
+
 
 	const getAllSlides = async () => {
 		const res = await apiClientCustomer.get("/slide/view/customer");
@@ -64,6 +112,13 @@ function HeroBanner() {
   
 	  return () => clearInterval(interval); 
 	}, [slides?.length]);
+
+
+	useEffect(()=>{
+      if(AddressData?.branchId){
+		CheckBranch();
+	  }
+	},[AddressData])
 
 	return (
 		<CarouselContainer
