@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartContext } from "@/context/context";
 import { apiClientCustomer } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { designVar } from "@/designVar/desighVar";
 import { toast } from "sonner";
 import React from "react"; // Added for React.useState
@@ -22,11 +22,27 @@ const Footer = () => {
     return response.data.data
   }
 
-  const {data: socialMediaData} = useQuery({
-    queryKey: ["social-media"],
-    queryFn : getSocialMedia
-  })
+  const getApplicationInfo = async()=>{
+    const res = await apiClientCustomer.get("/application-info/basic-info");
+    return res.data.data
+  }
 
+
+  const [{data : socialMediaData} , {data : appInfo}] = useQueries({
+    queries: [
+      {
+        queryKey: ["social-media"],
+        queryFn: getSocialMedia,
+      },
+      {
+        queryKey: ["social-media", "inactive"],
+        queryFn: getApplicationInfo,
+      },
+    ]
+  });
+
+
+  
 
  
   
@@ -170,15 +186,25 @@ const Footer = () => {
         {/* Logo and App Downloads Section */}
         <div className="space-y-8 ">
           {/* Logo Placeholder */}
-          <div className="w-40 h-16">
-  <img
-    src="/blueLogo.png"
-    alt="logo"
+          <div className="relative w-40 h-16 group">
+            <img
+              src="/blueLogo.png"
+              alt="logo"
+              className="w-full h-full object-contain"
+            />
+          
+            {/* Hover Box */}
+            {
+              appInfo && (
+            <div className="absolute whitespace-nowrap top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white shadow-md px-3 py-2 rounded-lg text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+              <strong>{appInfo?.versionTitle}</strong><br />
+              {appInfo?.version}
+            </div>
 
+              )
+            }
+          </div>
 
-  className="w-full h-full object-contain"
-  />
-</div>
 
 
           {/* App Download Buttons */}
@@ -308,7 +334,7 @@ const Footer = () => {
             socialMediaData?.length > 0 ? (
                 <>
                  <h4 className="text-[16px] font-semibold text-gray-900 mb-3">Follow Us:</h4>
-                 <div className="w-full flex gap-2">
+                 <div className="w-full flex gap-2 flex-wrap">
                  {
                   socialMediaData?.map((item : any , index : number)=>{
                   
@@ -344,9 +370,14 @@ const Footer = () => {
         
        
       </div>
+      {
+        appInfo?.license && (
+
       <div className="pt-4 text-[12px] text-center mt-4 border-t-[1.3px] border-gray-200">
-        <p>Copyright © {new Date().getFullYear()} Zest Up. All rights reserved.</p>
+        <p>{appInfo?.license}</p>
       </div>
+        )
+      }
     </div>
   </footer>
   );
