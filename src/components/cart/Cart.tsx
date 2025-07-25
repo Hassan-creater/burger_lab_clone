@@ -259,7 +259,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           ClearCart();
           toast.success("Order placed successfully");
           localStorage.removeItem("orderType")
-          sessionStorage.clear();
+          sessionStorage.removeItem("canCheckout");
           router.push("/order-complete/" + res.data.data.displayId);
         }
       } catch (err: any) {

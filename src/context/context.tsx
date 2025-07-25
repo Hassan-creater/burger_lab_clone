@@ -99,6 +99,8 @@ interface CartContextType {
   DecreaseItemAddonQuantity: (cartItem: any , addonId : string) => void;
   IncreaseItemExtraQuantity: (cartItem: any , extraId : string) => void;
   DecreaseItemExtraQuantity: (cartItem: any , extraId : string) => void;
+  SetDateFormat : (date : string)=>void,
+  dateFormat : string,
 }
 
 
@@ -130,6 +132,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [isTaxAppliedBeforeCoupon, setIsTaxAppliedBeforeCoupon] = useState<boolean>(false);
   const [deals , setDeals] = useState<any>([])
   const [dealData,setDealData] = useState<any>({})
+  const [dateFormat , _setDateFormat] = useState("YYYY-MM-DD");
 
   const setFavorite = ({ itemId, favId }: Favorite) => {
     // 1. Load current favorites (or empty array)
@@ -150,6 +153,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     // 5. Update your React state (or other state manager)
     _setFavorite(newFavorites);
   };
+
+
+  const SetDateFormat = (date : string)=>{
+    sessionStorage.setItem("dateFormat" , date);
+    const dateload = sessionStorage.getItem("dateFormat");
+    _setDateFormat(dateload || "YYYY-MM-DD");
+  }
 
 
   useEffect(() => {
@@ -214,25 +224,25 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
 
-  const deduplicateItems = (items: CartItem[]): boolean => {
-    // same comparison as before
-    const isSameItem = (a: CartItem, b: CartItem) =>
-      a.variantId === b.variantId &&
-      JSON.stringify(a.addons || []) === JSON.stringify(b.addons || []) &&
-      JSON.stringify(a.extras || []) === JSON.stringify(b.extras || []);
+  // const deduplicateItems = (items: CartItem[]): boolean => {
+  //   // same comparison as before
+  //   const isSameItem = (a: CartItem, b: CartItem) =>
+  //     a.variantId === b.variantId &&
+  //     JSON.stringify(a.addons || []) === JSON.stringify(b.addons || []) &&
+  //     JSON.stringify(a.extras || []) === JSON.stringify(b.extras || []);
   
-    const seen: CartItem[] = [];
-    for (const item of items) {
-      // if we already saw an “equal” item, we have a duplicate
-      if (seen.find(s => isSameItem(s, item))) {
-        return true;
-      }
-      seen.push(item);
-    }
+  //   const seen: CartItem[] = [];
+  //   for (const item of items) {
+  //     // if we already saw an “equal” item, we have a duplicate
+  //     if (seen.find(s => isSameItem(s, item))) {
+  //       return true;
+  //     }
+  //     seen.push(item);
+  //   }
   
-    // no duplicates found
-    return false;
-  };
+  //   // no duplicates found
+  //   return false;
+  // };
   
 
   const updateCart = (newItems: CartItem[]) => {
@@ -386,7 +396,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity , dateFormat , SetDateFormat }}>
       {children}
     </CartContext.Provider>
   );

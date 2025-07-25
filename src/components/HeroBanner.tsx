@@ -41,6 +41,7 @@ function HeroBanner() {
 	const CheckBranch = async () => {
 	  try {
 		const res = await apiClientCustomer.get(`branch/${AddressData.branchId}/view/customer`);
+		
 	
 		if(AddressData?.orderType == "delivery" && !res.data.data.isDeliveryAvailable){
 			localStorage.removeItem("addressData");

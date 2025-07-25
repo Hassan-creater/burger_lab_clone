@@ -44,6 +44,74 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
 
     const handleScroll = () => {
       if (!categories || categories.length === 0) return;
+      // If at the very top, check if first section is at the top of viewport
+      // If manualDealsActive is true, lock deals as active until deals section is present and in view
+      if (manualDealsActive) {
+        const dealsSection = document.getElementById("deals");
+        if (dealsSection) {
+          const rect = dealsSection.getBoundingClientRect();
+          // If deals section is at/near top, release manual lock
+          if (Math.abs(rect.top - scrollOffset) < 10) {
+            setManualDealsActive(false);
+          } else {
+            if (activeSectionId !== "deals") {
+              setActiveSectionId("deals");
+            }
+            return;
+          }
+        } else {
+          // If deals section not present, keep deals active
+          if (activeSectionId !== "deals") {
+            setActiveSectionId("deals");
+          }
+          return;
+        }
+      }
+      // If deals section exists, use its position to determine highlight
+      const dealsSection = document.getElementById("deals");
+      if (dealsSection) {
+        const rect = dealsSection.getBoundingClientRect();
+        // If deals section is visible near the top, keep deals active
+        if (rect.top < scrollOffset && rect.bottom > scrollOffset / 2) {
+          if (activeSectionId !== "deals") {
+            setActiveSectionId("deals");
+          }
+          return;
+        }
+        // If deals section is out of view, use scrollspy logic for categories
+        if (rect.bottom <= scrollOffset / 2) {
+          let closestSection = categories[0].title;
+          let minDistance = Number.POSITIVE_INFINITY;
+          for (let i = 0; i < categories.length; i++) {
+            const section = document.getElementById(categories[i].title);
+            if (section) {
+              const catRect = section.getBoundingClientRect();
+              const distance = Math.abs(catRect.top - scrollOffset);
+              if (catRect.top - scrollOffset <= 0 && distance < minDistance) {
+                minDistance = distance;
+                closestSection = categories[i].title;
+              }
+            }
+          }
+          // If no section is above the offset, pick the first section below the offset
+          if (minDistance === Number.POSITIVE_INFINITY) {
+            for (let i = 0; i < categories.length; i++) {
+              const section = document.getElementById(categories[i].title);
+              if (section) {
+                const catRect = section.getBoundingClientRect();
+                if (catRect.top - scrollOffset > 0) {
+                  closestSection = categories[i].title;
+                  break;
+                }
+              }
+            }
+          }
+          if (closestSection !== activeSectionId) {
+            setActiveSectionId(closestSection);
+          }
+          return;
+        }
+      }
       const dealsSectionExists = !!document.getElementById("deals");
       if (manualDealsActive && !dealsSectionExists) {
         // If manually set to deals and section is not present, always force highlight and prevent scrollspy from updating
@@ -89,7 +157,6 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
       }
 
       if (closestSection !== activeSectionId) {
-      
         setActiveSectionId(closestSection);
       }
     };
@@ -109,14 +176,12 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   }, [categories, setActiveSectionId, activeSectionId, ignoreScrollSpyUntil, manualDealsActive]);
   // --- Debounced, smooth Scrollspy logic end ---
 
+  // Only scroll active link into view if the user clicked a category
   useEffect(() => {
-    if (activeLinkRef.current) {
+    if (isUserClick && activeLinkRef.current) {
       activeLinkRef.current.scrollIntoView();
     }
-    if(!categories){
-      
-    }
-  }, [activeSectionId]);
+  }, [activeSectionId, isUserClick]);
 
   // const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
   const [activeSubNavId, setActiveSubNavId] = useState<string | null>(null);
@@ -124,11 +189,18 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   const windowWidth = useWindowSize();
  
 
-  // fist category is active by default only if no activeSectionId is set
+  // On mount, deals is active by default if it exists, else first category
   useEffect(() => {
     if (categories && categories.length > 0 && !activeSectionId) {
-      setActiveSectionId(categories[0].title);         // Sets first category as active only if none is set
-      setActiveSubNavId(categories[0].title);          // Opens its submenu
+      const dealsSection = document.getElementById("deals");
+      if (dealsSection) {
+        setActiveSectionId("deals");
+        setManualDealsActive(false);
+      } else {
+        setActiveSectionId(categories[0].title);
+        setManualDealsActive(false);
+      }
+      setActiveSubNavId(categories[0].title);
     }
   }, [categories, activeSectionId, setActiveSectionId]);
 
@@ -166,13 +238,11 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   return (
     <nav
       className={cn(
-        "sticky top-[5em]   bg-inherit z-20 mt-[1.5em] sm:mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-500",
+        "sticky top-[5em]   bg-inherit z-20 mt-[1.5em] sm:mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-300",
         `${deliveryClose || dineInClose || pickupClose ? "pt-[1em] " : "pt-[0em]"}`
       )}
     >
-       
-
-           <div
+          <div
             className={cn(
               "relative w-full overflow-hidden  flex items-center overflow-x-auto  no-scrollbar scroll-smooth transition-all"
             )}
@@ -208,15 +278,19 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   <button
     onClick={e => {
       e.preventDefault();
-      const dealsSection = document.getElementById("deals");
-      if (dealsSection) {
-        setIsUserClick(true);
-        setIgnoreScrollSpyUntil(Date.now() + 400);
-        setManualDealsActive(false);
-      } else {
-        setManualDealsActive(true);
-      }
-      setActiveSectionId("deals");
+      setIsUserClick(true);
+      setIgnoreScrollSpyUntil(Date.now() + 600); // Give scrollspy more time to ignore
+      setManualDealsActive(true); // Mark deals as manually activated
+      setActiveSectionId("deals"); // Immediately set deals as active
+      // Scroll to deals section if it exists
+      setTimeout(() => {
+        const dealsSection = document.getElementById("deals");
+        if (dealsSection) {
+          const yOffset = -170;
+          const y = dealsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 50);
     }}
   >
     <p className="text-center">Deals</p>

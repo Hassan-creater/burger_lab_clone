@@ -15,7 +15,11 @@ import React from "react"; // Added for React.useState
 const Footer = () => {
 
 
-  const {TaxData , AddressData} = useCartContext()
+  const {TaxData , AddressData , SetDateFormat} = useCartContext()
+
+
+  const socialMedias = AddressData?.socialMedias
+
 
   const getSocialMedia = async () => {
     const response = await apiClientCustomer.get(`/social-media`)
@@ -24,18 +28,16 @@ const Footer = () => {
 
   const getApplicationInfo = async()=>{
     const res = await apiClientCustomer.get("/application-info/basic-info");
+    SetDateFormat(res.data.data.dateTimeFormat)
     return res.data.data
   }
 
 
-  const [{data : socialMediaData} , {data : appInfo}] = useQueries({
+  const [{data : appInfo}] = useQueries({
     queries: [
+     
       {
-        queryKey: ["social-media"],
-        queryFn: getSocialMedia,
-      },
-      {
-        queryKey: ["social-media", "inactive"],
+        queryKey: ["appInfo"],
         queryFn: getApplicationInfo,
       },
     ]
@@ -331,12 +333,12 @@ const Footer = () => {
 
           {/* Social Media */}
           {
-            socialMediaData?.length > 0 ? (
+            socialMedias?.length > 0 ? (
                 <>
                  <h4 className="text-[16px] font-semibold text-gray-900 mb-3">Follow Us:</h4>
                  <div className="w-full flex gap-2 flex-wrap">
                  {
-                  socialMediaData?.map((item : any , index : number)=>{
+                  socialMedias?.map((item : any , index : number)=>{
                   
                     return (
                       <SocialIcon

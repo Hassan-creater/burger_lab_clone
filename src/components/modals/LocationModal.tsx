@@ -43,7 +43,8 @@ export default function LocationModal() {
         endTime : convertTo12HourFormat(deliveryBranch?.endTime) || "",
         supportEmail : deliveryBranch?.supportEmail,
         address : deliveryBranch?.address || "",
-        contactPhone : deliveryBranch?.contactPhone
+        contactPhone : deliveryBranch?.contactPhone,
+        socialMedias : deliveryBranch?.socialMedias
        }),
       ...(selectedOrderType === "pickup" && { branch: selectedPickupBranch ,
         openTime :   convertTo12HourFormat(selectedPickupBranchData?.openTime) || "",
@@ -52,7 +53,8 @@ export default function LocationModal() {
         tax : selectedPickupBranchData?.tax,
         supportEmail : selectedPickupBranchData?.supportEmail,
         branchId : selectedPickupBranchData?.id,
-        contactPhone : selectedPickupBranchData?.contactPhone
+        contactPhone : selectedPickupBranchData?.contactPhone,
+        socialMedias : selectedPickupBranchData?.socialMedias
 
         
        }),
@@ -64,7 +66,8 @@ export default function LocationModal() {
         tax : selectedDineInBranchData?.tax,
         supportEmail : selectedDineInBranchData?.supportEmail,
         branchId : selectedDineInBranchData?.id,
-        contactPhone : selectedDineInBranchData?.contactPhone
+        contactPhone : selectedDineInBranchData?.contactPhone,
+        socialMedias : selectedDineInBranchData?.socialMedias
        
       })
       
@@ -74,6 +77,7 @@ export default function LocationModal() {
     UpdateAddressData(AddressData);
     setOpen(false)
   }
+
 
 
   function convertTo12HourFormat(time24: string): string {
@@ -394,6 +398,11 @@ const isButtonDisabled =
 
 
 
+ 
+
+
+
+
   return (
 
 <Dialog open={pathname.includes("/auth/update-verification/") ? false : open} onOpenChange={setOpen}>
@@ -520,7 +529,13 @@ const isButtonDisabled =
           </Button>
 
           {/* City Selection */}
-          <Select value={selectedCity} onValueChange={setSelectedCity}>
+          <Select value={selectedCity} onValueChange={(val) => {
+               setSelectedCity(val);
+               setSelectedArea("");
+               setSelectedPickupBranch(""),
+               setSelectedDineInBranch("");
+             }}>
+
             <SelectTrigger className="w-full focus:ring-orange-500 focus:ring-offset-0 border-gray-200">
               <SelectValue placeholder="Select City / Region" />
             </SelectTrigger>

@@ -57,6 +57,8 @@ function ProductCard({
   const [open, setOpen] = useState(false);
   const {user} = useCartContext();
   const [imgError, setImgError] = useState(false);
+  const hasDiscount = product?.variants[0]?.discountedPrice  > 0 && product?.variants[0]?.discountedPrice != product?.variants[0]?.price && product?.variants[0]?.discountedPrice < product?.variants[0]?.price
+ 
 
   return (
     <Card
@@ -94,9 +96,9 @@ function ProductCard({
                   
                 />
               )}
-              {product?.discountPercent > 0 && (
+              {hasDiscount && (
                 <div className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  {product?.discountPercent}% OFF
+                  {Math.round(100 - (product?.variants[0]?.discountedPrice / product?.variants[0]?.price) * 100)}% OFF
                 </div>
               )}
              
@@ -130,12 +132,11 @@ function ProductCard({
               
               
             
-              {product?.discountPercent > 0 ? (
-                <div>
-                  <p className="text-lg font-bold text-orange-600">
+              {hasDiscount ? (
+                <div className="flex gap-4 items-center">
+                  <p className={`${designVar.productPrice.backgroundColor} ${designVar.productPrice.borderRadius} ${designVar.productPrice.paddingX} ${designVar.productPrice.paddingY} ${designVar.productPrice.fontSize} ${designVar.productPrice.fontWeight} ${designVar.productPrice.color} ${designVar.fontFamily} ${designVar.productPrice.textSize} ${designVar.fontFamily} ${designVar.productPrice.width} ${designVar.productPrice.height} whitespace-nowrap  flex justify-center items-center `}>
                     {formatPrice(
-                      product?.variants[0]?.price *
-                        (1 - product?.discountPercent / 100)
+                      product?.variants[0]?.discountedPrice 
                     )}
                   </p>
                   <p className="text-sm text-gray-500 line-through">

@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import dayjs from "dayjs";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -171,12 +172,19 @@ export function extractUnavailableAddonsOrExtrasError(error: any): string {
 
 
   export function formatDisplayId(displayIdMetadata: string, orderId: number): string {
-	const lastDash = displayIdMetadata.lastIndexOf('-');
-	const prefix = lastDash !== -1 ? displayIdMetadata.slice(0, lastDash) : displayIdMetadata;
-	const suffix = lastDash !== -1 ? displayIdMetadata.slice(lastDash + 1) : '';
-	let paddedId = orderId.toString();
-	if (orderId < 10) paddedId = '00' + paddedId;
-	else if (orderId < 100) paddedId = '0' + paddedId;
-	// else use as is
-	return `${prefix}-${paddedId}-${suffix}`;
+	let paddedId = orderId.toString();  
+	return displayIdMetadata.replace('($)', paddedId);
   }
+
+
+  export function formatDateByPattern(dateInput: string | Date, formatPattern: string): string {
+	const date = dayjs(dateInput);
+  
+	// Validate if it's a valid date
+	if (!date.isValid()) {
+	  return "Invalid date";
+	}
+  
+	return date.format(formatPattern);
+  }
+  
