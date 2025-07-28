@@ -51,57 +51,73 @@ const Footer = () => {
 
   // Phone functionality
   const handlePhoneClick = () => {
-    if (AddressData?.tax) {
-      // Try to open phone dialer
-      const phoneNumber = TaxData.contact.replace(/\s+/g, ''); 
-      window.open(`tel:${phoneNumber}`, '_self');
-      
-      // Fallback: copy to clipboard
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(phoneNumber);
-        // You could add a toast notification here
-        toast.success('Phone number copied to clipboard');
-      }
+    if (!AddressData?.contactPhone) return;
+  
+    const phoneNumber = AddressData.contactPhone.replace(/\D+/g, ''); // Remove non-digit characters
+    const telUrl = `tel:${phoneNumber}`;
+  
+    // Open phone dialer
+    window.open(telUrl, '_self');
+    toast.success('Opening phone dialer...');
+  
+    // Fallback: copy to clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(phoneNumber);
+      toast.success('Phone number copied to clipboard');
+    } else {
+      const textArea = document.createElement('textarea');
+      textArea.value = phoneNumber;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast.success('Phone number copied to clipboard');
     }
   };
+  
+
+
+  const handleWhatsAppClick = () => {
+    if (!AddressData?.whatsappNumber ) return;
+  
+    const phoneNumber = AddressData.whatsappNumber.replace(/\D+/g, ''); // Remove non-numeric characters
+    const countryCode = '92'; // Change if needed; Pakistan's country code is 92
+    const fullNumber = `${countryCode}${phoneNumber}`;
+    const message = 'Hi, I wanted to get in touch via WhatsApp.';
+  
+    const whatsappUrl = `https://wa.me/${fullNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    toast.success('Opening WhatsApp...');
+  };
+  
+
+  const handleAddressClick = () => {
+    if (!AddressData?.address ) return;
+  
+    const query = encodeURIComponent(AddressData.address.trim());
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  
+    window.open(mapsUrl, '_blank');
+    toast.success('Opening location in Google Maps...');
+  };
+  
 
   // Email functionality
   const handleEmailClick = () => {
-    if (AddressData?.tax) {
-      const email = TaxData.supportEmail.trim();
-      const subject = 'Inquiry from Burger Lab Website';
-      const body = 'Hello,\n\nI would like to inquire about your services.\n\nBest regards,';
-      
-      // Show options to user
-      const choice = confirm(
-        'Choose how to contact us:\n\n' +
-        'OK - Open Gmail in browser\n' +
-        'Cancel - Copy email to clipboard'
-      );
-      
-      if (choice) {
-        // Open Gmail in browser
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.open(gmailUrl, '_blank');
-        toast.success('Opening Gmail...');
-      } else {
-        // Copy to clipboard
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(email);
-          toast.success('Email copied to clipboard');
-        } else {
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = email;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          toast.success('Email copied to clipboard');
-        }
-      }
-    }
+    if ( !AddressData?.supportEmail) return;
+  
+    const email = AddressData.supportEmail.trim();
+    const subject = 'Zest Up Contact';
+    const body = `Hi,%0D%0A%0D%0AI had a quick question and thought of reaching out directly.%0D%0A%0D%0ALooking forward to hearing from you.%0D%0A%0D%0ABest,`;
+
+  
+    const gmailDraftUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${body}`;
+  
+    // Directly open Gmail draft
+    window.open(gmailDraftUrl, '_blank');
+    toast.success('Opening Gmail...');
   };
+  
 
   // SocialIcon subcomponent for social media icons with fallback abbreviation
   type SocialIconProps = {
@@ -196,6 +212,7 @@ const Footer = () => {
             />
           
             {/* Hover Box */}
+
             {
               appInfo && (
             <div className="absolute whitespace-nowrap top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white shadow-md px-3 py-2 rounded-lg text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
@@ -266,6 +283,29 @@ const Footer = () => {
               </div>
             </div>
             }
+
+{
+              AddressData?.whatsappNumber ? (
+                <div className="flex items-start space-x-3 text-[14px]">
+                <i className="fa-brands fa-whatsapp w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0"></i>
+                <div>
+                  <span className="font-semibold text-gray-900"> Whatsapp: </span>
+                  <span 
+                    onClick={handleWhatsAppClick}
+                    className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer"
+                  >
+                    {AddressData?.whatsappNumber}
+                  </span>
+                </div>
+              </div>
+              ) : <div className="flex items-start space-x-3 animate-pulse">
+              <div className="w-5 h-5 bg-gray-300 rounded-full mt-0.5 flex-shrink-0" />
+              <div className="space-y-1">
+                <div className="h-4 bg-gray-300 rounded w-20" /> 
+                <div className="h-4 bg-gray-300 rounded w-40" />
+              </div>
+            </div>
+            }
              
 
              {
@@ -297,7 +337,7 @@ const Footer = () => {
               <MapPin className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div>
                 <span className="font-semibold text-gray-900">Address: </span>
-                <span className="text-gray-600">
+                <span onClick={handleAddressClick} className="text-gray-600 hover:text-blue-600 hover:underline transition-colors cursor-pointer">
                  {AddressData?.address}
                 </span>
               </div>

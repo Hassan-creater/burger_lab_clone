@@ -29,13 +29,15 @@ export default function LocationModal() {
   const [selectedArea, setSelectedArea] = useState("")
   const [selectedPickupBranch, setSelectedPickupBranch] = useState("")
   const [selectedDineInBranch, setSelectedDineInBranch] = useState("")
-  const {UpdateAddressData , AddressData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose } = useCartContext();
-  const [open, setOpen] = useState(false)
+  const {UpdateAddressData , AddressData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , open , setOpen} = useCartContext();
+  // const [open, setOpen] = useState(false)
+
 
   const handleSelect = () => {
     const AddressData =  {
       orderType: selectedOrderType,
       city: selectedCity,
+
       ...(selectedOrderType === "delivery" && { area: selectedArea , 
         tax : deliveryBranch?.tax,
         branchId : deliveryBranch?.branchId,
@@ -44,7 +46,8 @@ export default function LocationModal() {
         supportEmail : deliveryBranch?.supportEmail,
         address : deliveryBranch?.address || "",
         contactPhone : deliveryBranch?.contactPhone,
-        socialMedias : deliveryBranch?.socialMedias
+        socialMedias : deliveryBranch?.socialMedias,
+        whatsappNumber : deliveryBranch?.whatsappNumber
        }),
       ...(selectedOrderType === "pickup" && { branch: selectedPickupBranch ,
         openTime :   convertTo12HourFormat(selectedPickupBranchData?.openTime) || "",
@@ -54,7 +57,8 @@ export default function LocationModal() {
         supportEmail : selectedPickupBranchData?.supportEmail,
         branchId : selectedPickupBranchData?.id,
         contactPhone : selectedPickupBranchData?.contactPhone,
-        socialMedias : selectedPickupBranchData?.socialMedias
+        socialMedias : selectedPickupBranchData?.socialMedias,
+        whatsappNumber : selectedPickupBranchData?.whatsappNumber
 
         
        }),
@@ -67,8 +71,8 @@ export default function LocationModal() {
         supportEmail : selectedDineInBranchData?.supportEmail,
         branchId : selectedDineInBranchData?.id,
         contactPhone : selectedDineInBranchData?.contactPhone,
-        socialMedias : selectedDineInBranchData?.socialMedias
-       
+        socialMedias : selectedDineInBranchData?.socialMedias,
+        whatsappNumber : selectedDineInBranchData?.whatsappNumber
       })
       
     }
@@ -131,12 +135,12 @@ export default function LocationModal() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log("Current location:", position.coords)
+         
           alert("Using current location!")
           setSelectedCity("Karachi") // Mock setting city based on location
         },
         (error) => {
-          console.error("Error getting location:", error)
+          
           alert("Unable to get current location")
         },
       )
@@ -152,18 +156,7 @@ export default function LocationModal() {
   //   return selectedOrderType === "delivery" ? cityData.delivery_areas : cityData.branches
   // }
 
-  const getPlaceholderText = () => {
-    switch (selectedOrderType) {
-      case "delivery":
-        return "Select Area / Sub Region"
-      case "pickup":
-        return "Select Branch"
-      case "dine_in":
-        return "Select Branch"
-      default:
-        return "Select Option"
-    }
-  }
+  
 
   const getModalTitle = () => {
     switch (selectedOrderType) {
@@ -253,7 +246,7 @@ export default function LocationModal() {
   const areaInfo = area.find((a: any) => a.areaName === selectedArea)  || {};
   const deliveryBranch = areaInfo?.branch;
   const isDeliveryOpen = deliveryBranch?.isSpecialClosed;
-
+  console.log(deliveryAreas);
 
  
 
@@ -398,6 +391,29 @@ const isButtonDisabled =
 
 
 
+  
+  const getPlaceholderText = () => {
+    console.log(selectedArea);
+    if (selectedOrderType === "delivery" && (deliveryAreas.length === 0)) {
+      return "No area available";
+    }
+    if (
+      (selectedOrderType === "pickup" && (pickupBranches.length === 0)) ||
+      (selectedOrderType === "dine_in" && (dineInBranchNames.length === 0))
+    ) {
+      return "No branch available";
+    }
+  
+    switch (selectedOrderType) {
+      case "delivery":
+        return "Select Area / Sub Region";
+      case "pickup":
+      case "dine_in":
+        return "Select Branch";
+      default:
+        return "Select Option";
+    }
+  };
  
 
 

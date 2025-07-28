@@ -17,6 +17,7 @@ import { chownSync } from "fs";
 import { useQuery } from "@tanstack/react-query";
 import { useCartContext } from "@/context/context";
 import { toast } from "sonner";
+import { updateAddress } from "@/functions";
 
 function HeroBanner() {
 	/* Original data fetching code
@@ -34,44 +35,102 @@ function HeroBanner() {
 	};
 
 
-	const {AddressData , UpdateAddressData} = useCartContext()
+	const {AddressData , UpdateAddressData , setOpen} = useCartContext()
     
  
 
 	const CheckBranch = async () => {
-	  try {
-		const res = await apiClientCustomer.get(`branch/${AddressData.branchId}/view/customer`);
-		
-	
-		if(AddressData?.orderType == "delivery" && !res.data.data.isDeliveryAvailable){
+		try {
+		  const res = await apiClientCustomer.get(
+			`branch/${AddressData.branchId}/view/customer`
+		  );
+		  let addressData = JSON.parse(localStorage.getItem("addressData") || "{}");
+		  let hasUpdated = false;
+	  
+		  if (
+			AddressData?.orderType === "delivery" &&
+			!res.data.data.isDeliveryAvailable
+		  ) {
 			localStorage.removeItem("addressData");
-			UpdateAddressData({})
-		}
-
-		if(AddressData?.orderType == "pickup" && !res.data.data.isTakeAwayAvailable){
-			localStorage.removeItem("addressData");
-			UpdateAddressData({})
-		}
-
-
-		if(AddressData?.orderType == "dine_in" && !res.data.data.isDineInAvailable){
-			localStorage.removeItem("addressData");
-			UpdateAddressData({})
-		}
-
-		
-	
-	  } catch (error : any) {
-		// Axios error object contains the status code under error.response.status
-		if (error.response && error.response.status) {
-	
-		  if(error.response.status == 404){
-			localStorage.removeItem("addressData")
-		    UpdateAddressData({});
+			UpdateAddressData({});
+			setOpen(true);
+			return; // bail out if invalid for delivery
 		  }
-		} 
-	  }
-	};
+	  
+		  if (
+			AddressData?.orderType === "pickup" &&
+			!res.data.data.isTakeAwayAvailable
+		  ) {
+			localStorage.removeItem("addressData");
+			UpdateAddressData({});
+			setOpen(true);
+			return;
+		  }
+	  
+		  if (
+			AddressData?.orderType === "dine_in" &&
+			!res.data.data.isDineInAvailable
+		  ) {
+			localStorage.removeItem("addressData");
+			UpdateAddressData({});
+			setOpen(true);
+			return;
+		  }
+	  
+		  if (
+			AddressData?.branchId === res.data.data.id &&
+			res.data.data.whatsappNumber !== AddressData.whatsappNumber
+		  ) {
+			addressData = {
+			  ...addressData,
+			  whatsappNumber: res.data.data.whatsappNumber,
+			};
+			hasUpdated = true;
+		  }
+	  
+		  if (
+			hasUpdated &&
+			res.data.data.contactPhone !== AddressData.contactPhone
+		  ) {
+			addressData = {
+			  ...addressData,
+			  contactPhone: res.data.data.contactPhone,
+			};
+		  }
+	  
+		  if (res.data.data.tax !== AddressData.tax) {
+			addressData = {
+			  ...addressData,
+			  tax: res.data.data.tax,
+			};
+		  }
+	  
+		  if (res.data.data.supportEmail !== AddressData.supportEmail) {
+			addressData = {
+			  ...addressData,
+			  supportEmail: res.data.data.supportEmail,
+			};
+		  }
+	  
+		  if (res.data.data.address !== AddressData.address) {
+			addressData = {
+			  ...addressData,
+			  address: res.data.data.address,
+			};
+		  }
+	  
+		  if (JSON.stringify(addressData) !== JSON.stringify(AddressData)) {
+			localStorage.removeItem("addressData");
+			UpdateAddressData(addressData);
+		  }
+		} catch (error: any) {
+		  if (error.response?.status === 404) {
+			localStorage.removeItem("addressData");
+			UpdateAddressData({});
+		  }
+		}
+	  };
+	  
 	  
 	  
 

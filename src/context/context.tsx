@@ -101,6 +101,8 @@ interface CartContextType {
   DecreaseItemExtraQuantity: (cartItem: any , extraId : string) => void;
   SetDateFormat : (date : string)=>void,
   dateFormat : string,
+  open : boolean,
+  setOpen : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
@@ -133,7 +135,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [deals , setDeals] = useState<any>([])
   const [dealData,setDealData] = useState<any>({})
   const [dateFormat , _setDateFormat] = useState("YYYY-MM-DD");
-
+  const [open , setOpen]= useState(true);
   const setFavorite = ({ itemId, favId }: Favorite) => {
     // 1. Load current favorites (or empty array)
     const raw = localStorage.getItem("favorite");
@@ -396,7 +398,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity , dateFormat , SetDateFormat }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity , dateFormat , SetDateFormat , open , setOpen }}>
       {children}
     </CartContext.Provider>
   );
