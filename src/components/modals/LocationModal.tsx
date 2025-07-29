@@ -246,7 +246,7 @@ export default function LocationModal() {
   const areaInfo = area.find((a: any) => a.areaName === selectedArea)  || {};
   const deliveryBranch = areaInfo?.branch;
   const isDeliveryOpen = deliveryBranch?.isSpecialClosed;
-  console.log(deliveryAreas);
+ 
 
  
 
@@ -393,7 +393,7 @@ const isButtonDisabled =
 
   
   const getPlaceholderText = () => {
-    console.log(selectedArea);
+   
     if (selectedOrderType === "delivery" && (deliveryAreas.length === 0)) {
       return "No area available";
     }

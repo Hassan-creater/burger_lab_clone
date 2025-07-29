@@ -44,8 +44,11 @@ function HeroBanner() {
 		  const res = await apiClientCustomer.get(
 			`branch/${AddressData.branchId}/view/customer`
 		  );
+	  
 		  let addressData = JSON.parse(localStorage.getItem("addressData") || "{}");
 		  let hasUpdated = false;
+
+		 
 	  
 		  if (
 			AddressData?.orderType === "delivery" &&
@@ -54,7 +57,7 @@ function HeroBanner() {
 			localStorage.removeItem("addressData");
 			UpdateAddressData({});
 			setOpen(true);
-			return; // bail out if invalid for delivery
+			return;
 		  }
 	  
 		  if (
@@ -118,6 +121,18 @@ function HeroBanner() {
 			  address: res.data.data.address,
 			};
 		  }
+	  
+		  const socialMedia = AddressData.socialMedias || [];
+		  const resSocialMedia = res.data.data.socialMedias || [];
+		  
+		  if (JSON.stringify(socialMedia) !== JSON.stringify(resSocialMedia)) {
+			addressData = {
+			  ...addressData,
+			  socialMedias: resSocialMedia,
+			};
+			hasUpdated = true;
+		  }
+		  
 	  
 		  if (JSON.stringify(addressData) !== JSON.stringify(AddressData)) {
 			localStorage.removeItem("addressData");
