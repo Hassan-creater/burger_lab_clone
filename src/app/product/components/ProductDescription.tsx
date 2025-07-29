@@ -30,6 +30,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   // const [selectedAddons, setSelectedAddons] = useState<Record<string, Set<string>>>({});
   // const [selectedExtras, setSelectedExtras] = useState<Record<string, Set<string>>>({});
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const toggleExpand = () => setExpanded((prev) => !prev);
 
   // Fetch product variants
   const getItemById = async () => {
@@ -352,15 +354,32 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       <div className="w-full  lg:w-full flex flex-col  ">
         {/* Product Image */}
         <div className="w-full p-4 mt-[1em]">
-        <div className="flex justify-between items-start bg-white p-2 rounded-md  ">
-          <div>
-            <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
-            {product.description && (
-              <p className="mt-2 text-gray-600 max-w-2xl text-[14px]">{product.description}</p>
-            )}
-          </div>
+      <div className="flex justify-between items-start bg-white p-2 rounded-md">
+        <div>
+          <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
+          {product.description && (
+            <div>
+              <p
+                className={`mt-2 text-gray-600 max-w-2xl text-[14px] ${
+                  expanded ? "" : "line-clamp-2"
+                }`}
+              >
+                {product.description}
+              </p>
+              {product.description.length > 80 && ( // Adjust character threshold as needed
+                <button
+                  className="text-blue-500 mt-1 text-[12px] underline focus:outline-none"
+                  onClick={toggleExpand}
+                >
+                  {expanded ? "Show less" : "Show more"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
-        </div>
+      </div>
+    </div>
+
         <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center ">
        <img 
          src={product.image} 

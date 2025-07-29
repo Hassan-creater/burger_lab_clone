@@ -57,6 +57,8 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
   const [extraQuantities, setExtraQuantities] = useState<{ [id: number]: number }>({});
   const prevMainQuantity = useRef(mainQuantity);
   const { updateDealCart, dineInClose, deliveryClose, pickupClose } = useCartContext();
+  const [expanded, setExpanded] = useState(false);
+  const toggleExpand = () => setExpanded((prev) => !prev);
 
   // Double/halve addon and extra quantities when mainQuantity changes
   useEffect(() => {
@@ -259,15 +261,32 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
           {/* Product Image */}
           <div className="w-full lg:w-full flex flex-col">
           <div className="w-full p-4 mt-[1em]">
-          <div className="flex justify-between items-start bg-white p-2 rounded-md ">
+      <div className="flex justify-between items-start bg-white p-2 rounded-md">
+        <div>
+          <h1 className="text-[20px] font-bold text-gray-800">{deal.name}</h1>
+          {deal.description && (
             <div>
-              <h1 className="text-[20px] font-bold text-gray-800">{deal.name}</h1>
-              {deal.description && (
-                <p className="mt-2 text-gray-600 max-w-2xl text-[14px]">{deal.description}</p>
+              <p
+                className={`mt-2 text-gray-600 max-w-2xl text-[14px] ${
+                  expanded ? "" : "line-clamp-2"
+                }`}
+              >
+                {deal.description}
+              </p>
+              {deal.description.length > 80 && ( // Adjust character threshold as needed
+                <button
+                  className="text-blue-500 mt-1 text-[12px] underline focus:outline-none"
+                  onClick={toggleExpand}
+                >
+                  {expanded ? "Show less" : "Show more"}
+                </button>
               )}
             </div>
-          </div>
+          )}
         </div>
+      </div>
+    </div>
+
 
             <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center">
               <img 

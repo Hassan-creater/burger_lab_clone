@@ -40,6 +40,8 @@ function HeroBanner() {
  
 
 	const CheckBranch = async () => {
+
+	
 		try {
 		  const res = await apiClientCustomer.get(
 			`branch/${AddressData.branchId}/view/customer`
@@ -47,6 +49,8 @@ function HeroBanner() {
 	  
 		  let addressData = JSON.parse(localStorage.getItem("addressData") || "{}");
 		  let hasUpdated = false;
+
+	
 
 		 
 	  
