@@ -11,10 +11,12 @@ import {
   useQueryClient,
 
 } from "@tanstack/react-query";
-import { LucideEdit, LucideTrash2 } from "lucide-react";
+import { LucideEdit, LucideTrash2, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import DeleteAddress from "../DeleteAddress";
+import UpdateAddress from "../UpdateAddress";
+import { cn } from "@/lib/utils";
 // import dynamic from "next/dynamic";
 // import { toast } from "sonner";
 
@@ -47,7 +49,18 @@ export default function AddressCard({
 
   const {setDefaultAddress , defaultAddress} = useCartContext()
   const queryClient = useQueryClient();
+  const [showEditPopup, setShowEditPopup] = useState(false);
+const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
+
+
+
+
+const handleEditClick = async (id: string) => {
+  setSelectedAddressId(id);
+  setShowEditPopup(true);
+  // Optionally fetch address or do `reset()` here too
+};
 
  
 
@@ -80,6 +93,8 @@ export default function AddressCard({
    
 
   return (
+    <>
+    
     <article className="w-full h-[10em] flex flex-col justify-between p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 ">
     {/* Address Line */}
     <div>
@@ -94,17 +109,25 @@ export default function AddressCard({
     {/* Footer */}
     <div className="flex items-center justify-between mt-2">
       {/* Delete Icon */}
-      {/* <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => deleteAddress(address?.id ?? "")}
-        className="hover:bg-red-100 rounded-full"
-      >
-        <LucideTrash2 className="w-4 h-4 text-red-500" />
-        <span className="sr-only">Delete</span>
-      </Button> */}
-    
-          <DeleteAddress id={address?.id ?? ""}/>
+
+      <div className="flex gap-3 items-center">
+
+      <Button
+          variant="ghost"
+          size="sm"
+          onClick={()=>handleEditClick(address?.id || "")}
+          className={cn(
+            "p-2 h-auto text-green-500 hover:text-green-700 bg-green-100",
+           
+          )}
+        >
+          <Pencil className="w-4 h-4" />
+          <span className="sr-only">Update address</span>
+        </Button>
+           
+         <DeleteAddress id={address?.id ?? ""}/>
+
+      </div>
         
       
   
@@ -126,6 +149,20 @@ export default function AddressCard({
       )}
     </div>
   </article>
+
+
+
+  {showEditPopup && selectedAddressId && (
+      <UpdateAddress
+        id={selectedAddressId}
+        onClose={() => {
+          setShowEditPopup(false);
+          setSelectedAddressId(null);
+        }}
+      />
+    )}
+
+    </>
   
   
 

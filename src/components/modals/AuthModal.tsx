@@ -344,7 +344,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
             </Label>
             <div className="flex w-full items-center justify-between gap-2 mt-2 mb-4">
   {/* Left side: Checkbox + Label */}
-  <div className="flex items-center gap-2">
+  {/* <div className="flex items-center gap-2">
     <input
       id="remember-me"
       {...register("rememberMe")}
@@ -354,7 +354,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     <label htmlFor="remember-me" className="text-xs sm:text-sm text-gray-600 cursor-pointer">
       Remember me for 30 days
     </label>
-  </div>
+  </div> */}
 
   {/* Right side: Forgot Password Link */}
   <Button

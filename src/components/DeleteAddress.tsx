@@ -51,7 +51,7 @@ export default function DeleteAddress({
         queryClient.invalidateQueries({ queryKey: ["addresses"] });
       }
     } catch (error) {
-      console.error("Address deletion failed:", error);
+      toast.error("Address deletion failed");
       setDisabled(false);
     }
   };
@@ -64,7 +64,7 @@ export default function DeleteAddress({
           size="sm"
           disabled={disabled}
           className={cn(
-            "p-2 h-auto text-red-500 hover:text-red-700 hover:bg-red-50",
+            "p-2 h-auto text-red-500 hover:text-red-700 bg-red-100",
             disabled && "opacity-50 cursor-not-allowed",
         
           )}
