@@ -394,12 +394,12 @@ const isButtonDisabled =
   
   const getPlaceholderText = () => {
    
-    if (selectedOrderType === "delivery" && (deliveryAreas.length === 0)) {
+    if (selectedOrderType === "delivery" && selectedCity && (deliveryAreas.length === 0)) {
       return "No area available";
     }
     if (
-      (selectedOrderType === "pickup" && (pickupBranches.length === 0)) ||
-      (selectedOrderType === "dine_in" && (dineInBranchNames.length === 0))
+      (selectedOrderType === "pickup" && selectedCity && (pickupBranches.length === 0)) ||
+      (selectedOrderType === "dine_in" && selectedCity && (allDineInBranches.length === 0))
     ) {
       return "No branch available";
     }
@@ -408,8 +408,10 @@ const isButtonDisabled =
       case "delivery":
         return "Select Area / Sub Region";
       case "pickup":
-      case "dine_in":
         return "Select Branch";
+
+        case "dine_in":
+          return "Select Branch";
       default:
         return "Select Option";
     }

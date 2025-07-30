@@ -1,22 +1,22 @@
 import CategoryLinkMenu from "./components/CategoryLinkMenu";
-import CategorySection from "./components/CategorySection";
+// import CategorySection from "./components/CategorySection";
 import HeroBanner from "@/components/HeroBanner";
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import ServiceError from "@/components/ServiceError";
+// import ServiceError from "@/components/ServiceError";
 
-import { dummyCategories } from "@/lib/dummyData";
+// import { dummyCategories } from "@/lib/dummyData";
 import { Category } from "@/models/Category";
 
 
 import { cookies } from "next/headers";
-import SearchBox from "./components/SearchBox";
+// import SearchBox from "./components/SearchBox";
 import SearchFilter from "./components/SearchFilter";
 import OnlineStatusWrapper from "./components/OnlineStatusWrapper";
-import DealSection from "./components/DealSection";
+// import DealSection from "./components/DealSection";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 
