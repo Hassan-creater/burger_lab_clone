@@ -44,6 +44,16 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
 
     const handleScroll = () => {
       if (!categories || categories.length === 0) return;
+      // --- Custom: At scrollY==0, set deals if exists, else first category ---
+      if (window.scrollY === 0) {
+        const dealsSection = document.getElementById("deals");
+        if (dealsSection) {
+          if (activeSectionId !== "deals") setActiveSectionId("deals");
+        } else {
+          if (activeSectionId !== categories[0].title) setActiveSectionId(categories[0].title);
+        }
+        return;
+      }
       // If at the very top, check if first section is at the top of viewport
       // If manualDealsActive is true, lock deals as active until deals section is present and in view
       if (manualDealsActive) {
