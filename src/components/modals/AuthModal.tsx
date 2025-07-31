@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import React, { useState } from "react";
 import {
   Dialog,
@@ -157,15 +157,9 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     // Optionally reset OTP or move to next step
   };
 
-  
-
- 
-
-
   const handleLogin = async (data: {email: string, password: string , rememberMe : boolean}) => {
     try {
         setLoading(true);
-    
         // Attempt API request
         const res = await apiClient.post("/auth/login/customer", {
           email : data.email,

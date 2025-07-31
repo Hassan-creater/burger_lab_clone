@@ -17,6 +17,7 @@ import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
 import { designVar } from "@/designVar/desighVar";
 
+
 type AddressDetailsProps = {
   className?: string;
   setOrderDetails?: React.Dispatch<React.SetStateAction<OrderDetails>>;
@@ -35,13 +36,30 @@ export default function AddressDetails({
   const Data = Cookies.get("userData");
   const parsedData = Data ? JSON.parse(Data) : null;
   const userid = parsedData?.id;
+
   const {setNewAddress , newAddress} = useCartContext();
 
 
-  const getAddresses = async ()=>{
-    const res = await apiClient.get(`/address/user`);
-    return res.data.data;
-  }
+  const getAddresses = async () => {
+    try {
+      const res = await apiClient.get(`/address/user`);
+  
+      if (res.status === 200 || res.status === 201) {
+        return res.data.data;
+      }
+  
+      throw new Error(`Unexpected response status: ${res.status}`);
+    } catch (error: any) {
+      if(error.response.status == 401){
+      Cookies.remove("accessToken"),
+      Cookies.remove("refreshToken"),
+      Cookies.remove("userData")
+      window.location.href = "/"
+      }
+      return null;
+    }
+  };
+  
 
   const { data , isLoading  } = useQuery({
     queryKey: ["addresses", userid],

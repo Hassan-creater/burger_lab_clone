@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import FavoriteItemContainer from "./components/FavoriteItemContainer";
 import NoFavorites from "@/components/ServiceError";
 import { designVar } from "@/designVar/desighVar";
+import { error } from "console";
 
 type FavoritesProps = {};
 
@@ -50,8 +51,10 @@ const getFavorites = async ({id, token} : {id : string, token : string}) => {
     // assuming response shape { data: { categories: Category[] } }
     const body = await res.json();
     return body.data?.favorites as any[];
-  } catch (err) {
-  
+  } catch (error : any) {
+   if(error.response.status == 401){
+    window.location.href = "/";
+   }
   }
 }   
 

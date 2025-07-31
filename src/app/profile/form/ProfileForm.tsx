@@ -18,7 +18,7 @@ import { toast } from "sonner"
 import { useCartContext } from "@/context/context"
 import { useRouter } from "next/navigation";
 import { getClientCookie } from "@/lib/getCookie"
-
+import Cookies from "js-cookie"
 
 // Define the form data type
 interface ProfileFormData {
@@ -77,9 +77,25 @@ export default function ProfileForm() {
   }
 
   const getProfile = async () => {
-    const data = await apiClient.get("/auth/profile");
-    return data.data.data?.profile
-  }
+    try {
+      const res = await apiClient.get("/auth/profile");
+  
+      if (res.status === 200 || res.status === 201) {
+        return res.data.data?.profile;
+      }
+  
+      throw new Error(`Unexpected status code: ${res.status}`);
+    } catch (error: any) {
+      if(error.response.status == 401){
+        Cookies.remove("accessToken"),
+        Cookies.remove("refreshToken"),
+        Cookies.remove("userData")
+       router.push("/");
+      }
+      return null;
+    }
+  };
+  
 
   const {data, isLoading} = useQuery({
     queryKey : ["profile"],

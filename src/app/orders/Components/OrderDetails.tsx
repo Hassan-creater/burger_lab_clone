@@ -20,6 +20,8 @@ import axios from "axios";
 import { designVar } from "@/designVar/desighVar";
 import { useCartContext } from "@/context/context";
 import { useQuery } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+
 
 function OrderDetails() {
  const {user} = useCartContext()
@@ -36,7 +38,7 @@ function OrderDetails() {
   } = useOrders(user?.userId!);
 
    
-  
+
   
  const getOrders  = async ()=>{
   try {
@@ -46,8 +48,13 @@ function OrderDetails() {
     }
     // Treat non-200/201 as invalid
     throw new Error(`Unexpected status: ${res.status}`);
-  } catch (error) {
-    
+  } catch (error : any) {
+    if(error.response.status == 401){
+      Cookies.remove("accessToken"),
+      Cookies.remove("refreshToken"),
+      Cookies.remove("userData")
+      window.location.href = "/"
+    }
     return null;
   }
  }
