@@ -110,9 +110,9 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
   };
 
   return (
-    <div className={`${designVar.fontFamily} flex items-center productdetail justify-center w-full h-[35em] overflow-y-scroll`}>
+    <div className={`${designVar.fontFamily} flex items-center productdetail justify-center w-full h-[37.5em] `}>
       <Card className="w-full">
-        <CardHeader className="text-center space-y-2 pb-4 mt-[1.5em]">
+        <CardHeader className="text-center space-y-2 pb-2 ">
           <CardTitle className="text-[20px] font-extrabold text-gray-800">
            Create Account
           </CardTitle>
@@ -122,7 +122,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
         </CardHeader>
 
         <form onSubmit={handleSubmit(submitHandler)}>
-        <CardContent className="space-y-6 p-[0.5em]">
+        <CardContent className="space-y-5 p-[0.5em]">
             {/* Avatar */}
             <div onClick={()=>document.getElementById("image")?.click()} className="flex justify-center">
               <div className="w-20 h-20 rounded-full bg-gray-100 cursor-pointer overflow-hidden border-2 border-orange-500">

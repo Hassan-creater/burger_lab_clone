@@ -157,9 +157,13 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     // Optionally reset OTP or move to next step
   };
 
+  
+
+
   const handleLogin = async (data: {email: string, password: string , rememberMe : boolean}) => {
     try {
         setLoading(true);
+    
         // Attempt API request
         const res = await apiClient.post("/auth/login/customer", {
           email : data.email,
@@ -578,7 +582,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
           <span className="block sm:hidden">Login</span>
         </Button>
       </DialogTrigger>
-         <DialogContent className="w-[80%] sm:w-[30em] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
+         <DialogContent className="w-[90%] sm:w-[30em] max-w-full h-max min-h-40 flex flex-col px-5 py-6 gap-0 rounded-xl border-0 descriptionModal">
         <DialogHeader>
           <DialogTitle asChild>
             <VisuallyHidden>Authentication</VisuallyHidden>
