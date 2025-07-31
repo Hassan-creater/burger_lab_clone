@@ -180,7 +180,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAddons ? 'rotate-180' : ''}`} />
               </button>
               <div
-              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-gray-200 rounded-lg transition-all duration-300 ease-in-out ${showAddons ? 'py-2' : 'py-0'}`}
+              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-white rounded-lg transition-all duration-300 ease-in-out ${showAddons ? 'py-2' : 'py-0'}`}
           style={{
            maxHeight: showAddons ? '500px' : '0px',
           opacity: showAddons ? 1 : 0,
@@ -189,7 +189,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                 {cartItem.addons.map((addon : any) => (
                   <div
                     key={addon.id}
-                    className="flex items-center text-sm rounded-lg bg-white px-3 py-2 my-[0.1em] mx-[0.5em]"
+                    className="flex items-center text-sm rounded-full border border-gray-200 bg-white px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
                     <div className="flex justify-between w-full items-center">
                       <div>{addon.name.slice(0, 25)}...</div>
@@ -244,7 +244,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showExtras ? 'rotate-180' : ''}`} />
               </button>
               <div
-              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-gray-200 rounded-lg transition-all duration-300 ease-in-out ${showExtras ? 'py-2' : 'py-0'}`}
+              className={`flex flex-col gap-2 mt-2 overflow-hidden bg-white rounded-lg transition-all duration-300 ease-in-out ${showExtras ? 'py-2' : 'py-0'}`}
           style={{
            maxHeight: showExtras ? '500px' : '0px',
           opacity: showExtras ? 1 : 0,
@@ -253,7 +253,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                 {cartItem.extras.map((extra : any) => (
                   <div
                     key={extra.id}
-                    className="flex items-center text-sm bg-white rounded-lg px-3 py-2 my-[0.1em] mx-[0.5em]"
+                    className="flex items-center text-sm bg-white rounded-full border border-gray-200 px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
                     <div className="flex w-full justify-between items-center">
                       <div className="text-[13px]">{extra.name.slice(0, 25)}...</div>
