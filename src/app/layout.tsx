@@ -36,7 +36,7 @@ export default function RootLayout({
 
       <body
         className={cn(
-          "min-h-screen flex flex-col  max-w-[2500px] w-full mx-auto   bg-primaryBg ",
+          "min-h-screen flex flex-col  max-w-[2500px] w-full mx-auto   bg-primaryBg no-scrollbar ",
           inter.className,
           `${designVar.fontFamily}`
         )}

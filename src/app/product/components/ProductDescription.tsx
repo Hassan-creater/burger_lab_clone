@@ -385,6 +385,12 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
          src={product.image} 
          alt={product.name} 
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        onError={e => {
+          const target = e.currentTarget as HTMLImageElement;
+          if (target.src !== "/logo-symbol-2.png") {
+         target.src = "/logo-symbol-2.png";
+          }
+          }}
        />
       </div>
         

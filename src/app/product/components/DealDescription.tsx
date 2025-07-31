@@ -293,6 +293,12 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 src={deal.image} 
                 alt={deal.name} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                onError={e => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (target.src !== "/logo-symbol-2.png") {
+                 target.src = "/logo-symbol-2.png";
+                  }
+                  }}
               />
             </div>
             
@@ -318,6 +324,12 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                             src={v?.image}
                             alt={v?.name}
                             className="w-8 h-8 rounded-md object-cover mr-3"
+                            onError={e => {
+                              const target = e.currentTarget as HTMLImageElement;
+                              if (target.src !== "/logo-symbol-2.png") {
+                             target.src = "/logo-symbol-2.png";
+                              }
+                              }}
                           />
                           <div>
                             <span className="font-medium hidden sm:block">{v?.name?.slice(0, 28)} x {v?.quantity} ...</span>
