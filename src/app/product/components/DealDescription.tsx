@@ -313,11 +313,11 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                     Included in this deal
                   </span>
                 </div>
-                  <div className="flex flex-col gap-3 bg-gray-100 rounded-lg  p-2  relative z-10 -mt-4">
+                  <div className="flex flex-col gap-3 bg-white rounded-lg  p-2  relative z-10 -mt-4">
                     {Variants?.map((v: any) => (
                       <div
                         key={v.id}
-                        className="p-3 rounded-xl border border-gray-200 bg-white flex items-center justify-between w-full"
+                        className="p-3 rounded-full border border-gray-200  bg-white flex items-center justify-between w-full"
                       >
                         <div className="flex items-center w-full">
                           <img
@@ -361,7 +361,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                     Select Addons
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+                <div className="flex flex-col gap-3 bg-white rounded-lg p-2 relative z-10 -mt-4">
   {Addons.map((ao: any) => {
     const qty      = addonQuantities[ao.id] || 0;
     const selected = qty > 0;
@@ -372,10 +372,10 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     return (
       <div
         key={ao.id}
-        className={`p-3 rounded-xl border transition-all cursor-pointer ${
+        className={`p-3 rounded-full border transition-all cursor-pointer ${
           selected
-            ? "border-orange-500 bg-white"
-            : "border-gray-300 bg-white hover:bg-gray-50"
+            ? "border-orange-500 bg-white rounded-full"
+            : "border-gray-300 rounded-full bg-white"
         }`}
         onClick={() => {
           if (selected) {
@@ -479,7 +479,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                     Select Extras
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+                <div className="flex flex-col gap-3 bg-white rounded-lg p-2 relative z-10 -mt-4">
   {Extras.map((ex: any) => {
     const qty      = extraQuantities[ex.id] || 0;
     const selected = qty > 0;
@@ -490,8 +490,8 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
     return (
       <div
         key={ex.id}
-        className={`p-3 rounded-xl border transition-all cursor-pointer ${
-          selected ? "border-orange-500 bg-white" : "border-gray-300 bg-white hover:bg-gray-50"
+        className={`p-3 rounded-full border transition-all cursor-pointer ${
+          selected ? "border-orange-500 bg-white " : "border-gray-300 bg-whit"
         }`}
         onClick={() => {
           if (selected) {

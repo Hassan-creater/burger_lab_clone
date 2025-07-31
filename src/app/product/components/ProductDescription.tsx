@@ -405,7 +405,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                   </span>
                 </div>
           
-          <div className="flex justify-start  gap-3 bg-gray-100  p-2 rounded-lg z-10 relative overflow-x-scroll no-scrollbar">
+          <div className="flex justify-start  gap-3 bg-white border border-gray-200  p-2 rounded-lg z-10 relative overflow-x-scroll no-scrollbar">
             {variants?.map((v: any) => {
               const isActive = v?.id === selectedVariantId;
               const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price && v.discountedPrice != 0;
@@ -487,7 +487,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     Select Addons
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+                <div className="flex flex-col gap-3 bg-white rounded-lg p-2 relative z-10 -mt-4">
   {selectedVariant.addons
     .filter((ao: any) =>
       ao &&
@@ -505,10 +505,10 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       return (
         <div
           key={ao.id}
-          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+          className={`p-3 rounded-full border transition-all bg-white flex items-center justify-between ${
             selected
               ? 'border-orange-500'
-              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+              : 'border-gray-200 hover:border-gray-300 '
           } cursor-pointer`}
           onClick={() => {
             if (selected) {
@@ -615,7 +615,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     Select Extras
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 bg-gray-100 rounded-lg p-2 relative z-10 -mt-4">
+                <div className="flex flex-col gap-3 bg-white rounded-lg p-2 relative z-10 -mt-4">
   {selectedVariant.extras
     .filter((ex: any) =>
       ex &&
@@ -633,7 +633,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
       return (
         <div
           key={ex.id}
-          className={`p-3 rounded-xl border transition-all bg-white flex items-center justify-between ${
+          className={`p-3 rounded-full border transition-all bg-white flex items-center justify-between ${
             selected
               ? 'border-orange-500'
               : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
