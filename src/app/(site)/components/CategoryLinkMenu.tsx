@@ -44,17 +44,8 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
 
     const handleScroll = () => {
       if (!categories || categories.length === 0) return;
-      // --- Custom: At scrollY==0, set deals if exists, else first category ---
-      if (window.scrollY === 0) {
-        const dealsSection = document.getElementById("deals");
-        if (dealsSection) {
-          if (activeSectionId !== "deals") setActiveSectionId("deals");
-        } else {
-          if (activeSectionId !== categories[0].title) setActiveSectionId(categories[0].title);
-        }
-        return;
-      }
-      // If at the very top, check if first section is at the top of viewport
+      // Always use deals section visibility logic to determine highlight
+
       // If manualDealsActive is true, lock deals as active until deals section is present and in view
       if (manualDealsActive) {
         const dealsSection = document.getElementById("deals");
@@ -81,23 +72,25 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
       const dealsSection = document.getElementById("deals");
       if (dealsSection) {
         const rect = dealsSection.getBoundingClientRect();
-        // If deals section is visible near the top, keep deals active
-        if (rect.top < scrollOffset && rect.bottom > scrollOffset / 2) {
+        // Only highlight deal link if its bottom is at least 30px below the top of the viewport
+        if (rect.bottom > 170) {
           if (activeSectionId !== "deals") {
             setActiveSectionId("deals");
           }
           return;
         }
-        // If deals section is out of view, use scrollspy logic for categories
-        if (rect.bottom <= scrollOffset / 2) {
+        // If deals section is fully out of view, use scrollspy logic for categories
+        if (rect.bottom <= 0) {
           let closestSection = categories[0].title;
           let minDistance = Number.POSITIVE_INFINITY;
           for (let i = 0; i < categories.length; i++) {
             const section = document.getElementById(categories[i].title);
             if (section) {
               const catRect = section.getBoundingClientRect();
-              const distance = Math.abs(catRect.top - scrollOffset);
-              if (catRect.top - scrollOffset <= 0 && distance < minDistance) {
+              // Use offset 0 for first category, original scrollOffset for others
+              const offset = i === 0 ? 0 : scrollOffset;
+              const distance = Math.abs(catRect.top - offset);
+              if (catRect.top - offset <= 0 && distance < minDistance) {
                 minDistance = distance;
                 closestSection = categories[i].title;
               }
@@ -163,6 +156,19 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
               break;
             }
           }
+        }
+        // Fallback: if still no section in view, highlight deals if it exists, else first category
+        const dealsSection = document.getElementById("deals");
+        if (dealsSection) {
+          if (activeSectionId !== "deals") {
+            setActiveSectionId("deals");
+          }
+          return;
+        } else {
+          if (activeSectionId !== categories[0].title) {
+            setActiveSectionId(categories[0].title);
+          }
+          return;
         }
       }
 

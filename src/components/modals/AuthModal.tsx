@@ -103,7 +103,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
    
     try {
   
-      const res = await apiClient.post('/auth/verify-password-otp', {
+      const res = await apiClient.post('/auth/password/verify-otp', {
         email: email,
         code: otpValue.toString()
       });
@@ -209,7 +209,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     setForgotLoading(true);
     try {
   
-      const res = await apiClient.post('/auth/forgot-password', {
+      const res = await apiClient.post('/auth/customer/password/forgot', {
         email: data.email,
   
       });
@@ -270,7 +270,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     setPasswordLoading(true);
     try {
       const resetToken = sessionStorage.getItem('resetTokenUser');
-      const res = await apiClient.put('/auth/reset-password', {
+      const res = await apiClient.put('/auth/customer/password/reset', {
         email,
         password: data.password,
         resetToken,

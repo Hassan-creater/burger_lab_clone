@@ -257,6 +257,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         itemImage: product?.image,
         variantId: item?.variant?.id,
         variantName: item?.variant?.name,
+        itemName : product?.name,
         variantPrice: getEffectivePrice(item?.variant),
         quantity: item?.quantity,
         totalPrice,
