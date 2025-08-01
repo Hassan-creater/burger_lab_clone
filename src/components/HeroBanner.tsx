@@ -213,14 +213,20 @@ function HeroBanner() {
 			  className="w-screen aspect-[3000/2000] sm:aspect-[3000/1000] h-full flex items-center justify-center "
 			>
 			  <div className="w-full h-full flex items-center justify-center aspect-[2400/1000]">
-				<Image
+				<img
 				 src={(slide?.image || "").trimStart()}
 				  alt={`Slide no ${slide?.id}`}
 				  width={3000}
 				  height={1000}
-				  priority
+				 
 				  loading="eager"
 				  className="w-full h-full object-cover"
+				  onError={e => {
+					const target = e.currentTarget as HTMLImageElement;
+					if (target.src !== "/logo-symbol-2.png") {
+					  target.src = "/logo-symbol-2.png";
+					}
+				  }}
 				/>
 			  </div>
 			</CarouselItem>

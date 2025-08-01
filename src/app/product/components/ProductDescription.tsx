@@ -10,6 +10,7 @@ import { Item } from "@/models/Item";
 import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton";
 import { designVar } from "@/designVar/desighVar";
 import { toast } from "sonner";
+import Image from "next/image";
 interface ProductDescriptionProps {
   product: Item;
   setOpen?: (open: boolean) => void;
@@ -381,7 +382,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     </div>
 
         <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center ">
-       <img 
+       <Image 
          src={product.image} 
          alt={product.name} 
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
@@ -400,7 +401,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         {/* Variant Selector */}
         <div className="mt-8 px-4 relative ">
         <div className="z-0 relative -mb-3 flex justify-start">
-                  <span className="bg-orange-500 px-6 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-6 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Select Variants
                   </span>
                 </div>
@@ -424,10 +425,16 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     `}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-1">
-                      <img 
+                      <Image 
                         src={v?.image} 
                         alt={v?.name} 
                         className="w-full h-20 object-cover" 
+                        onError={e => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (target.src !== "/logo-symbol-2.png") {
+                         target.src = "/logo-symbol-2.png";
+                          }
+                          }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg" />
                       
@@ -483,7 +490,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
              ).length > 0 && (
                 <div className="mt-6 relative">
                     <div className="z-0 relative flex justify-start pb-2">
-                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Select Addons
                   </span>
                 </div>
@@ -611,7 +618,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
              ).length > 0 && (
                 <div className="mt-5 relative">
                   <div className="z-0 relative flex justify-start pb-2">
-                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Select Extras
                   </span>
                 </div>

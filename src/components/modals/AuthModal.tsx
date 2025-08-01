@@ -165,10 +165,10 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
         setLoading(true);
     
         // Attempt API request
-        const res = await apiClient.post("/auth/login/customer", {
+        const res = await apiClient.post("/auth/customer/login", {
           email : data.email,
           password : data.password,
-          rememberMe : data.rememberMe
+          // rememberMe : data.rememberMe
         });
     
         // Extract tokens

@@ -373,7 +373,7 @@ const Footer = () => {
 
           {/* Social Media */}
           {
-            socialMedias?.length > 0 ? (
+            socialMedias?.length > 0 && (
                 <>
                  <h4 className="text-[16px] font-semibold text-gray-900 mb-3">Follow Us:</h4>
                  <div className="w-full flex gap-2 flex-wrap">
@@ -393,14 +393,7 @@ const Footer = () => {
                  </div>
                  
                 </>
-            ) : <div className="flex justify-between gap-4 animate-pulse">
-            {[1, 2, 3].map((_, index) => (
-              <div
-                key={index}
-                className="flex-1 h-32 bg-gray-300 rounded-md"
-              />
-            ))}
-          </div>
+            ) 
           }
           
         </div>

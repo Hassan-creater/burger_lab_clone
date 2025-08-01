@@ -14,6 +14,7 @@ import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton
 import { designVar } from "@/designVar/desighVar";
 import { toast } from "sonner";
 import { saveDealCartData } from "@/cartStorage/cartStorage";
+import Image from "next/image";
 
 interface ProductDescriptionProps {
   deal: any;
@@ -289,7 +290,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
 
 
             <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center">
-              <img 
+              <Image
                 src={deal.image} 
                 alt={deal.name} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
@@ -309,7 +310,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
               {Variants?.length > 0 && (
                 <div className="mt-8 px-4 w-full">
                   <div className="z-0 relative -mb-3 flex justify-start">
-                  <span className="bg-orange-500 px-6 py-2 pb-6 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-6 py-2 pb-6 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Included in this deal
                   </span>
                 </div>
@@ -320,7 +321,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                         className="p-3 rounded-full border border-gray-200  bg-white flex items-center justify-between w-full"
                       >
                         <div className="flex items-center w-full">
-                          <img
+                          <Image
                             src={v?.image}
                             alt={v?.name}
                             className="w-8 h-8 rounded-md object-cover mr-3"
@@ -357,7 +358,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 {Addons.length > 0 && (
                   <div className="mt-5 relative">
                     <div className="z-0 relative flex justify-start pb-2">
-                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Select Addons
                   </span>
                 </div>
@@ -475,7 +476,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 {Extras?.length > 0 && (
                   <div className="mt-5 relative ">
                     <div className="z-0 relative flex justify-start pb-2">
-                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-bold shadow-md ">
+                  <span className="bg-orange-500 px-7 py-2 pb-4 rounded-t-lg text-white text-sm  lg:text-md font-[600] shadow-md ">
                     Select Extras
                   </span>
                 </div>

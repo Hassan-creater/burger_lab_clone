@@ -62,7 +62,7 @@ const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params 
     setLoading(true);
     setError("");
     try {
-      const res = await apiClient.put(`/auth/update-verification/${token}`);
+      const res = await apiClient.put(`/auth/verification/${token}`);
       if (res.status === 204) {
         setSuccess(true);
       } else if (res.status == 409){

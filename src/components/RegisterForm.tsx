@@ -75,7 +75,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
         formData.append('image', data.image[0]);
       }
       
-      const res = await apiClient.post("/auth/register/customer", formData);
+      const res = await apiClient.post("/auth/customer/register", formData);
 
 
       if(res.status == 201 || res.status == 200 ){
