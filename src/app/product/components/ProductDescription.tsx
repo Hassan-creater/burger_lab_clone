@@ -705,7 +705,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
             {selected && (
               <div className="flex gap-2 border border-slate-300 justify-center items-center rounded-full p-1">
                 <button
-                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                  className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
                   onClick={e => {
                     e.stopPropagation();
                     changeExtraQty(selectedVariant.id, ex.id, -1);
@@ -716,8 +716,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                 <span className="text-gray-800 text-[13px] font-semibold">
                   {qty}
                 </span>
-                <button
-                  className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                <button 
+                className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                   onClick={e => {
                     e.stopPropagation();
                     changeExtraQty(selectedVariant.id, ex.id, 1);
@@ -762,7 +762,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
           <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, -1)} 
-    className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black hover:text-white cursor-pointer border border-slate-300 font-bold hover:bg-orange-600 transition-colors shadow-sm "
+    className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full text-black hover:text-white cursor-pointer border border-slate-300 font-bold hover:bg-orange-600 transition-colors shadow-sm "
   >
     −
   </button>
@@ -773,7 +773,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   
   <button 
     onClick={() => changeVariantQty(selectedVariant?.id, 1)} 
-    className=" w-6 h-6 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg- text-black border border-slate-300 font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors shadow-sm "
+  className=" w-6 h-6 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full bg- text-black border border-slate-300 font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors shadow-sm "
   >
     +
   </button>

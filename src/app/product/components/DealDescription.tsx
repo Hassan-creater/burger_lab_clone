@@ -448,7 +448,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
               onClick={e => e.stopPropagation()}
             >
               <button
-                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
                 onClick={() => handleAddonDecrease(ao.id)}
               >
                 −
@@ -457,7 +457,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 {qty}
               </span>
               <button
-                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                 onClick={() => handleAddonIncrease(ao.id)}
               >
                 +
@@ -562,7 +562,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
               onClick={e => e.stopPropagation()}
             >
               <button
-                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
+                className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full text-black font-bold hover:bg-orange-600 hover:text-white cursor-pointer transition-colors"
                 onClick={() => handleExtraDecrease(ex.id)}
               >
                 −
@@ -571,7 +571,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 {qty}
               </span>
               <button
-                className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                 onClick={() => handleExtraIncrease(ex.id)}
               >
                 +

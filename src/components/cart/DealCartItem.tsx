@@ -135,7 +135,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                     <div className="flex gap-2 justify-center items-center border border-slate-300 p-1 rounded-full">
                       <button 
                         onClick={() => DecreaseDealQuantity([cartItem])}
-                        className="w-6 h-6 flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         −
                       </button>
@@ -143,7 +143,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                       <span className="text-gray-800 font-semibold">{cartItem.variantQuantity || cartItem.quantity}</span>
                       <button 
                         onClick={() => IncreaseDealQuantity([cartItem])}
-                        className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         +
                       </button>
@@ -199,7 +199,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                           !isCheckoutPage && (
                             <div className="flex gap-2 justify-center items-center p-1 border border-slate-300 rounded-full">
                              <button
-                          className="w-5 h-5 flex items-center justify-center rounded-full  text-black hover:text-white font-bold hover:bg-orange-600 transition-colors"
+                            className=" w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full  text-black hover:text-white font-bold hover:bg-orange-600 transition-colors"
                           onClick={() => {
                            
                             DecreaseDealAddonQuantity(cartItem , addon?.id)
@@ -208,7 +208,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                         >−</button>
                         <span className="text-gray-800 text-[13px] font-semibold">{addon.quantity}</span>
                         <button
-                          className="w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                           onClick={() => {
                            
                             IncreaseDealAddonQuantity(cartItem  , addon?.id)
@@ -263,7 +263,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                           !isCheckoutPage && (
                             <div className="flex gap-2 justify-center items-center p-1 border border-slate-300 rounded-full">
                              <button
-                          className="w-5 h-5 flex items-center justify-center rounded-full hover:text-white  text-black font-bold hover:bg-orange-600 transition-colors"
+                          className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full hover:text-white  text-black font-bold hover:bg-orange-600 transition-colors"
                           onClick={() => {
                            
                             DecreaseDealExtraQuantity(cartItem , extra?.id);
@@ -273,7 +273,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                         >−</button>
                         <span className="text-gray-800 text-[13px] font-semibold">{extra.quantity}</span>
                         <button
-                          className="w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                          className="w-4 h-4 sm:w-[1.2rem] sm:h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                           onClick={() => {
                            
                             IncreaseDealExtraQuantity(cartItem , extra?.id);
