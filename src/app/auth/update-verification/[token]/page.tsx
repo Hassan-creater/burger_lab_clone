@@ -76,7 +76,7 @@ const UpdateVerificationPage: React.FC<UpdateVerificationPageProps> = ({ params 
         setAlreadyVerified(true);
         setError(err?.response?.data?.error || "User is already verified");
       } else {
-        setError(err?.response?.data?.message || "Verification failed.");
+        setError(err?.response?.data?.error || "Verification failed.");
       }
     } finally {
       setLoading(false);
