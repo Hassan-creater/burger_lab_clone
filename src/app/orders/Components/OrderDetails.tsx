@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrders } from "@/hooks/useOrders";
-import { Loader2, LucideChevronLeft, LucideChevronRight } from "lucide-react";
+import { Loader2, LucideChevronLeft, LucideChevronRight, Router } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ServiceError from "@/components/ServiceError";
 import { useUserStore } from "@/store/slices/userSlice";
@@ -50,9 +50,10 @@ function OrderDetails() {
     throw new Error(`Unexpected status: ${res.status}`);
   } catch (error : any) {
     if(error.response.status == 401){
-      Cookies.remove("accessToken"),
-      Cookies.remove("refreshToken"),
-      Cookies.remove("userData")
+      Cookies.remove("accessToken", { path: "/" });
+      Cookies.remove("refreshToken", { path: "/" });
+      Cookies.remove("userData" , {path : "/"});
+      localStorage.removeItem("defaultAddress")
       window.location.href = "/"
     }
     return null;

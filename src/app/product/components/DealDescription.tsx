@@ -290,7 +290,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
 
 
             <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center">
-              <Image
+              <img
                 src={deal.image} 
                 alt={deal.name} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
@@ -321,7 +321,7 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                         className="p-3 rounded-full border border-gray-200  bg-white flex items-center justify-between w-full"
                       >
                         <div className="flex items-center w-full">
-                          <Image
+                          <img
                             src={v?.image}
                             alt={v?.name}
                             className="w-8 h-8 rounded-md object-cover mr-3"

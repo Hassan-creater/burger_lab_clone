@@ -43,7 +43,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
 
 
   const logout = async () => {
-     const res = await apiClient.get("/auth/logout");
+     const res = await apiClient.post("/auth/logout");
      
      if(res.status == 204){
         Cookies.remove("accessToken", { path: "/" });

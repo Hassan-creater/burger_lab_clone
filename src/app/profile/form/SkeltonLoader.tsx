@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ProfileSkeleton() {
   return (
-    <Card className="w-full p-[1em] max-w-[60%] bg-white shadow-none border-none ">
+    <Card className="w-full p-[1em] max-w-[85%] bg-white shadow-none border-none ">
       <CardHeader>
         <CardTitle className="text-[20px] font-semibold text-center ">
           <Skeleton className="w-32 h-6 mx-auto bg-gray-200 rounded-md animate-pulse" />

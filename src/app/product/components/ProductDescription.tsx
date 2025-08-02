@@ -383,7 +383,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
     </div>
 
         <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center ">
-       <Image 
+       <img
          src={product.image} 
          alt={product.name} 
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
@@ -426,9 +426,10 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     `}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-1">
-                      <Image 
+                      <img
                         src={v?.image} 
                         alt={v?.name} 
+                       
                         className="w-full h-20 object-cover" 
                         onError={e => {
                           const target = e.currentTarget as HTMLImageElement;

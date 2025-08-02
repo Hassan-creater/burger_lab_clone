@@ -109,7 +109,7 @@ function Checkout() {
  
 
    const getAddresses = async () => {
-    const res = await apiClient.get(`/address/user`);
+    const res = await apiClient.get(`/address/customer`);
     return res.data.data.addresses;
    }
 

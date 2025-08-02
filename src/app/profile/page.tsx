@@ -8,6 +8,7 @@ import { dummyUser } from "@/lib/dummyData";
 import { cookies } from "next/headers";
 import ProfileDisplay from "./form/ProfileForm";
 import { designVar } from "@/designVar/desighVar";
+import LogOut from "./form/LgoutFromAll";
 
 
 export const metadata: Metadata = {
@@ -30,8 +31,13 @@ export default async function Profile() {
 
 
   return (
-    <main className={`w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col ${designVar.fontFamily}`}>
-      <h1 className={`text-xl text-center font-bold mt-10  text-gray-700 ${designVar.fontFamily}`}>Profile</h1>
+    <main className={`w-[90%] lg:max-w-[70%]  relative  mx-auto my-5  flex flex-col ${designVar.fontFamily}`}>
+      <div className="w-full flex justify-center items-center"><h1 className={`text-xl text-center font-bold mt-10  text-gray-700 ${designVar.fontFamily}`}>Profile</h1>
+     
+      </div>
+      <div className="absolute right-0 top-10 "> <LogOut  /></div>
+      
+
       <section className=" rounded-lg ">
         <ProfileDisplay  />
       </section>

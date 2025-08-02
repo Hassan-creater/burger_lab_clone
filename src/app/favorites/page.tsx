@@ -32,14 +32,13 @@ const getFavorites = async ({id, token} : {id : string, token : string}) => {
   }
   try {
     const res = await fetch(
-      `${process.env.NEXT_BASE_URL}/favorite/user/${id}`,
+      `${process.env.NEXT_BASE_URL}/favorite/customer/${id}`,
       {
         method: "GET",
         headers: {
           "Accept": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        cache: "no-store",
       }
     );
 
@@ -50,11 +49,11 @@ const getFavorites = async ({id, token} : {id : string, token : string}) => {
 
     // assuming response shape { data: { categories: Category[] } }
     const body = await res.json();
-    return body.data?.favorites as any[];
+    return body.data?.favorites  || [];
   } catch (error : any) {
-   if(error.response.status == 401){
-    window.location.href = "/";
-   }
+    if(error.response.status == 401){
+      window.location.href = "/"
+    }
   }
 }   
 
@@ -87,7 +86,7 @@ export default async function Favorites({}: FavoritesProps) {
       {favorites && favorites?.length > 0 ? (
         <section className=" w-[95%] flex flex-wrap gap-4   mx-auto">
         
-        {favorites?.map((favorite) => (
+        {favorites?.map((favorite : any) => (
         <Suspense key={favorite.id} fallback={<ProductCardSkeleton />}>
           <div className="flex justify-center">
             <FavoriteItemContainer

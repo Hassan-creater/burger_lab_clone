@@ -8,15 +8,53 @@ import ProfileDropdown from "./ProfileDropdown";
 import { usePathname } from "next/navigation";
 import AuthModal from "./modals/AuthModal";
 import { useCartContext } from "@/context/context";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api";
+import Cookies from "js-cookie";
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
 });
 
 const Header = () => {
 
-  const {token , user , deliveryClose , dineInClose , pickupClose   } = useCartContext();
+  const {token , user , deliveryClose , dineInClose , pickupClose  , setUser  } = useCartContext();
 
   const pathname = usePathname();
+
+
+  const getUserRoles = async () => {
+    try {
+      const res = await apiClient.get("/role");
+      return res.data.data;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
+        Cookies.remove("userData" , {path : "/"});
+        localStorage.removeItem("defaultAddress")
+        setUser({});
+        window.location.href = "/";
+      } 
+      return null;
+    }
+  };
+  
+  
+  
+  // ------------------------
+  // extract user form cookies 
+  // -------------------------
+  
+
+  
+  const { data } = useQuery({
+    queryKey: ["userRoles"],
+    queryFn: getUserRoles,
+    enabled : !!user?.firstName,
+    staleTime: 60 * 1000,         // Optional: data is considered fresh for 1 minute
+    refetchInterval: 60 * 1000,   //  Refetch every 1 minute
+  });
+  
   
 
   return (
@@ -72,7 +110,7 @@ const Header = () => {
        {pathname !== "/checkout" && pathname !== "/order-complete" && (
          <Cart type="CART" className="block min-[400px]:block" />
        )}
-       {token ? (
+       {token && user?.firstName ? (
           <ProfileDropdown user={`${user?.firstName} ${user?.lastName}`} />
         
        ) : (

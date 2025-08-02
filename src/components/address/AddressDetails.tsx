@@ -42,7 +42,7 @@ export default function AddressDetails({
 
   const getAddresses = async () => {
     try {
-      const res = await apiClient.get(`/address/user`);
+      const res = await apiClient.get(`/address/customer`);
   
       if (res.status === 200 || res.status === 201) {
         return res.data.data;
@@ -51,10 +51,11 @@ export default function AddressDetails({
       throw new Error(`Unexpected response status: ${res.status}`);
     } catch (error: any) {
       if(error.response.status == 401){
-      Cookies.remove("accessToken"),
-      Cookies.remove("refreshToken"),
-      Cookies.remove("userData")
-      window.location.href = "/"
+        Cookies.remove("accessToken", { path: "/" });
+     Cookies.remove("refreshToken", { path: "/" });
+     Cookies.remove("userData" , {path : "/"});
+     localStorage.removeItem("defaultAddress")
+     window.location.href = "/"
       }
       return null;
     }

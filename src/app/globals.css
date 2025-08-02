@@ -146,3 +146,39 @@ body::-webkit-scrollbar{
     scrollbar-width: none; /* Firefox */
   }
 }
+
+
+
+  /* button color  */
+  .orange_color{
+    background-color: rgba(246, 140, 30, 1);
+    color: white;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(246, 140, 30, 1);
+    cursor: pointer;
+  }
+  
+  .orange_color:hover{
+    background-color: white;
+    border: 1px solid rgba(246, 140, 30, 1);
+    color: rgba(246, 140, 30, 1);
+    transition: all 0.3s ease-in-out;
+  }
+
+
+
+  
+.dark_blue_color{
+  background-color: rgba(6, 39, 59, 1);
+   color: white;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid rgba(6, 39, 59, 1);
+  cursor: pointer;
+}
+
+.dark_blue_color:hover{
+  background-color: transparent;
+  border: 1px solid rgba(6, 39, 59, 1);
+  color: white;
+  transition: all 0.3s ease-in-out;
+}
