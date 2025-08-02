@@ -42,7 +42,7 @@ function OrderDetails() {
   
  const getOrders  = async ()=>{
   try {
-    const res = await apiClient.get(`/order/user/${user?.id}`);
+    const res = await apiClient.get(`/order/customer/${user?.id}`);
     if (res.status === 200 || res.status === 201) {
       return res.data.data?.orders;
     }

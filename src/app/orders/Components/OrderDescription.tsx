@@ -67,6 +67,7 @@ type OrderDetailsModalProps = {
           enabled : !!orders?.id && !!dialogOpen
         })
 
+      
        
   if(isLoading){
     return(
@@ -214,14 +215,14 @@ type OrderDetailsModalProps = {
             <div>
               <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Name</label>
               <p>
-                {order?.user?.firstName} {order?.user?.lastName} {/* Fixed */}
+                {order?.customer?.firstName} {order?.customer?.lastName} {/* Fixed */}
               </p>
             </div>
             <div>
               <label className={`font-medium text-gray-600 ${designVar.fontFamily}`}>Phone</label>
               <p className="flex items-center gap-1">
                 <Phone className="w-4 h-4" />
-                {order?.user?.phone} {/* Fixed */}
+                {order?.customer?.phone} {/* Fixed */}
               </p>
             </div>
           </div>
