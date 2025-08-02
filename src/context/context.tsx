@@ -139,9 +139,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [dateFormat , _setDateFormat] = useState("YYYY-MM-DD");
   const [open , setOpen]= useState(true);
   const [userProfile, setUserProfile] = useState<any>(() => {
-    // Try to load from sessionStorage on first mount
-    const stored = sessionStorage.getItem("custProfile");
-    return stored ? JSON.parse(stored) : {};
+    // Try to load from sessionStorage on first mount (client only)
+    if (typeof window !== 'undefined') {
+      const stored = sessionStorage.getItem("custProfile");
+      return stored ? JSON.parse(stored) : {};
+    }
+    return {};
   });
   const setFavorite = ({ itemId, favId }: Favorite) => {
     // 1. Load current favorites (or empty array)
@@ -166,15 +169,23 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   /// profile 
 const ResetProfile = (profile: any) => {
-  sessionStorage.setItem("custProfile", JSON.stringify(profile));
-  const updateProfile = JSON.parse(sessionStorage.getItem("custProfile") || "{}" );
-  setUserProfile(updateProfile);
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem("custProfile", JSON.stringify(profile));
+    const updateProfile = JSON.parse(sessionStorage.getItem("custProfile") || "{}" );
+    setUserProfile(updateProfile);
+  } else {
+    setUserProfile(profile);
+  }
 }
 
   const SetDateFormat = (date : string)=>{
-    sessionStorage.setItem("dateFormat" , date);
-    const dateload = sessionStorage.getItem("dateFormat");
-    _setDateFormat(dateload || "YYYY-MM-DD");
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem("dateFormat" , date);
+      const dateload = sessionStorage.getItem("dateFormat");
+      _setDateFormat(dateload || "YYYY-MM-DD");
+    } else {
+      _setDateFormat("YYYY-MM-DD");
+    }
   }
 
 

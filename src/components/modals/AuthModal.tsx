@@ -116,7 +116,9 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
         } else if (res.status === 200 || res.status === 201) {
           toast.success(res.data.message);
           reset();
-          sessionStorage.setItem("resetTokenUser", res.data.data.resetToken);
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem("resetTokenUser", res.data.data.resetToken);
+          }
           setModalType("RESET-PASSWORD")
         }
       }
@@ -269,7 +271,10 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
     // Call backend to reset password with email, password, and resetToken from sessionStorage
     setPasswordLoading(true);
     try {
-      const resetToken = sessionStorage.getItem('resetTokenUser');
+      let resetToken = '';
+      if (typeof window !== 'undefined') {
+        resetToken = sessionStorage.getItem('resetTokenUser') || '';
+      }
       const res = await apiClient.put('/auth/customer/password/reset', {
         email,
         password: data.password,

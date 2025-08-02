@@ -259,7 +259,9 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           ClearCart();
           toast.success("Order placed successfully");
           localStorage.removeItem("orderType")
-          sessionStorage.removeItem("canCheckout");
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem("canCheckout");
+          }
           router.push("/order-complete/" + res.data.data.displayId);
         }
       } catch (err: any) {
@@ -725,7 +727,12 @@ useEffect(() => {
                     <Button
                       variant="outline"
                       title="checkout"
-                      onClick={() => {setIsCartOpen(false) ; sessionStorage.setItem("canCheckout", "true")}}
+                      onClick={() => {
+                        setIsCartOpen(false);
+                        if (typeof window !== 'undefined') {
+                          sessionStorage.setItem("canCheckout", "true");
+                        }
+                      }}
                       className={`${designVar.widthFullButton.width} ${designVar.widthFullButton.backgroundColor} ${designVar.widthFullButton.borderRadius} ${designVar.widthFullButton.paddingX} ${designVar.widthFullButton.paddingY} ${designVar.widthFullButton.fontSize} ${designVar.widthFullButton.fontWeight} ${designVar.widthFullButton.color} ${designVar.widthFullButton.cursor} ${designVar.widthFullButton.transition} ${designVar.widthFullButton.hover.backgroundColor} ${designVar.widthFullButton.hover.borderRadius} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.color} ${designVar.widthFullButton.hover.backgroundColor}`}
                     >
                       Checkout

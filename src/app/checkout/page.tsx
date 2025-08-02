@@ -123,9 +123,11 @@ function Checkout() {
   useEffect(()=>{
   
 
-    const canCheckout = sessionStorage.getItem("canCheckout");
-    if(!canCheckout){
-      redirect("/");
+    if (typeof window !== 'undefined') {
+      const canCheckout = sessionStorage.getItem("canCheckout");
+      if(!canCheckout){
+        redirect("/");
+      }
     }
   },[])
 
