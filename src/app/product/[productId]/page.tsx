@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import ProductDescription from "../components/ProductDescription";
 import { Metadata } from "next";
 import RelatedProducts from "../components/RelatedProducts";
-import notFound from "@/app/not-found";
+import { notFound } from "next/navigation";
 import { Item } from "@/models/Item";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ServiceError from "@/components/ServiceError";
