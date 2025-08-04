@@ -1,7 +1,7 @@
 import type { CartItem } from "@/types";
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {  ChevronDown, Trash2} from "lucide-react";
+import {  ChevronDown, Trash, Trash2} from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -68,14 +68,19 @@ function CartItem({ cartItem, removeItem, showAddons = false, setShowAddons = ()
     <div className={`group w-full relative py-4 ${designVar.fontFamily}`}>
     <article className="flex flex-col p-4 bg-white rounded-xl border border-gray-300 hover:border-gray-300 hover:shadow-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.1)]">
       {/* Absolute delete button - visible on hover */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => removeItemFromCart(cartItem)}
-        className="absolute top-6 right-3 opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      {
+        isCheckoutPage && (
+          <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => removeItemFromCart(cartItem)}
+          className="absolute top-6 right-3 opacity-100 xl:opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+        )
+      }
+    
 
       {/* Top row - Image and basic info */}
       <div className="flex gap-4 pb-3">
@@ -119,12 +124,24 @@ function CartItem({ cartItem, removeItem, showAddons = false, setShowAddons = ()
                   <div className="flex items-center gap-2">
                   {!isCheckoutPage && (
                     <div className="flex gap-2 justify-center items-center border border-slate-300 p-1 rounded-full">
-                      <button 
-                        onClick={() => DecreaseQuantity([cartItem])}
-                        className="w-6 h-6 flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
-                      >
-                        −
-                      </button>
+                      {
+                        cartItem.quantity > 1 ? (
+                          <button 
+                          onClick={() => DecreaseQuantity([cartItem])}
+                          className="w-6 h-6 flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
+                        >
+                          −
+                        </button>
+                        ) : (
+                          <button 
+                          onClick={() => removeItemFromCart(cartItem)}
+                          className="w-6 h-6 flex items-center justify-center rounded-full text-white  bg-red-500 hover:bg-white hover:text-red-500 duration-300 cursor-pointer font-bold  transition-colors shadow-sm"
+                        >
+                          <Trash className="w-4 h-4"/>
+                        </button>
+                        )
+                      }
+                     
                       
                       <span className="text-gray-800 font-semibold">{cartItem.quantity}</span>
                       <button 

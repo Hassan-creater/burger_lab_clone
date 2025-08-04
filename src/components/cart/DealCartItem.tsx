@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {  ChevronDown, Trash2} from "lucide-react";
+import {  ChevronDown, Trash, Trash2} from "lucide-react";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import {  usePathname } from "next/navigation";
@@ -70,6 +70,9 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
     <div className={`group w-full relative py-4 ${designVar.fontFamily}`}>
     <article className="flex flex-col p-4 bg-white rounded-xl border border-gray-300 hover:border-gray-300 hover:shadow-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.1)]">
       {/* Absolute delete button - visible on hover */}
+      {
+        isCheckoutPage && (
+
       <Button
         variant="ghost"
         size="sm"
@@ -78,6 +81,8 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
       >
         <Trash2 className="h-4 w-4" />
       </Button>
+        )
+      }
 
       {/* Top row - Image and basic info */}
       <div className="flex gap-4 pb-3">
@@ -133,17 +138,29 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                   <div className="flex items-center gap-2">
                   {!isCheckoutPage && (
                     <div className="flex gap-2 justify-center items-center border border-slate-300 p-1 rounded-full">
+                      {
+                       (cartItem.variantQuantity || cartItem.quantity) > 1 ? (
+
                       <button 
                         onClick={() => DecreaseDealQuantity([cartItem])}
-                        className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-6 h-6 flex items-center justify-center rounded-full text-black  cursor-pointer font-bold hover:text-white hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         −
                       </button>
+                       ) : (
+                        <button 
+                        onClick={() => removeDealFromCart(cartItem)}
+                        className="w-6 h-6 flex items-center justify-center rounded-full text-white  bg-red-500 hover:bg-white hover:text-red-500 duration-300 cursor-pointer font-bold  transition-colors shadow-sm"
+                      >
+                        <Trash className="w-4 h-4"/>
+                      </button>
+                       )
+                      }
                       
                       <span className="text-gray-800 font-semibold">{cartItem.variantQuantity || cartItem.quantity}</span>
                       <button 
                         onClick={() => IncreaseDealQuantity([cartItem])}
-                        className="w-[1.2rem] h-[1.2rem] flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
+                        className="w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors shadow-sm"
                       >
                         +
                       </button>
