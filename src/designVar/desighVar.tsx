@@ -56,7 +56,7 @@ export const designVar = {
 
     carHeading : {
         fontSize : "text-[16px]",
-        fontWeight : "font-bold",
+        fontWeight : "font-[600]",
         colorOrange : "text-[#FABF2C]",
         colorBlack : "text-black",
         

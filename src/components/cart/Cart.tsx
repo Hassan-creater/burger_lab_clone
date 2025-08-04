@@ -31,6 +31,7 @@ import { designVar } from "@/designVar/desighVar";
 import DealItem from "./DealCartItem";
 import { json } from "stream/consumers";
 import { loadCartFromStorage } from "@/cartStorage/cartStorage";
+import ClearCartModel from "./ClearCartModel";
 
 
 interface CartProps {
@@ -665,13 +666,17 @@ useEffect(() => {
         >
           <SheetHeader className="flex flex-row w-full items-center justify-between mt-2 rounded-3xl">
             <SheetTitle className={`font-bold text-md ${designVar.fontFamily}`}>Your Cart</SheetTitle>
-            <Button
+            {/* <Button
               variant="link"
               onClick={()=>{ClearCart()}}
               className={`text-[#fabf2c] !p-2 underline font-bold text-md ${designVar.fontFamily}`}
             >
               Clear Cart
-            </Button>
+            </Button> */}
+            {
+              (AddedInCart.length > 0 || dealDataSafe.length > 0 ) &&   <ClearCartModel/>
+            }
+           
           </SheetHeader>
           {AddedInCart.length > 0 || dealDataSafe.length > 0 ? (
             <>
