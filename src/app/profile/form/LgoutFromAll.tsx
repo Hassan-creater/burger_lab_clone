@@ -125,7 +125,7 @@ export default function LogOut({data } : {data? : any}) {
           </DialogTrigger>
         </div>
       </div>
-      <DialogContent className="sm:max-w-[500px] p-4 descriptionModal">
+      <DialogContent className="w-[90%] rounded-lg sm:max-w-[500px] p-4 descriptionModal">
         <DialogHeader>
           <DialogTitle className="sr-only">
             Logout

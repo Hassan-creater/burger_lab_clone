@@ -653,7 +653,7 @@ export default function ProfileForm() {
         </div>
 
             {/* Full Name */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
                 First Name
@@ -689,7 +689,7 @@ export default function ProfileForm() {
             </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
             {/* Gender and Date of Birth Row */}
             <div className="space-y-2 w-full">
@@ -741,7 +741,7 @@ export default function ProfileForm() {
 
        
           </form>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -818,7 +818,7 @@ export default function ProfileForm() {
 
 
             {/* Update Profile Button */}
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex flex-col-reverse sm:flex-row justify-between items-center sm:gap-4">
             <Button
              type="button"
              onClick={()=>{formRef?.current?.reset()}}
