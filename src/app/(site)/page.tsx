@@ -63,7 +63,7 @@ export async function getCategories(): Promise<Category[] | null> {
 const getFavorites = async ({id, token} : {id : string, token : string}) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_BASE_URL}/favorite/user/${id}`,
+      `${process.env.NEXT_BASE_URL}/favorite/customer/${id}`,
       {
         method: "GET",
         headers: {

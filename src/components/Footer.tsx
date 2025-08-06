@@ -144,6 +144,7 @@ const Footer = () => {
         href={link}
         className="w-10 h-10 bg-gray-200 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
         aria-label={name}
+        target="_blank"
       >
         {!imgError ? (
           <Image
@@ -386,6 +387,7 @@ const Footer = () => {
                     link={item?.linkText}
                     icon={item?.linkIcon}
                     name={item?.linkName}
+
                   />
                     )
                   })

@@ -71,9 +71,9 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
       formData.append('phone', data.phone);
       formData.append('email', data.email);
       formData.append('password', data.password);
-      if (data.image && data.image.length > 0) {
-        formData.append('image', data.image[0]);
-      }
+      // if (data.image && data.image.length > 0) {
+      //   formData.append('image', data.image[0]);
+      // }
       
       const res = await apiClient.post("/auth/customer/register", formData);
 
@@ -110,7 +110,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
   };
 
   return (
-    <div className={`${designVar.fontFamily} flex items-center productdetail justify-center w-full h-[37.5em] `}>
+    <div className={`${designVar.fontFamily} flex items-center productdetail justify-center w-full  `}>
       <Card className="w-full">
         <CardHeader className="text-center space-y-2 pb-2 ">
           <CardTitle className="text-[20px] font-extrabold text-gray-800">
@@ -124,7 +124,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
         <form onSubmit={handleSubmit(submitHandler)}>
         <CardContent className="space-y-5 p-[0.5em]">
             {/* Avatar */}
-            <div onClick={()=>document.getElementById("image")?.click()} className="flex justify-center">
+            {/* <div onClick={()=>document.getElementById("image")?.click()} className="flex justify-center">
               <div className="w-20 h-20 rounded-full bg-gray-100 cursor-pointer overflow-hidden border-2 border-orange-500">
                 {preview ? (
                   <img src={preview} className="w-full h-full object-cover" alt="avatar" />
@@ -132,7 +132,7 @@ export default function RegisterForm({setModalType}:{setModalType:React.Dispatch
                   <div className="h-full flex items-center justify-center text-orange-500 text-2xl">+</div>
                 )}
               </div>
-            </div>
+            </div> */}
             <input
               type="file"
              accept="image/*"
