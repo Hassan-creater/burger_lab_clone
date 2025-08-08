@@ -418,19 +418,19 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     onClick={() => setSelectedVariantId(v?.id)}
                     className={`
                       flex flex-col items-center p-2 rounded-xl transition-all duration-300
-                       border-2 w-[8em] h-[10em]
+                       border-2 w-[8em] h-[12em]
                       ${isActive 
                         ? 'border-orange-500 bg-orange-50 shadow-md' 
                         : 'border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300'}
                       overflow-hidden
                     `}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-1">
+                    <div className="relative bg-red-500 h-[12em] rounded-lg overflow-hidden mb-1">
                       <img
                         src={v?.image} 
-                        alt={v?.name} 
+                        alt={v?.name}  
                        
-                        className="w-full h-20 object-cover" 
+                        className="w-full h-24 object-cover" 
                         onError={e => {
                           const target = e.currentTarget as HTMLImageElement;
                           if (target.src !== "/logo-symbol-2.png") {
@@ -450,7 +450,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     </div>
                     
                     <span className="text-[12px] font-medium text-gray-700 b h-1/2 flex justify-center items-center">
-                      {(v?.name).slice(0, 15)}...
+                      {v?.name.length <= 22 ? (v?.name) : `${v?.name.slice(0, 21)}...` }
                     </span>
                     <div className={`
                      rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-1
