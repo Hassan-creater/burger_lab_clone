@@ -209,7 +209,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                     className="flex items-center text-sm rounded-full border border-gray-200 bg-white px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
                     <div className="flex justify-between w-full items-center">
-                      <div>{addon.name.slice(0, 25)}...</div>
+                      <div>{addon?.name.length <= 18 ? (addon?.name) : `${addon?.name.slice(0, 18)}...` }</div>
                       <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(addon.price)}</span>
                         {
@@ -273,7 +273,7 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
                     className="flex items-center text-sm bg-white rounded-full border border-gray-200 px-3 py-2 my-[0.1em] mx-[0.5em]"
                   >
                     <div className="flex w-full justify-between items-center">
-                      <div className="text-[13px]">{extra.name.slice(0, 25)}...</div>
+                      <div className="text-[13px]">{extra?.name.length <= 18 ? (extra?.name) : `${extra?.name.slice(0, 18)}...` }</div>
                       <div className="flex items-center gap-2">
                         <span className="text-[12px]">+{formatPrice(extra.price)}</span>
                         {

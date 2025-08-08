@@ -425,12 +425,14 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                       overflow-hidden
                     `}
                   >
-                    <div className="relative bg-red-500 h-[12em] rounded-lg overflow-hidden mb-1">
-                      <img
-                        src={v?.image} 
-                        alt={v?.name}  
-                       
-                        className="w-full h-24 object-cover" 
+                    <div className="relative  h-[12em] rounded-lg overflow-hidden mb-1">
+                      <Image
+                        src={v?.image || "/logo-symbol-2.png"} 
+                        alt={v?.name  || "image"}  
+                        width={100}
+                        height={100}
+                        quality={100}
+                        className="w-[15em] h-full object-cover" 
                         onError={e => {
                           const target = e.currentTarget as HTMLImageElement;
                           if (target.src !== "/logo-symbol-2.png") {
@@ -453,7 +455,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                       {v?.name.length <= 22 ? (v?.name) : `${v?.name.slice(0, 21)}...` }
                     </span>
                     <div className={`
-                     rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-1
+                     rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-2
                     ${isActive 
                       ? 'bg-orange-500 text-white' 
                       : 'bg-white text-gray-700 border border-gray-300'}
@@ -468,7 +470,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                     )}
                     </div>
                     {showDiscount && (
-                      <span className="line-through text-orange-500 text-[11px] mr-1">{formatPrice(v?.price)}</span>
+                      <span className="line-through text-orange-500 text-[11px] mr-1 ">{formatPrice(v?.price)}</span>
                     )}
                   </button>
                 </div>
@@ -554,11 +556,11 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                 </svg>
               )}
             </div>
-            <span className="font-medium hidden sm:block">
-              {ao.name.slice(0, 30)}...
+            <span className="font-normal hidden sm:block">
+            {ao?.name.length <= 32 ? (ao?.name) : `${ao?.name.slice(0, 32)}...` }
             </span>
             <span className="text-[13px] block sm:hidden">
-              {ao.name.slice(0, 11)}...
+            {ao?.name.length <= 12 ? (ao?.name) : `${ao?.name.slice(0, 10)}...` }
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -682,11 +684,11 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
                 </svg>
               )}
             </div>
-            <span className="font-medium hidden sm:block">
-              {ex.name.slice(0, 30)}…
+            <span className="font-normal hidden sm:block">
+            {ex?.name.length <= 32 ? (ex?.name) : `${ex?.name.slice(0, 32)}...` }
             </span>
             <span className="text-[13px] block sm:hidden">
-              {ex.name.slice(0, 12)}…
+            {ex?.name.length <= 12 ? (ex?.name) : `${ex?.name.slice(0, 12)}...` }
             </span>
           </div>
           <div className="flex items-center gap-2">

@@ -321,9 +321,12 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                         className="p-3 rounded-full border border-gray-200  bg-white flex items-center justify-between w-full"
                       >
                         <div className="flex items-center w-full">
-                          <img
-                            src={v?.image}
-                            alt={v?.name}
+                          <Image
+                            src={v?.image || "/logo-symbol-2.png"}
+                            width="100"
+                            height="100"
+                            quality="100"
+                            alt={v?.name || "Image"}
                             className="w-8 h-8 rounded-md object-cover mr-3"
                             onError={e => {
                               const target = e.currentTarget as HTMLImageElement;
@@ -333,8 +336,8 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                               }}
                           />
                           <div>
-                            <span className="font-medium hidden sm:block">{v?.name?.slice(0, 28)} x {v?.quantity} ...</span>
-                            <span className="text-[13px] block sm:hidden">{v?.name?.slice(0, 13)} x  {v?.quantity}  ...</span>
+                            <span className="font-normal hidden sm:block"> {v?.name.length <= 32 ? (v?.name) : `${v?.name.slice(0, 32)}...` } x {v?.quantity}</span>
+                            <span className="text-[13px] block sm:hidden"> {v?.name.length <= 12 ? (v?.name) : `${v?.name.slice(0, 12)}...` } x  {v?.quantity}  ...</span>
                           </div>
                         </div>
                         <div className="text-right w-full">
@@ -415,11 +418,11 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 </svg>
               )}
             </div>
-            <span className="font-medium hidden sm:block">
-              {ao.name.slice(0, 30)}…
+            <span className="font-normal hidden sm:block">
+            {ao?.name.length <= 32 ? (ao?.name) : `${ao?.name.slice(0, 32)}...` }
             </span>
             <span className="text-[13px] block sm:hidden">
-              {ao.name.slice(0, 12)}…
+            {ao?.name.length <= 12 ? (ao?.name) : `${ao?.name.slice(0, 12)}...` }
             </span>
           </div>
 
@@ -529,11 +532,11 @@ const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.Rea
                 </svg>
               )}
             </div>
-            <span className="text-[13px] hidden sm:block font-medium">
-              {ex.name.slice(0, 30)}…
+            <span className="text-[13px] hidden sm:block font-normal">
+            {ex?.name.length <= 32 ? (ex?.name) : `${ex?.name.slice(0, 32)}...` }
             </span>
             <span className="text-[13px] block sm:hidden font-medium">
-              {ex.name.slice(0, 12)}…
+            {ex?.name.length <= 12 ? (ex?.name) : `${ex?.name.slice(0, 12)}...` }
             </span>
           </div>
 
