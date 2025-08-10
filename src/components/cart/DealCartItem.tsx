@@ -110,7 +110,6 @@ function DealItem({ cartItem, removeItem }: CartItemProps) {
             {/* Show all variant names and prices if present */}
             {Array.isArray(cartItem.allvariant) && cartItem.allvariant.length > 0 && (
               <div className="text-sm text-gray-600 mt-1">
-                Variants:
                 <ul className="ml-4 mt-1">
                   {cartItem.allvariant.map((v: any) => (
                     <li key={v.id} className="flex justify-between">

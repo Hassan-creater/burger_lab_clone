@@ -105,7 +105,7 @@ function CartItem({ cartItem, removeItem, showAddons = false, setShowAddons = ()
             <h3 className="font-semibold text-gray-900 text-base leading-tight line-clamp-2 text-[15px] mb-1">
               {cartItem?.itemName}
             </h3>
-            <p className="text-gray-500 text-[13px] font-semibold">Variant : <span className="font-normal">{cartItem?.variantName}</span>
+            <p className="text-gray-500 text-[13px] font-semibold"><span className="font-normal">{cartItem?.variantName}</span>
             </p>
           </div>
           <div className="flex items-center justify-between">

@@ -268,8 +268,9 @@ type OrderDetailsModalProps = {
                     <div key={item.id} className="border rounded-lg p-4 bg-gray-50">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <h4 className={`font-medium ${designVar.fontFamily}`}>{item.variant.name}</h4>
                           <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>Item #{itemIndex + 1}</p>
+                          <h4 className={`font-medium ${designVar.fontFamily}`}>{item.variant.itemName}</h4>
+                          <p className={`font-normal ${designVar.fontFamily}`}>{item.variant.name}</p>
                           {item?.variant?.addons?.length > 0 && (
                             <div className="mt-2">
                               <p className={`text-xs font-medium text-gray-600 ${designVar.fontFamily}`}>Add-ons:</p>

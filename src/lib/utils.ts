@@ -188,3 +188,5 @@ export function extractUnavailableAddonsOrExtrasError(error: any): string {
 	return date.format(formatPattern);
   }
   
+
+  export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

@@ -12,7 +12,7 @@ import {
 import { Badge, Calendar, CrossIcon, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
 
-import { formatDisplayId, formatPrice } from "@/lib/utils";
+import { capitalize, formatDisplayId, formatPrice } from "@/lib/utils";
 import { parseOrderItems } from "@/lib/orderUtils";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "@radix-ui/react-select";
@@ -127,7 +127,7 @@ const getStatusColor = (status: string) => {
               </div>
             </div>
             <div className="text-right space-y-2">
-              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status ? (order?.status).toUpperCase() : "Pending"}</p>
+              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status && capitalize(order?.status)}</p>
               <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.total}</p> 
             </div>
           </div>
