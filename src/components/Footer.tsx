@@ -205,7 +205,7 @@ const Footer = () => {
         {/* Logo and App Downloads Section */}
         <div className="space-y-8 ">
           {/* Logo Placeholder */}
-          <div className="relative w-40 h-16 group">
+          <div className="relative w-40 h-16 group ">
             <img
               src="/blueLogo.png"
               alt="logo"
@@ -216,7 +216,7 @@ const Footer = () => {
 
             {
               appInfo && (
-            <div className="absolute whitespace-nowrap top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white shadow-md px-3 py-2 rounded-lg text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+            <div className="absolute whitespace-nowrap top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white shadow-md px-3 py-2 rounded-lg text-sm text-gray-700 hidden group-hover:block transition-opacity duration-200 z-10">
               <strong>{appInfo?.versionTitle}</strong><br />
               {appInfo?.version}
             </div>
@@ -288,7 +288,7 @@ const Footer = () => {
 {
               AddressData?.whatsappNumber ? (
                 <div className="flex items-start space-x-3 text-[14px]">
-                <i className="fa-brands fa-whatsapp w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0"></i>
+                <i className="fa-brands fa-whatsapp w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0 text-[1.5em]"></i>
                 <div>
                   <span className="font-semibold text-gray-900"> Whatsapp: </span>
                   <span 

@@ -208,7 +208,7 @@ const ResetProfile = (profile: any) => {
     Cookies.set("refreshToken", RefreshToken ?? "", {
       expires: 1, // 1 day
       path: "/",
-      secure: !isLocalhost, // Secure in production only
+      secure: !isLocalhost, // Secure in productio~n only
       sameSite: "lax",
     });
 

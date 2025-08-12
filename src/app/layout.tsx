@@ -34,6 +34,13 @@ export default function RootLayout({
   
   return (
     <html lang="en">
+      <head>
+      <link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v6.5.0/css/all.css"
+/>
+
+      </head>
       {/* Next will fill in <head> for you from `metadata` */}
       <body
         className={cn(
@@ -46,10 +53,8 @@ export default function RootLayout({
         {/* your layout shell + Toaster + providers, etc */}
         <LayoutShell>{children}</LayoutShell>
         {/* your external scripts */}
-        <Script
-          src={process.env.FONT_AWESOME_SCRIPT}
-          crossOrigin="anonymous"
-        />
+       
+        
       </body>
     </html>
   );
