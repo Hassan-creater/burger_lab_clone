@@ -120,7 +120,7 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
         // If manually set to deals and section is not present, always force highlight and prevent scrollspy from updating
         if (activeSectionId !== "deals") {
           setActiveSectionId("deals");
-          console.log("[ScrollSpy] Forcing Deals highlight due to manualDealsActive");
+          
         }
         return;
       }
@@ -254,7 +254,7 @@ function CategoryLinkMenu({ categories  }: { categories: Category[] | null  }) {
   return (
     <nav
       className={cn(
-        "sticky top-[5em]   bg-inherit z-20 mt-[1.5em] px-[2em] sm:mt-[4em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-300",
+        "sticky top-[3em]   bg-inherit z-20 mt-[1.5em] px-[2em] sm:mt-[3em] bg-[#F8F9FA]  flex items-center h-[4em] w-full lg:max-w-[92%] overflow-y-hidden  !focus-visible:outline-0 transition-all duration-300",
         `${deliveryClose || dineInClose || pickupClose ? "pt-[1em] " : "pt-[0em]"}`
       )}
     >
