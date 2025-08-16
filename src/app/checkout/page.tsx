@@ -105,7 +105,7 @@ function Checkout() {
  const parsedUserData = userData ? JSON.parse(userData) : null;
  const userid = parsedUserData?.id;
   const {setComment , AddressData , setDeliveryName , setDeliveryPhone } = useCartContext();
-
+ const [message , setMessage] = useState("");
  
 
    const getAddresses = async () => {
@@ -184,7 +184,7 @@ function Checkout() {
                   </SelectContent>
                 </Select> */}
                 <div className="w-full flex items-center justify-between">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address</label>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Address <span className="text-red-500 ml-2">*</span></label>
                 <AddressForm/>
                 </div>
                 
@@ -210,8 +210,16 @@ function Checkout() {
 
 
               <div className="bg-primaryBg  px-3 py-[1em] rounded-lg">
-                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Phone</label>
-                <input type="number" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter your phone number" onChange={(e) => setDeliveryPhone(e.target.value)}/>
+                <label htmlFor="address" className={`text-md ${designVar.fontFamily}`}>Delivery Phone <span className="text-red-500 ml-2">*</span></label>
+                <input type="number" className="w-full py-[0.5em] border border-gray-300 rounded-md p-2" placeholder="Enter your phone number" onChange={(e) => {
+                  if(e.target.value.length < 11){
+                    setMessage("Phone must be of 11 digits.")
+                  }else{
+                    setDeliveryPhone(e.target.value)
+                    setMessage("");
+                  }
+                }}/>
+                {message && <p className="text-xs text-red-400 mt-2">{message}</p>}
               </div>
                 </>
                

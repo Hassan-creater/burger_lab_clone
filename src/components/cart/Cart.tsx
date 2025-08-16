@@ -60,7 +60,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
   const [total, setTotal] = useState(0.0);
   const [discount, setDiscount] = useState("0");
   const [couponValidation, setCouponValidation] = useState<boolean>(false);
-  const {AddedInCart  , dealData, ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName , deliveryPhone , comment , user , setAuthOpen , couponData ,setCouponData, updateCart, couponCode , isTaxAppliedBeforeCoupon ,pickupClose , deliveryClose , dineInClose , updateDealCart  } = useCartContext();
+  const {AddedInCart  , dealData, ClearCart , AddressData , defaultAddress , deliveryAddress , deliveryName ,setDeliveryPhone ,deliveryPhone , comment , user , setAuthOpen , couponData ,setCouponData, updateCart, couponCode , isTaxAppliedBeforeCoupon ,pickupClose , deliveryClose , dineInClose , updateDealCart  } = useCartContext();
   const [isLoading, setIsLoading] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, { addons: boolean; extras: boolean }>>({});
 
@@ -218,6 +218,17 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       toast.error("Please select location.");
       return;
     }
+    
+   
+
+    if (
+      AddressData?.orderType === "delivery" &&
+      (!deliveryAddress || !deliveryPhone)
+    ) {
+      toast.error("Please add delivery address and phone.");
+      return;
+    }
+    
 
     let orderPayload = {
       status: "pending",
@@ -259,6 +270,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
         if(res.status === 201){
           ClearCart();
           toast.success("Order placed successfully");
+          setDeliveryPhone("")
           localStorage.removeItem("orderType")
           if (typeof window !== 'undefined') {
             sessionStorage.removeItem("canCheckout");
