@@ -182,7 +182,7 @@ export default async function Home(
 
   return (
     <OnlineStatusWrapper>
-      <main className="w-full max-w-none mt-[30px]  min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center ">
+      <main className="w-full max-w-none   min-h-[calc(100dvh - 80px)] flex flex-col justify-center items-center ">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <HeroBanner />
           <CategoryLinkMenu categories={categories} />
