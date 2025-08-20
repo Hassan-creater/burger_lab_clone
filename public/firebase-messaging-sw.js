@@ -21,6 +21,7 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 // Handle background messages
+if(self && "serviceWorker" in self){
 messaging.onBackgroundMessage(function (payload) {
     // console.log('[firebase-messaging-sw] Received background message', payload);
   
@@ -49,6 +50,7 @@ messaging.onBackgroundMessage(function (payload) {
   
 
 // Handle notification click
+
 self.addEventListener('notificationclick', function(event) {
   // console.log('Notification click received.', event);
   
@@ -77,3 +79,4 @@ self.addEventListener('notificationclick', function(event) {
 self.addEventListener('notificationclose', function(event) {
   // console.log('Notification was closed', event);
 });
+}  
