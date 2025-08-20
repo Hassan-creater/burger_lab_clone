@@ -16,16 +16,70 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   const [queryClient] = React.useState(() => new QueryClient());
   const isOffline = useOffline();
 
-
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/firebase-messaging-sw.js")
-        .then(reg => {
-          // console.log("Service Worker registered:", reg);
-        })
-        .catch(err => console.error("Service Worker registration failed:", err));
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      console.warn('Service Worker not supported in this environment');
+
+      return;
     }
+  
+    const registerServiceWorker = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        // console.log('Service Worker registered with scope:', registration.scope);
+        
+        // Wait until the service worker is ready
+        if (registration.active) {
+          // console.log('Service Worker is active');
+          return registration;
+        }
+        
+        // If not active, wait for it to become active
+        return new Promise<ServiceWorkerRegistration>((resolve) => {
+          const timer = setInterval(() => {
+            if (registration.active) {
+              clearInterval(timer);
+              // console.log('Service Worker is now active');
+              resolve(registration);
+            }
+          }, 100);
+        });
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+        throw error;
+      }
+    };
+  
+    // Register service worker and handle messaging initialization
+    registerServiceWorker()
+      .then((registration) => {
+        if (registration) {
+          // Initialize FCM token after service worker is ready
+          if ('Notification' in window) {
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'granted') {
+                // console.log('Notification permission granted');
+                // You can call getFcmToken here if needed
+              }
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to initialize service worker:', error);
+      });
+  
+    // Optional: Handle controllerchange event
+    const handleControllerChange = () => {
+      // console.log('Service Worker controller changed');
+    };
+  
+    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+  
+    // Cleanup
+    return () => {
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+    };
   }, []);
   
   return (

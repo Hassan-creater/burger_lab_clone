@@ -1,4 +1,4 @@
-// lib/firebaseClient.ts
+// src/lib/firebaseClient.ts
 import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
@@ -6,33 +6,52 @@ const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-if (!getApps().length) initializeApp(firebaseConfig);
+let app;
+let messaging: any;
 
-const messaging = getMessaging();
+if (typeof window !== 'undefined') {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
+  
+  try {
+    messaging = getMessaging(app);
+  } catch (err) {
+    console.warn('Failed to initialize Firebase Messaging', err);
+  }
+}
 
 export async function getFcmToken(
   serviceWorkerRegistration?: ServiceWorkerRegistration
 ): Promise<string | null> {
+  if (!messaging) return null;
+  
   try {
-    const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY!;
+    const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
     if (!vapidKey) {
-      // console.warn('VAPID key is missing. Set NEXT_PUBLIC_FIREBASE_VAPID_KEY.');
+      console.warn('VAPID key is missing');
       return null;
     }
-    const token = await getToken(messaging, {
+    
+    return await getToken(messaging, {
       vapidKey,
       serviceWorkerRegistration,
     });
-    return token ?? null;
   } catch (err) {
-    // console.error('getFcmToken error', err);
+    console.error('Failed to get FCM token', err);
     return null;
   }
 }
 
-export const onMessageListener = (cb: (payload: any) => void) =>
-  onMessage(messaging, (payload) => cb(payload));
+export const onMessageListener = (callback: (payload: any) => void) => {
+  if (!messaging) return () => {};
+  return onMessage(messaging, callback);
+};
