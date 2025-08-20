@@ -11,6 +11,9 @@ import { useCartContext } from "@/context/context";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
+import { useFcmToken } from "@/hooks/useFcmToken";
+import { useEffect } from "react";
+
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
 });
@@ -21,6 +24,26 @@ const Header = () => {
 
   const pathname = usePathname();
 
+  const {fcmToken} = useFcmToken()
+   
+  // console.log(fcmToken)
+
+  const createAnonymousDevice = async ()=>{
+    const res = await apiClient.post("/user-device/anonymous" , {
+      fcmToken : fcmToken
+    });
+    if(res.data){
+      localStorage.setItem("anonymousDeviceId" , res.data.data.anonymousDeviceId)
+    }
+  }
+
+  useEffect(()=>{
+   if(!fcmToken) return
+
+   if(fcmToken && !localStorage.getItem("anonymousDeviceId")){
+    createAnonymousDevice();
+   }
+  },[fcmToken])
 
   const getUserRoles = async () => {
     try {

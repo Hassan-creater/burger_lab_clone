@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/app/providers";
 import { CartProvider } from "@/context/context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { useOffline } from "./(site)/components/OnlineStatusWrapper";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -16,6 +16,18 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   const [queryClient] = React.useState(() => new QueryClient());
   const isOffline = useOffline();
 
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then(reg => {
+          // console.log("Service Worker registered:", reg);
+        })
+        .catch(err => console.error("Service Worker registration failed:", err));
+    }
+  }, []);
+  
   return (
     <CartProvider>
       <QueryClientProvider client={queryClient}>

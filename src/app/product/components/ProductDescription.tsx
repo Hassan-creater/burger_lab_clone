@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useCartContext } from "@/context/context";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, truncate } from "@/lib/utils";
 import { Item } from "@/models/Item";
 import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton";
 import { designVar } from "@/designVar/desighVar";
@@ -282,6 +282,11 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
   }, [cartPayload, updateCart]);
 
 
+
+
+useEffect(()=>{
+
+},[selectedVariantId])
 // skelton loader
   const loading =  <article className="flex w-full h-full flex-col rounded-2xl overflow-y-scroll overflow-x-hidden bg-white shadow-lg pb-[3em] animate-pulse">
   {/* Top Section */}
@@ -358,17 +363,17 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
         <div className="w-full p-4 mt-[1em]">
       <div className="flex justify-between items-start bg-white p-2 rounded-md">
         <div>
-          <h1 className="text-[20px] font-bold text-gray-800">{product.name}</h1>
-          {product.description && (
+          <h1 className="text-[20px] font-bold text-gray-800">{truncate(selectedVariant?.name , 15)} <span className="px-3 py-1  bg-orange-500 rounded-full text-white ml-2 text-xs font-normal">{product?.name}</span></h1>
+          {selectedVariant?.description && (
             <div>
               <p
                 className={`mt-2 text-gray-600 max-w-2xl text-[14px] ${
                   expanded ? "" : "line-clamp-2"
                 }`}
               >
-                {product.description}
+                {selectedVariant?.description}
               </p>
-              {product.description.length > 80 && ( // Adjust character threshold as needed
+              {selectedVariant?.description.length > 80 && ( // Adjust character threshold as needed
                 <button
                   className="text-blue-500 mt-1 text-[12px] underline focus:outline-none"
                   onClick={toggleExpand}
@@ -384,8 +389,8 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
         <div className="relative w-[95%] mx-auto h-[20em] overflow-hidden rounded-xl flex justify-center items-center ">
        <img
-         src={product.image} 
-         alt={product.name} 
+         src={selectedVariant?.image} 
+         alt={selectedVariant?.name} 
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         onError={e => {
           const target = e.currentTarget as HTMLImageElement;
@@ -411,7 +416,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
             {variants?.map((v: any) => {
               const isActive = v?.id === selectedVariantId;
               const showDiscount = typeof v.discountedPrice === 'number' && typeof v.price === 'number' && v.discountedPrice < v.price && v.discountedPrice != 0;
-            
+              
               return (
                 <div key={v?.id} className="relative flex flex-col items-center group shrink-0">
                   <button
