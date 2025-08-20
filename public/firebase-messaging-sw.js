@@ -51,32 +51,32 @@ messaging.onBackgroundMessage(function (payload) {
 
 // Handle notification click
 
-self.addEventListener('notificationclick', function(event) {
-  // console.log('Notification click received.', event);
+// self.addEventListener('notificationclick', function(event) {
+//   // console.log('Notification click received.', event);
   
-  // Android needs explicit close
-  event.notification.close();
+//   // Android needs explicit close
+//   event.notification.close();
   
-  // This looks to see if the current tab is already open and focuses it
-  event.waitUntil(
-    clients.matchAll({type: 'window'}).then(function(clientList) {
-      // Check if there's already a window/tab open
-      for (const client of clientList) {
-        if (client.url === '/' && 'focus' in client) {
-          return client.focus();
-        }
-      }
+//   // This looks to see if the current tab is already open and focuses it
+//   event.waitUntil(
+//     clients.matchAll({type: 'window'}).then(function(clientList) {
+//       // Check if there's already a window/tab open
+//       for (const client of clientList) {
+//         if (client.url === '/' && 'focus' in client) {
+//           return client.focus();
+//         }
+//       }
       
-      // If no matching tab is found, open a new one
-      if (clients.openWindow) {
-        return clients.openWindow('/');
-      }
-    })
-  );
-});
+//       // If no matching tab is found, open a new one
+//       if (clients.openWindow) {
+//         return clients.openWindow('/');
+//       }
+//     })
+//   );
+// });
 
-// Optional: Handle notification close
-self.addEventListener('notificationclose', function(event) {
-  // console.log('Notification was closed', event);
-});
-}  
+// // Optional: Handle notification close
+// self.addEventListener('notificationclose', function(event) {
+//   // console.log('Notification was closed', event);
+// });
+ }  
