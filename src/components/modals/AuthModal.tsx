@@ -1,6 +1,6 @@
 "use client";
  
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -24,6 +24,7 @@ import { apiClient } from "@/lib/api";
 import { useCartContext } from "@/context/context";
 import { designVar } from "@/designVar/desighVar";
 import { formatErrorMessage } from "@/lib/utils";
+import { useFcmToken } from "@/hooks/useFcmToken";
 
 type Login = {
     email: string;
@@ -47,13 +48,15 @@ function AuthModal() {
   });
   const [isPassVisible, setIsPassVisible] = React.useState(false);
   const [isConfPassVisible, setIsConfPassVisible] = React.useState(false);
+  const {fcmToken} = useFcmToken()
   const [loading, setLoading] = React.useState(false);
   const [email , setEmail] = useState("");
   const [forgotLoading,setForgotLoading] = useState(false);
-  const {setLoggedIn , authOpen , setAuthOpen } = useCartContext()
+  const {setLoggedIn , authOpen , setAuthOpen , setCreateLodedInUserDevice} = useCartContext()
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpLoading, setOtpLoading] = useState(false);
   const [passwordLoading,setPasswordLoading] = useState(false);
+ 
 
 
   const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
@@ -161,7 +164,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
 
   
 
-
+  
   const handleLogin = async (data: {email: string, password: string , rememberMe : boolean}) => {
     try {
         setLoading(true);
@@ -190,6 +193,7 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
           setAuthOpen(false);
           window.location.reload();
           setLoading(false);
+          localStorage.setItem("logedIn","true");
         } else {
           toast.error("Something went wrong!");
         }
@@ -299,6 +303,14 @@ const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number)
       setPasswordLoading(false);
     }
   };
+
+
+
+
+
+
+
+
 
 
 

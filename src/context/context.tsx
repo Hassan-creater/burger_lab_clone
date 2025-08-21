@@ -105,6 +105,9 @@ interface CartContextType {
   setOpen : React.Dispatch<React.SetStateAction<boolean>>
   userProfile : any
   ResetProfile : (profile : any)=>void,
+  createLogedInUserDevice : boolean,
+  setCreateLodedInUserDevice : React.Dispatch<React.SetStateAction<boolean>>
+
 }
 
 
@@ -138,6 +141,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [dealData,setDealData] = useState<any>({})
   const [dateFormat , _setDateFormat] = useState("YYYY-MM-DD");
   const [open , setOpen]= useState(true);
+  const [createLogedInUserDevice , setCreateLodedInUserDevice] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(() => {
     // Try to load from sessionStorage on first mount (client only)
     if (typeof window !== 'undefined') {
@@ -423,7 +427,7 @@ const ResetProfile = (profile: any) => {
 
 
   return (
-    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity , dateFormat , SetDateFormat , open , setOpen , userProfile , ResetProfile }}>
+    <CartContext.Provider value={{ AddedInCart, setAddedInCart , updateCart , removeItemFromCart , ClearCart , UpdateAddressData , AddressData , newAddress , setNewAddress , defaultAddress , setDefaultAddress , deliveryAddress , setDeliveryAddress , deliveryName , setDeliveryName , deliveryPhone , setDeliveryPhone , comment , setComment , user , setUser , token , setLoggedIn , authOpen , setAuthOpen  , favorite , setFavorite , couponData , setCouponData , TaxData , setTaxData , dineInClose , setDineInClose , pickupClose , setPickupClose , deliveryClose , setDeliveryClose , refreshToken , setRefreshToken , couponCode , setCouponCode , DecreaseQuantity , IncreaseQuantity , isTaxAppliedBeforeCoupon , setIsTaxAppliedBeforeCoupon , deals , setDeals , dealData , updateDealCart , IncreaseDealQuantity , DecreaseDealQuantity ,removeDealFromCart , IncreaseDealAddonQuantity , DecreaseDealAddonQuantity , IncreaseDealExtraQuantity , DecreaseDealExtraQuantity , IncreaseItemAddonQuantity , DecreaseItemAddonQuantity , IncreaseItemExtraQuantity , DecreaseItemExtraQuantity , dateFormat , SetDateFormat , open , setOpen , userProfile , ResetProfile , createLogedInUserDevice , setCreateLodedInUserDevice}}>
       {children}
     </CartContext.Provider>
   );

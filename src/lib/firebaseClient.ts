@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 let app;
-let messaging: any;
+export let messaging: any;
 
 if (typeof window !== 'undefined') {
   if (!getApps().length) {

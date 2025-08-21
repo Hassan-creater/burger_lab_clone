@@ -12,7 +12,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
 import { useFcmToken } from "@/hooks/useFcmToken";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getFcmToken } from "@/lib/firebaseClient";
+import { getFreshFcmToken } from "@/functions/freshFcmToken";
+
 
 const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
   ssr: false,
@@ -20,34 +23,96 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 
 const Header = () => {
 
-  const {token , user , deliveryClose , dineInClose , pickupClose  , setUser  } = useCartContext();
+  const {token , user , deliveryClose , dineInClose , pickupClose  , setUser   } = useCartContext();
 
   const pathname = usePathname();
 
   const {fcmToken} = useFcmToken()
+  const [retry , setRetry] = useState(false);
+  const [activeFcmToken, setActiveFcmToken] = useState<string | null>(fcmToken);
+
+  
    
   // console.log(fcmToken)
+  const createAnonymousDevice = async () => {
+    try {
+      const res = await apiClient.post("/user-device/anonymous", {
+        fcmToken: activeFcmToken,
+      });
+  
+      if (res.data?.data?.anonymousDeviceId) {
+        localStorage.setItem("anonymousDeviceId", res.data.data.anonymousDeviceId);
+        setRetry(false);
+      }
+    } catch (error: any) {
+      const status = error?.response?.status;
+      // console.error("Anonymous device creation failed with status:", status);
+  
+      if (status === 500) {
+        try {
+          const newToken = await getFreshFcmToken();
+  
+          if (newToken) {
+            setActiveFcmToken(newToken); // update token for retry
+            setRetry(true);              // trigger retry
+          } else {
+            // console.warn("Token refresh failed — not retrying");
+          }
+        } catch (err) {
+          // console.error("Error during token refresh:", err);
+        }
+      }
+    }
+  };
 
-  const createAnonymousDevice = async ()=>{
-    const res = await apiClient.post("/user-device/anonymous" , {
-      fcmToken : fcmToken
+
+  const createLogedInUserDevice = async ()=>{
+    const res = await apiClient.post("/user-device" , {
+      deviceToken : fcmToken,
+      deviceType :  "WEB"
     });
     if(res.data){
-      localStorage.setItem("anonymousDeviceId" , res.data.data.anonymousDeviceId)
+      localStorage.setItem("userDeviceId" , res.data.data.userDeviceId)
+      localStorage.removeItem("logedIn")
     }
   }
 
-  useEffect(()=>{
-   if(!fcmToken) return
+  useEffect(() => {
+    if (!activeFcmToken) return;
+  
+    if (activeFcmToken && !localStorage.getItem("anonymousDeviceId")) {
+      createAnonymousDevice();
+    }
+  
+    if (retry) {
+      createAnonymousDevice();
+    }
+  }, [activeFcmToken, retry]);
 
-   if(fcmToken && !localStorage.getItem("anonymousDeviceId")){
-    createAnonymousDevice();
+
+  
+  useEffect(()=>{
+    if(localStorage.getItem("logedIn") && fcmToken){
+      createLogedInUserDevice()
+    
+    }
+  },[
+    fcmToken
+  ])
+
+
+
+  useEffect(()=>{
+   if(fcmToken){
+    setActiveFcmToken(fcmToken)
    }
   },[fcmToken])
 
-  const getUserRoles = async () => {
+ 
+
+  const getUserProfile = async () => {
     try {
-      const res = await apiClient.get("/role");
+      const res = await apiClient.get("/auth/customer/profile");
       return res.data.data;
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -72,7 +137,7 @@ const Header = () => {
   
   const { data } = useQuery({
     queryKey: ["userRoles"],
-    queryFn: getUserRoles,
+    queryFn: getUserProfile,
     enabled : !!user?.firstName,
     staleTime: 60 * 1000,         // Optional: data is considered fresh for 1 minute
     refetchInterval: 60 * 1000,   //  Refetch every 1 minute

@@ -43,13 +43,23 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
 
 
   const logout = async () => {
-     const res = await apiClient.post("/auth/logout");
+     
+    if(!localStorage.getItem("userDeviceId")){
+      window.location.reload();
+    }
+
+     const res = await apiClient.post("/auth/logout" ,{
+      userDeviceId : localStorage.getItem("userDeviceId")
+     });
      
      if(res.status == 204){
         Cookies.remove("accessToken", { path: "/" });
         Cookies.remove("refreshToken", { path: "/" });
         Cookies.remove("userData" , {path : "/"});
         localStorage.removeItem("defaultAddress")
+        localStorage.removeItem("logedIn")
+        localStorage.removeItem("anonymousDeviceId")
+        localStorage.removeItem("userDeviceId")
         window.location.reload();
      }
 
