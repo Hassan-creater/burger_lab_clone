@@ -12,7 +12,9 @@ import LoadingSpinner from "../LoadingSpinner";
 import ServiceError from "../ServiceError";
 import { useUserStore } from "@/store/slices/userSlice";
 import { useCartContext } from "@/context/context";
-import AddressForm from "@/app/addresses/compoenent/AddressForm";
+const AddressForm = dynamic(() => import('@/app/addresses/compoenent/AddressForm'), {
+  ssr: false,
+});
 import { apiClient } from "@/lib/api";
 import Cookies from "js-cookie";
 import { designVar } from "@/designVar/desighVar";

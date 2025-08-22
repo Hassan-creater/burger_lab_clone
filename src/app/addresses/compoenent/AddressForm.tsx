@@ -3,9 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { MapPin, Home, Building2, Globe,  Cross, Loader2, XIcon } from "lucide-react"
+import { MapPin, Home, Building2, Globe,   Loader2, XIcon } from "lucide-react"
 import { useCartContext } from "@/context/context"
 import { useForm } from "react-hook-form"
 import { apiClient } from "@/lib/api"
@@ -13,8 +11,15 @@ import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { designVar } from "@/designVar/desighVar"
-import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogHeader, DialogContent, DialogTitle,  DialogClose } from "@/components/ui/dialog"
 import { VisuallyHidden } from "@/components/ui/visually-hidden"
+
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import L from "leaflet"
+import 'leaflet/dist/leaflet.css';
+import { useEffect } from 'react';
+import { useMapEvents } from 'react-leaflet';
+
 
 
 type AddressFormProps = {
@@ -22,6 +27,21 @@ type AddressFormProps = {
   line2: string;
   city: string;
   country: string;
+}
+
+const defaultIcon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+
+function MapUpdater({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng], 13);
+  }, [lat, lng, map]);
+  return null;
 }
 
 export default function AddressForm() {
@@ -37,11 +57,25 @@ export default function AddressForm() {
   const [loading , setLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [lat , setLat] = useState( 32.05233033402139)
+  const [lng , setLng] = useState(  72.91958169612704);
 
   const addAddress = async (data: AddressFormProps) => {
+   
+    if(!lat || !lng){
+      toast.error("Please select location from map or enter it manually.")
+      return 
+    }
+
     setLoading(true);
+
+    const payload = {
+      ...data,
+      lat : lat,
+      lon : lng,
+    }
   
-    const promise = apiClient.post("/address", data);
+    const promise = apiClient.post("/address", payload);
   
     toast.promise(promise, {
       loading: "Adding address...",
@@ -66,6 +100,20 @@ export default function AddressForm() {
     }
   };
 
+  // Inline click handler
+  function MapClickHandler() {
+    useMapEvents({
+      click(e) {
+        setLat(e.latlng.lat);
+        setLng(e.latlng.lng);
+      },
+    });
+    return null;
+  }
+
+
+
+  
 
 
 
@@ -167,6 +215,59 @@ export default function AddressForm() {
         />
         {errors?.country && typeof errors.country.message === 'string' && <p className="text-red-500 mt-[0.2em]">{errors.country.message}</p>}
       </div>
+
+                <MapContainer
+            center={[lat, lng]}
+            zoom={13}
+            scrollWheelZoom={false}
+            style={{ height: '300px', width: '100%', borderRadius: '0.5rem' }}
+          >
+           <TileLayer
+             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+             attribution="Tiles © Esri"
+           />
+           <TileLayer
+             url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+             attribution="Labels © Esri"
+           />
+
+            <MapUpdater lat={lat} lng={lng} />
+            <MapClickHandler />
+            <Marker position={[lat, lng]} icon={defaultIcon} />
+          </MapContainer>
+
+
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {/* Latitude */}
+  <div>
+    <Label htmlFor="latitude" className="text-gray-700 font-medium">Latitude</Label>
+    <Input
+      id="latitude"
+      type="number"
+      step="any"
+      value={lat}
+      onChange={(e) => setLat(parseFloat(e.target.value))}
+      placeholder="Enter latitude"
+      className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20"
+    />
+  </div>
+
+  {/* Longitude */}
+  <div>
+    <Label htmlFor="longitude" className="text-gray-700 font-medium">Longitude</Label>
+    <Input
+      id="longitude"
+      type="number"
+      step="any"
+      value={lng}
+      onChange={(e) => setLng(parseFloat(e.target.value))}
+      placeholder="Enter longitude"
+      className="border-gray-200 focus:border-orange-500 focus:ring-orange-500/20"
+    />
+  </div>
+</div>
+
 
       <Button
         disabled={loading}

@@ -8,12 +8,12 @@ import React, { useEffect } from 'react'
 import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 
 const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any }) => {
-  const { setDeals } = useCartContext()
+  const { setDeals , AddressData  } = useCartContext()
 
   
 
   const getAllDeals = async () => {
-    const res = await apiClientCustomer.get(`/deal/view/customer`);
+    const res = await apiClientCustomer.get(`/deal/branch/${AddressData?.branchId}/view/customer`);
     return res.data.data.deals
   }
 
@@ -21,7 +21,7 @@ const DealSection = ({ deals , favorites }: { deals?: any[] , favorites : any })
   const { data , isLoading } = useQuery({
     queryKey: ['deals'],
     queryFn: getAllDeals,
-    enabled: !deals,
+    enabled: !deals || !! AddressData?.branchId,
   })
 
   const dealList = deals || data;

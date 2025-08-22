@@ -23,15 +23,15 @@ const NoSSRLocationModal = dynamic(() => import("./modals/LocationModal"), {
 
 const Header = () => {
 
-  const {token , user , deliveryClose , dineInClose , pickupClose  , setUser   } = useCartContext();
+  const {token , user , deliveryClose , dineInClose , pickupClose  , setUser , AddressData  } = useCartContext();
 
   const pathname = usePathname();
 
   const {fcmToken} = useFcmToken()
   const [retry , setRetry] = useState(false);
   const [activeFcmToken, setActiveFcmToken] = useState<string | null>(fcmToken);
-
   
+
    
   // console.log(fcmToken)
   const createAnonymousDevice = async () => {
@@ -127,6 +127,13 @@ const Header = () => {
     }
   };
   
+
+
+  useEffect(()=>{
+  if(AddressData?.branchId ){
+    Cookies.set("branchId" , AddressData.branchId)
+  }
+  },[AddressData])
   
   
   // ------------------------

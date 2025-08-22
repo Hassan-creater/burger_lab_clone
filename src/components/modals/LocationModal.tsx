@@ -73,12 +73,15 @@ export default function LocationModal() {
         contactPhone : selectedDineInBranchData?.contactPhone,
         socialMedias : selectedDineInBranchData?.socialMedias,
         whatsappNumber : selectedDineInBranchData?.whatsappNumber
-      })
+      }),
+      
+      
       
     }
 
    
     UpdateAddressData(AddressData);
+    window.location.reload();
     setOpen(false)
   }
 
@@ -232,6 +235,7 @@ export default function LocationModal() {
     queryFn : getAllBranches,
     staleTime : 1000 * 60 * 60,
   })
+
 
 
  

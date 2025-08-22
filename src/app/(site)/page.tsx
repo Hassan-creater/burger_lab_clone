@@ -29,14 +29,14 @@ export const getServerCookie = async (name: string): Promise<string | undefined>
 
 export const dynamic = "force-dynamic";
 
-
-export async function getCategories(): Promise<Category[] | null> {
+export async function getCategories(branchId: string): Promise<Category[] | null> {
   
     // const token = await getServerCookie("accessToken")
+ 
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_BASE_URL}/category/view/customer`,
+      `${process.env.NEXT_BASE_URL}/category/branch/${branchId}/view/customer`,
       {
         method: "GET",
         headers: {
@@ -105,7 +105,8 @@ export default async function Home(
   // }
 
   
-  const data = await getCategories();
+  const BranchId = await getServerCookie("branchId")
+  const data = await getCategories(BranchId || "");
 
   // Show loader while categories are being fetched
   if (typeof data === "undefined") {
@@ -126,6 +127,7 @@ export default async function Home(
 
   // Using dummy data instead
   const token = await getServerCookie("accessToken");
+  
   const cookieStore = await cookies();
   const userData = cookieStore.get("userData")?.value;
   const userDataJson = JSON.parse(userData || "{}");
@@ -167,17 +169,17 @@ export default async function Home(
     hasSearchResults = filteredCategories.length > 0;
   }
 
-  // Show server error only if fetch failed
-  if (data === null) {
-    return (
-      <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
-        <h1 className="text-2xl font-semibold text-red-600">Server Error</h1>
-        <p className="text-gray-600 mt-2 max-w-md">
-          We couldn not load product data. Please try again later.
-        </p>
-      </main>
-    );
-  }
+  // // Show server error only if fetch failed
+  // if (data === null) {
+  //   return (
+  //     <main className="w-full min-h-[calc(100dvh-80px)] flex flex-col justify-center items-center text-center px-4">
+  //       <h1 className="text-2xl font-semibold text-red-600"></h1>
+  //       <p className="text-gray-600 mt-2 max-w-md">
+  //         We couldn not load product data. Please try again later.
+  //       </p>
+  //     </main>
+  //   );
+  // }
 
 
   return (
