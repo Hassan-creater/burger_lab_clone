@@ -189,7 +189,12 @@ export function extractUnavailableAddonsOrExtrasError(error: any): string {
   }
   
 
-  export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+  export const capitalize = (str: string) =>
+	str
+	  .split(/[_\s]+/) // split by underscores or spaces
+	  .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+	  .join(' ');
+  
 
 
   export function truncate(str: string, maxLength: number): string {

@@ -1,5 +1,6 @@
 import { designVar } from '@/designVar/desighVar'
 import { apiClient } from '@/lib/api';
+import { capitalize } from '@/lib/utils';
 import { Separator } from '@radix-ui/react-select'
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, MapPin, Package, Phone, Star, User } from 'lucide-react';
@@ -194,7 +195,7 @@ type OrderDetailsModalProps = {
           <div className="space-y-2">
             <label className={`text-sm font-medium text-gray-600 ${designVar.fontFamily}`}>Status</label>
             <div className="text-center max-w-[15em] space-y-2">
-              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status ? (order?.status).toUpperCase() : "Pending"}</p>
+              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status == "assigned_to_rider" ? "Out For Delivery" : capitalize(order?.status)}</p>
             </div>
           </div>
           <div className="space-y-2">

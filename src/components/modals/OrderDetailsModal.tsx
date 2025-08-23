@@ -127,7 +127,7 @@ const getStatusColor = (status: string) => {
               </div>
             </div>
             <div className="text-right space-y-2">
-              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status && capitalize(order?.status)}</p>
+              <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status == "assigned_to_rider" ? "Out For Delivery" : capitalize(order?.status)}</p>
               <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.total}</p> 
             </div>
           </div>

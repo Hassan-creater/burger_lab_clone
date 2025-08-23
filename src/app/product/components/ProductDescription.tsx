@@ -18,7 +18,7 @@ interface ProductDescriptionProps {
 
 const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
-  const { updateCart , dineInClose , pickupClose , deliveryClose } = useCartContext();
+  const { updateCart , dineInClose , pickupClose , deliveryClose , AddressData } = useCartContext();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [showMessage, setShowMessage] = useState('');
 
@@ -36,7 +36,7 @@ const ProductDescription = ({ product , setOpen }: ProductDescriptionProps) => {
 
   // Fetch product variants
   const getItemById = async () => {
-    const res = await apiClient.get(`/item/${product.id}/view/customer`);
+    const res = await apiClient.get(`item/${product?.id}/branch/${AddressData?.branchId}/view/customer`);
     return res.data;
   };
 
