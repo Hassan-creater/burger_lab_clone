@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Badge, Calendar, CrossIcon, DollarSign, MapPin, Package, Phone, Star, User, XIcon } from "lucide-react";
+import { Badge, Calendar, CrossIcon, DollarSign,  Map,  MapPin, Package, Phone, Pin, Star, User, XIcon } from "lucide-react";
 import OrderSummary from "@/app/orders/Components/OrderSummary";
 
 import { capitalize, formatDisplayId, formatPrice } from "@/lib/utils";
@@ -21,6 +21,7 @@ import { Button } from "../ui/button";
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import OrderDescription from "@/app/orders/Components/OrderDescription";
+import Link from "next/link";
 
 type OrderDetailsModalProps = {
   order: any;
@@ -90,6 +91,8 @@ const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case "pending":
       return "bg-orange-100 text-orange-800 border-orange-200"
+    case "confirmed":
+      return "bg-lime-100 text-lime-800 border-lime-200"
     case "completed":
       return "bg-green-100 text-green-800 border-green-200"
     case "cancelled":
@@ -126,6 +129,7 @@ const getStatusColor = (status: string) => {
                 <p className={`text-sm text-gray-600 ${designVar.fontFamily}`}>{formatDate(order?.createdAt)}</p> {/* Fixed */}
               </div>
             </div>
+           
             <div className="text-right space-y-2">
               <p className={`${getStatusColor(order?.status)} p-[0.5em] rounded-md ${designVar.fontFamily}`}>{order?.status == "assigned_to_rider" ? "Out For Delivery" : capitalize(order?.status)}</p>
               <p className={`text-lg font-bold text-orange-600 ${designVar.fontFamily}`}>Rs: {order?.total}</p> 
@@ -133,13 +137,23 @@ const getStatusColor = (status: string) => {
           </div>
             <div className={`mt-4 flex items-center justify-between text-sm text-gray-600 ${designVar.fontFamily}`}>
             <span className="flex items-center gap-1">
-              <Package className="w-4 h-4" />
-              {order?.itemsCount} items {/* Fixed */}
+              <Package className="w-4 h-4" />  
+              {order?.itemsCount} {order?.itemsCount === 1 ? 'item' : 'items'}
             </span>
+            {
+              order?.status == "out_for_delivery" ? 
+              <Link href={`/order-tracking/${order?.id}`}>
+                <span className={`flex items-center gap-1 border-[1px] border-blue-600 p-2 shadow-gray-300 rounded-lg cursor-pointer text-blue-600 hover:underline ${designVar.fontFamily}`}>
+                  <Map className="w-4 h-4" />
+                  {order?.user?.firstName} {order?.user?.lastName} Start Tracking
+                </span>
+              </Link> : 
             <span className={`flex items-center gap-1 ${designVar.fontFamily}`}>
               <User className="w-4 h-4" />
               {order?.user?.firstName} {order?.user?.lastName} {/* Fixed */}
             </span>
+              
+            }
           </div>
         </CardContent>
       </Card>

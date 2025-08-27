@@ -275,7 +275,7 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
           if (typeof window !== 'undefined') {
             sessionStorage.removeItem("canCheckout");
           }
-          router.push("/order-complete/" + res.data.data.displayId);
+          router.push("/order-complete/" + `${res.data.data.displayId}_${res.data.data.id}`);
         }
       } catch (err: any) {
         const backendError = err?.response?.data;

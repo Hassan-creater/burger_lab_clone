@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import LoadingFlash from "@/components/LoadingFlash";
 import { getServerCookie } from "@/app/(site)/page";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { designVar } from "@/designVar/desighVar";
+
+
 async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
 
   const token = await getServerCookie("accessToken");
+
   if(!token){
     redirect("/");
   }
@@ -27,6 +30,18 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
   }
 
   const orderDetails = await getOrder();
+  
+
+
+
+
+
+  const fullId = params?.orderId;
+const [prefix] = fullId.split("_");
+
+
+
+
   // parseInt(params.orderId)
 
  
@@ -61,11 +76,12 @@ async function OrderComplete(props: { params: Promise<{ orderId: string }> }) {
         </p>
         <h4 className="text-lg text-gray-700 font-medium">
           Order Number:{" "}
-          <span className="text-black font-semibold">{params.orderId}</span>
+          <span className="text-black font-semibold">{prefix}</span>
         </h4>
 
-        <Link href="/orders">
-          <Button className={`w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg ${designVar.fontFamily}`}>
+        <Link  href={`/orders`}>
+
+        <Button  className={`w-[40%] min-w-[250px] mx-auto px-5 py-2 bg-primaryOrange text-black hover:bg-primaryOrange/80 text-lg ${designVar.fontFamily}`}>
             View Orders
           </Button>
         </Link>

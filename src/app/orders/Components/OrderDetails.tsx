@@ -69,6 +69,8 @@ function OrderDetails() {
 
 
 
+  console.log(order)
+
   if (status === "pending") {
     return (
       <div className="w-full h-screen flex justify-center items-center">

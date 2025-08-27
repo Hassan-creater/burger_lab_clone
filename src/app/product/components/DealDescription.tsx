@@ -14,6 +14,7 @@ import ProductDescriptionSkelton from "@/components/ui/productDescriptionSkelton
 import { designVar } from "@/designVar/desighVar";
 import { toast } from "sonner";
 import { saveDealCartData } from "@/cartStorage/cartStorage";
+import Cookies from "js-cookie";
 import Image from "next/image";
 
 interface ProductDescriptionProps {
@@ -34,9 +35,11 @@ interface DealData {
 }
 
 const DealDescription = ({ deal , setOpen }: ProductDescriptionProps): React.ReactElement => {
+
+  const branchId = Cookies.get("branchId")
  // Fetch product variants
   const getItemById = async (): Promise<DealData> => {
-    const res = await apiClient.get(`/deal/${deal.id}/view/customer`);
+    const res = await apiClient.get(`deal/${deal?.id}/branch/${branchId}/view/customer`);
     return res.data.data;
   };
 
