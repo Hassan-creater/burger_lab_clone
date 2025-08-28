@@ -142,7 +142,7 @@ const getStatusColor = (status: string) => {
             </span>
             {
               order?.status == "out_for_delivery" ? 
-              <Link href={`/order-tracking/${order?.id}`}>
+              <Link href={`/order-tracking/${order?.id}__${order?.status}`}>
                 <span className={`flex items-center gap-1 border-[1px] border-blue-600 p-2 shadow-gray-300 rounded-lg cursor-pointer text-blue-600 hover:underline ${designVar.fontFamily}`}>
                   <Map className="w-4 h-4" />
                   {order?.user?.firstName} {order?.user?.lastName} Start Tracking

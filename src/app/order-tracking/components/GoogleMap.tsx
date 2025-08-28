@@ -22,6 +22,7 @@ type Props = {
   lat?: number;
   lng?: number;
   orderId: string;
+  status : string;
 };
 
 type Coordinate = {
@@ -29,7 +30,7 @@ type Coordinate = {
   longitude: number;
 };
 
-export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defaultCenter.lng, orderId }: Props) {
+export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defaultCenter.lng, orderId , status }: Props) {
   const router = useRouter();
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -99,6 +100,22 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!token || !orderId) return;
+    if(status && status == "delivered"){
+      toast.success("Order is Delivered.")
+      router.push("/orders")
+      return
+    }
+
+    if( status && status != "out_for_delivery"){
+      toast.error("Order is not currently out for delivery.")
+      router.push("/orders")
+      return 
+    }
+
+    if(!status){
+      router.push("/orders")
+      return 
+    }
 
     const socket = io('https://zestupbackend-59oze.sevalla.app', {
       auth: { token },
@@ -106,7 +123,7 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
       transports: ['websocket'],
     });
 
-    socket.on('order_subscription_confirmed', (data) => {
+    socket.on('order_subscription_confirmed', () => {
       // console.log('Subscription confirmed:', data);
     });
 

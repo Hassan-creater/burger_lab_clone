@@ -69,7 +69,7 @@ function OrderDetails() {
 
 
 
-  console.log(order)
+
 
   if (status === "pending") {
     return (

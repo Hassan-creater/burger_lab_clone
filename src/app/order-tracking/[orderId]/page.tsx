@@ -20,7 +20,8 @@ export default async function OrderTracking({
 }) {
 
   
-   const orderId = params?.orderId
+  const fullId = params?.orderId;
+  const [orderId , status] = fullId.split("__");
    
    
   const token = await getServerCookie("accessToken");
@@ -30,7 +31,7 @@ export default async function OrderTracking({
   return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col gap-5">
       <h1 className={`text-lg font-bold mt-10 text-gray-700 ${designVar.fontFamily} `}>Your order</h1>
-      <GoogleMapComponent orderId={orderId} />
+      <GoogleMapComponent orderId={orderId} status={status} />
     </main>
   );
 }
