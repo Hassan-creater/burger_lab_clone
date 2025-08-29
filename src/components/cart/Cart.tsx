@@ -228,6 +228,13 @@ const Cart = ({ type, setOrderDetails, addOrder, className  }: CartProps) => {
       toast.error("Please add delivery address and phone.");
       return;
     }
+
+
+    if (AddressData?.orderType === "delivery" && deliveryPhone.length !== 11) {
+      toast.error("Phone number must be of 11 digits.")
+      return
+    }
+    
     
 
     let orderPayload = {

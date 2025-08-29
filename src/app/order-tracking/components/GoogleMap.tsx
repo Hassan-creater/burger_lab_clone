@@ -22,7 +22,7 @@ type Props = {
   lat?: number;
   lng?: number;
   orderId: string;
-  status : string;
+  status: string;
 };
 
 type Coordinate = {
@@ -30,7 +30,7 @@ type Coordinate = {
   longitude: number;
 };
 
-export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defaultCenter.lng, orderId , status }: Props) {
+export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defaultCenter.lng, orderId, status }: Props) {
   const router = useRouter();
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -50,6 +50,14 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
   });
 
   const mapCenter = useMemo(() => ({ lat, lng }), [lat, lng]);
+
+  // user interaction tracking: when true, do not change map zoom/center programmatically
+  const userInteractedRef = useRef(false);
+
+  // DOM listeners so we can remove them on cleanup
+  const domListenersRef = useRef<Array<{ type: string; fn: EventListener }>>([]);
+  // google maps listeners (MapsEventListener) to remove on cleanup
+  const gmListenersRef = useRef<google.maps.MapsEventListener[]>([]);
 
   // helper to set routePath and keep ref synced
   function applyRoutePath(path: google.maps.LatLngLiteral[]) {
@@ -100,24 +108,24 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!token || !orderId) return;
-    if(status && status == "delivered"){
-      toast.success("Order is Delivered.")
-      router.push("/orders")
-      return
+    if (status && status === 'delivered') {
+      toast.success('Order is Delivered.');
+      router.push('/orders');
+      return;
     }
 
-    if( status && status != "out_for_delivery"){
-      toast.error("Order is not currently out for delivery.")
-      router.push("/orders")
-      return 
+    if (status && status !== 'out_for_delivery') {
+      toast.error('Order is not currently out for delivery.');
+      router.push('/orders');
+      return;
     }
 
-    if(!status){
-      router.push("/orders")
-      return 
+    if (!status) {
+      router.push('/orders');
+      return;
     }
 
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_BASE_URL, {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_BASE_URL || '', {
       auth: { token },
       path: '/socket.io',
       transports: ['websocket'],
@@ -182,24 +190,6 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
       }
     });
 
-    // socket.on('Route Calculated', (data) => {
-    //   console.log('Route Calculated (alt event):', data);
-
-    //   if (routePathRef.current && routePathRef.current.length > 0) return;
-
-    //   const decoded =
-    //     (data && (data.route?.decodedCoordinates ?? data?.decodedCoordinates ?? data?.initialRoute?.decodedCoordinates)) ||
-    //     undefined;
-
-    //   if (Array.isArray(decoded) && decoded.length > 0) {
-    //     const path = decoded.map((coord: Coordinate) => ({
-    //       lat: Number(coord.latitude),
-    //       lng: Number(coord.longitude),
-    //     }));
-    //     applyRoutePath(path);
-    //   }
-    // });
-
     socket.on('route_updated', (data) => {
       // console.log('Route Updated:', data);
       const decoded =
@@ -215,10 +205,8 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
 
     // When delivery tracking stops -> unsubscribe from order
     socket.on('delivery_completed', () => {
-      // console.log('delivery_tracking_stopped:', data);
       try {
         socket.emit('unsubscribe_from_order', { orderId });
-        // console.log('Emitted unsubscribe_from_order', { orderId });
       } catch (e) {
         toast.error('Failed to emit unsubscribe_from_order');
       }
@@ -226,11 +214,8 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
 
     // Listen for server ack of unsubscribe and navigate to /orders
     socket.on('order_unsubscribe_from_order', () => {
-      // console.log('order_unsubscribe_from_order received:', data);
-      // cleanup UI / state if needed
       applyRoutePath([]);
-      toast.success("Delivery Completed")
-      // navigate away
+      toast.success('Delivery Completed');
       try {
         router.push('/orders');
       } catch (e) {
@@ -239,21 +224,14 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
     });
 
     socket.on('connect', () => {
-      // console.log('Socket connected');
       socket.emit('subscribe_to_order', { orderId });
     });
 
-    // socket.on('connect_error', (err) => {
-    //   console.error('Socket connection error:', (err as any)?.message || err);
-    // });
-
     socket.on('error', (err) => {
-      // console.error('Socket error:', err);
       const message = (err && (err as any).message) ?? String(err ?? '');
       const normalized = String(message).toLowerCase();
 
       if (normalized.includes('order is not currently out for delivery')) {
-        // show toast and navigate
         toast.error(message);
         try {
           router.push('/orders');
@@ -261,8 +239,7 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
           toast.error('Router navigation failed');
         }
       } else {
-        // optional: show other errors as toast too (commented out)
-        // showToast(message);
+        // other errors optionally
       }
     });
 
@@ -270,7 +247,7 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
       socket.disconnect();
     };
     // keep same deps to avoid reordering socket creation
-  }, [orderId, token, isLoaded, router]);
+  }, [orderId, token, isLoaded, router, status]);
   // -------------------------------------------------------------------
 
   // create an initial advanced marker at the center (non-blocking)
@@ -292,21 +269,34 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
   }, [isLoaded, mapCenter, orderId]);
 
   // When routePath updates, fit bounds so polyline is visible
+  // — but only if the user hasn't manually interacted with the map yet.
   useEffect(() => {
     if (!isLoaded || !mapRef.current) return;
     if (!routePath || routePath.length === 0) return;
 
+    // If the user already interacted (zoom/pan/etc), do NOT recenter/zoom.
+    if (userInteractedRef.current) {
+      return;
+    }
+
     const bounds = new google.maps.LatLngBounds();
     routePath.forEach((p) => bounds.extend(p));
+
+    // Programmatic fit: perform fitBounds and wait for 'idle' to possibly tweak zoom.
     mapRef.current.fitBounds(bounds, 40);
 
-    const listener = google.maps.event.addListenerOnce(mapRef.current, 'idle', () => {
+    // After bounds have been set by program, we do NOT mark userInteractedRef true;
+    // this preserves the user's ability to keep interacting. However we DO set a small
+    // listener to enforce a sane min/max zoom after the fit completes.
+    const doneListener = google.maps.event.addListenerOnce(mapRef.current, 'idle', () => {
       const currentZoom = mapRef.current!.getZoom() ?? 14;
-      const minZoom = 10;
-      if (currentZoom > 18) mapRef.current!.setZoom(18);
+      const minZoom = 4;
+      const maxZoom = 20;
+      if (currentZoom > maxZoom) mapRef.current!.setZoom(maxZoom);
       if (currentZoom < minZoom) mapRef.current!.setZoom(minZoom);
-      google.maps.event.removeListener(listener);
+      google.maps.event.removeListener(doneListener);
     });
+    // no need to save this listener for manual removal because addListenerOnce cleans up.
   }, [isLoaded, routePath]);
 
   // If we received rider updates before map ready, create/update marker now
@@ -320,14 +310,59 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
-  // Cleanup on unmount
+  // Attach user-interaction listeners when map loads and clean them up on unmount
+  function handleMapLoad(map: google.maps.Map) {
+    mapRef.current = map;
+
+    // flush pending rider if any
+    if (pendingRiderRef.current) {
+      trimRoutePathToPosition(pendingRiderRef.current);
+      updateRiderMarker(pendingRiderRef.current);
+      pendingRiderRef.current = null;
+    }
+
+    // DOM-level interactions that indicate the user moved/zoomed the map
+    const div = map.getDiv();
+    const onUserInteract = () => {
+      userInteractedRef.current = true;
+    };
+
+    const domEvents = ['wheel', 'pointerdown', 'mousedown', 'touchstart'];
+    domEvents.forEach((ev) => {
+      div.addEventListener(ev, onUserInteract, { passive: true });
+      domListenersRef.current.push({ type: ev, fn: onUserInteract });
+    });
+
+    // Google Maps dragstart is also a direct user action
+    const dragListener = map.addListener('dragstart', () => {
+      userInteractedRef.current = true;
+    });
+    gmListenersRef.current.push(dragListener);
+  }
+
+  // Cleanup listeners on unmount
   useEffect(() => {
     return () => {
-      if (riderAnimRef.current) cancelAnimationFrame(riderAnimRef.current);
-      if (riderMarkerRef.current) {
-        riderMarkerRef.current.setMap(null);
-        riderMarkerRef.current = null;
+      // remove DOM listeners
+      const map = mapRef.current;
+      if (map) {
+        const div = map.getDiv();
+        domListenersRef.current.forEach((l) => {
+          try {
+            div.removeEventListener(l.type, l.fn);
+          } catch (_) {
+            // ignore
+          }
+        });
+        domListenersRef.current = [];
       }
+      // remove google maps listeners
+      gmListenersRef.current.forEach((l) => {
+        try {
+          l.remove();
+        } catch (_) {}
+      });
+      gmListenersRef.current = [];
     };
   }, []);
 
@@ -412,16 +447,7 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
       mapContainerStyle={containerStyle}
       center={mapCenter}
       zoom={14}
-      onLoad={(map) => {
-        mapRef.current = map;
-
-        // flush pending rider if any
-        if (pendingRiderRef.current) {
-          trimRoutePathToPosition(pendingRiderRef.current);
-          updateRiderMarker(pendingRiderRef.current);
-          pendingRiderRef.current = null;
-        }
-      }}
+      onLoad={handleMapLoad}
       options={{
         gestureHandling: 'greedy',
         zoomControl: true,
