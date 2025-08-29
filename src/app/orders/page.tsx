@@ -17,7 +17,7 @@ export default async function Orders({}: OrdersProps) {
   if(!token){
     redirect("/");
   }
-  return (
+return (
     <main className="w-[90%] lg:max-w-[70%] mx-auto my-5 min-h-screen flex flex-col gap-5">
       <h1 className={`text-lg font-bold mt-10 text-gray-700 ${designVar.fontFamily} `}>My Orders</h1>
       <OrderDetails />

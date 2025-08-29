@@ -8,7 +8,7 @@ export const designVar = {
     Button: {
       backgroundColor: "bg-[#FABF2C]",
       
-      borderRadius: "rounded-lg",             
+      borderRadius: "rounded-sm",             
       border: "border",                     
       borderColor: "border-[#FCD980]",      
       paddingX: "px-[0em]",
@@ -65,7 +65,7 @@ export const designVar = {
 
     productPrice : {
         backgroundColor : "bg-black",
-        borderRadius : "rounded-lg",
+        borderRadius : "rounded-sm",
         width : "min-w-[78px]",
         height : "h-[22px]",
         paddingX : "px-[]",
@@ -82,7 +82,7 @@ export const designVar = {
         minHeight : "min-h-[164px]",
         duration : "duration-300",
         backgroundColor : "bg-white",
-        borderRadius : "rounded-lg",
+        borderRadius : "rounded-sm",
         paddingX : "px-[0em]",
         paddingY : "py-[0em]",
         border : "border-[1px]",
@@ -90,7 +90,7 @@ export const designVar = {
         borderColor : "",    
         hover : {
             backgroundColor : "hover:bg-white",
-            borderRadius : "hover:rounded-2xl",
+            borderRadius : "hover:rounded-lg",
             borderColor : "",
             shadow : "hover:shadow-lg",
             overflow : "hover:overflow-hidden",
@@ -110,7 +110,7 @@ export const designVar = {
     categoryButton : {
         activeBackgroundColor : "bg-[#FABF2C]",
         inactiveBackgroundColor : "bg-gray-300",
-        borderRadius : "rounded-lg",
+        borderRadius : "rounded-sm",
         paddingX : "px-[1em]",
         paddingY : "py-[0.5em]",
         fontSize : " text-[0.8em] sm:text-[0.9em]",
@@ -120,7 +120,7 @@ export const designVar = {
         transition : "transition-all duration-500 ease",
         hover : {
                 backgroundColor : "hover:bg-[#FABF2C]",
-            borderRadius : "hover:rounded-2xl",
+            borderRadius : "hover:rounded-lg",
             color : "hover:text-white",
         }
     },
@@ -128,7 +128,7 @@ export const designVar = {
     // auth button design login/register button
     authButton : {
         backgroundColor : "bg-[#FABF2C]",
-        borderRadius : "rounded-lg",
+        borderRadius : "rounded-sm",
         paddingX : "px-[0.7em]",
         paddingY : "py-[0.5em]",
         fontSize : "text-base",
@@ -138,7 +138,7 @@ export const designVar = {
         transition : "transition-all duration-300 ease",
         hover : {
             backgroundColor : "hover:bg-[#FCD980]",
-            borderRadius : "hover:rounded-2xl",
+            borderRadius : "hover:rounded-lg",
             color : "hover:text-white",
         }
     },
@@ -151,7 +151,7 @@ export const designVar = {
     // cart , login , register , checkout , location , favorite  , place order button design
     widthFullButton : {
         backgroundColor : "bg-[#FABF2C]",
-        borderRadius : "rounded-lg",
+        borderRadius : "rounded-sm",
         maxWidth : "max-w-[30%]",
         maxAddressWidth : "max-w-[13em]",
         paddingX : "px-[0.7em]",
@@ -165,13 +165,13 @@ export const designVar = {
         transition : "transition-all duration-300 ease",
         hover : {
             backgroundColor : "hover:bg-[#FCD980]",
-            borderRadius : "hover:rounded-2xl",
+            borderRadius : "hover:rounded-lg",
             color : "hover:text-white",
         },
 
         registerButtonLink : {
             backgroundColor : "bg-transparent",
-            borderRadius : "rounded-lg",
+            borderRadius : "rounded-sm",
             paddingX : "px-[0.7em]",
             paddingY : "py-[0.5em]",
             fontSize : "text-base",
@@ -182,14 +182,14 @@ export const designVar = {
             transition : "transition-all duration-300 ease",
             hover : {
                 backgroundColor : "hover:bg-gray-100",
-                borderRadius : "hover:rounded-2xl",
+                borderRadius : "hover:rounded-lg",
                 color : "hover:text-black",
             }
         },
 
         registerButton : {
             backgroundColor : "bg-[#FABF2C]",
-            borderRadius : "rounded-lg",
+            borderRadius : "rounded-sm",
             paddingX : "px-[0.7em]",
             paddingY : "py-[0.5em]",
             fontSize : "text-base",
@@ -199,7 +199,7 @@ export const designVar = {
             transition : "transition-all duration-300 ease",
             hover : {
                 backgroundColor : "hover:bg-[#FCD980]",
-                borderRadius : "hover:rounded-2xl",
+                borderRadius : "hover:rounded-lg",
                 color : "hover:text-white",
             }
         }

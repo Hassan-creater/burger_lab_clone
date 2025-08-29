@@ -117,7 +117,7 @@ export default function GoogleMapComponent({ lat = defaultCenter.lat, lng = defa
       return 
     }
 
-    const socket = io('https://zestupbackend-59oze.sevalla.app', {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_BASE_URL, {
       auth: { token },
       path: '/socket.io',
       transports: ['websocket'],

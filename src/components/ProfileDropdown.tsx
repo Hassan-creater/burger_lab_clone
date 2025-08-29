@@ -70,7 +70,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
       <button
         title="My Account"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="rounded-lg md:bg-primaryOrange/60 p-2 w-auto h-auto flex items-center gap-1.5 md:hover:bg-primaryOrange/80"
+        className="rounded-sm md:bg-primaryOrange/60 p-2 w-auto h-auto flex items-center gap-1.5 md:hover:bg-primaryOrange/80"
       >
         <CircleUserIcon width={18} height={18} className="hidden md:inline-block" />
         <p className="font-normal hidden md:inline-block">
@@ -97,7 +97,7 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
           <hr className="my-2 border-gray-200" />
           <button
             onClick={logout}
-            className="w-full bg-red-500 hover:bg-red-400 text-center font-semibold rounded-full px-3 py-2 text-white cursor-pointer flex gap-3 justify-center"
+            className="w-full bg-red-500 hover:bg-red-400 text-center font-semibold rounded-sm px-3 py-2 text-white cursor-pointer flex gap-3 justify-center"
           >
             <LogOut className="w-5 h-5" />
             Log out
